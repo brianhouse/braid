@@ -1,11 +1,11 @@
 import random
-from pattern import Pattern
+from .pattern import Pattern
 
 class Scale(dict):
 
     def __init__(self, *args):
         dict.__init__(self, *args)
-        self.indexes = [i * -1 for i in self.keys()] + self.keys() + [len(self) + 1]
+        self.indexes = [i * -1 for i in self.keys()] + list(self.keys()) + [len(self) + 1]
 
     def __getitem__(self, degree):
         assert(type(degree) == int or degree == R)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import time, threading, Queue
+import time, threading, queue
 from housepy import osc
 
 class Driver(object):
@@ -23,7 +23,7 @@ class Driver(object):
             self.t = time.time() - start_t
             if int(self.t) / 15 != last_square:
                 last_square = int(self.t) / 15
-                print "<<%s>> %s" % (last_square, self.t)
+                print("<<%s>> %s" % (last_square, self.t))
             self.p = self.t / self.duration
             if self.p >= 1.0:
                 break            
@@ -36,7 +36,7 @@ class Synth(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True
         self.msp_sender = osc.Sender(5280)
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.start()
 
     def send(self, address, *params):

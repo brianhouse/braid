@@ -1,6 +1,6 @@
 import time, random, math
-from pattern import Pattern, lcm
-from core import *
+from .pattern import Pattern, lcm
+from .core import *
 from functools import wraps
 
 def clamp(pos):
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
     ctx = drawing.Context(800, 300, relative=True, flip=True)
 
-    for x in xrange(0, 101):
+    for x in range(0, 101):
         x /= 100.0
         ctx.arc(x, power(x), 3.0 / ctx.width, 3.0 / ctx.height, thickness=0, fill=(0, 0, 0))
         ctx.arc(x, ease_out(x), 3.0 / ctx.width, 3.0 / ctx.height, thickness=0, fill=(1., 0, 0))

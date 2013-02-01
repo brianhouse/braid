@@ -1,9 +1,10 @@
 import copy, math
 from collections import deque
-from pattern import Pattern
-from notation import *
-from tween import *
-from core import *
+from .pattern import Pattern
+from .notation import *
+from .tween import *
+from .core import *
+import collections
 
 class Voice(object):
         
@@ -56,7 +57,7 @@ class Voice(object):
                         if type(next) == Pattern:
                             self.pattern = next
                             break
-                        elif callable(next):
+                        elif isinstance(next, collections.Callable):
                             next(self)
                 elif 'pattern' in self.tweens:
                     self.pattern = self.tweens['pattern'].get_value()
@@ -64,7 +65,7 @@ class Voice(object):
             self.index_played = False                                
         if not self.index_played:
             step = self._steps[self.index]
-            if callable(step):
+            if isinstance(step, collections.Callable):
                 step = step(self)
             if step:
                 self.play(step)
@@ -104,7 +105,7 @@ class Voice(object):
         for param, tween in self.tweens.items():
             if tween.finished:          ## maybe take finisheds out, but might be needed for callbacks?
                 self.tweens.pop(param)
-                print 'killed tween %s' % param
+                print('killed tween %s' % param)
             else:
                 if param != 'pattern':
                     value = tween.get_value()
