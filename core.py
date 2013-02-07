@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time, threading, queue
-from housepy import osc
+from .housepy import osc
 
 class Driver(object):
     """ This is a substitute for a realtime system """

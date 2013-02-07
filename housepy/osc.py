@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import sys, os, time, json, threading, queue
-from config import config
-from log import log
-from lib import OSC
+from .config import config
+from .log import log
+from .lib import OSC
 
 verbose = True
 

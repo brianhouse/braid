@@ -1,8 +1,8 @@
-from notation import *
-from pattern import *
-from tween import *
-from voice import *
-from core import *
+from .notation import *
+from .pattern import *
+from .tween import *
+from .voice import *
+from .core import *
 
 try:
     from housepy import drawing, log, config

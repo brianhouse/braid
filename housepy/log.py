@@ -1,6 +1,6 @@
 import os, logging, __main__, sys
 import logging.handlers
-from config import config, ConfigError
+from .config import config, ConfigError
 
 try:
     name = os.path.basename(__main__.__file__).split('.')[0]    # log identifier/file will be the same as the file being run
