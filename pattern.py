@@ -47,10 +47,10 @@ class Pattern(list):
             r = []
         for step in pattern:
             if type(step) == list:
-                self._unroll(step, (divs / len(pattern)), r)
+                self._unroll(step, (divs // len(pattern)), r)
             else:
                 r.append(step)
-                for i in range((divs / len(pattern)) - 1):
+                for i in range((divs // len(pattern)) - 1):
                     r.append(0)
         return r        
 
