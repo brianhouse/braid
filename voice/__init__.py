@@ -8,26 +8,26 @@ import collections
 
 class Voice(object):
         
-    def __init__(self, channel=1, cycles=1):  
+    def __init__(self, channel=1, continuous=False):
+        driver.voices.append(self)        
         self.channel = channel
-        self.index = None
-        self.index_played = False
+        self.index = -1
         self.tweens = {}
         self.callbacks = []
-        self.cycles = cycles    ## this cycles thing is a hack for now
         self.channel = channel
-        self.continuous = False  # set to true to send params outside of notes, ie panning or reverb
+        self.continuous = continuous  # set to true to send params outside of notes, ie panning or reverb
+        self.tempo = 120
         self._pattern = Pattern()        
         self._sequence = deque()
         self._steps = self._pattern.resolve()
         self.chord = C, MAJ
         self.velocity = 1.0
 
-    def update(self, p):
-        params_changed = self._perform_tweens()        
-        local_p = (p * self.cycles) % 1.0
-        i = int(local_p * len(self._steps))
-        if i != self.index:            
+    def update(self, t):
+        params_changed = self._perform_tweens()   # might change to base on tempo/rate
+        p = (t * self.rate) % 1.0        
+        i = int(p * len(self._steps))
+        if i > self.index or (i == 0 and self.index == len(self._steps) - 1):
             self.index = i
             if self.index == 0:
                 self._perform_callbacks()
@@ -43,8 +43,6 @@ class Voice(object):
                 elif 'pattern' in self.tweens:
                     self.pattern = self.tweens['pattern'].get_value()
                 self._steps = self.pattern.resolve()
-            self.index_played = False                                
-        if not self.index_played:
             step = self._steps[self.index]
             if isinstance(step, collections.Callable):
                 step = step(self)
@@ -57,12 +55,12 @@ class Voice(object):
                 velocity = 1.0 - (random.random() * 0.05)
                 velocity *= self.velocity                           
                 self.play(pitch, velocity)
-            self.index_played = True
         elif params_changed and self.continuous:            
             send_params()
 
     def play(self, pitch, velocity):
         """ To facilitate abstraction"""
+        print("%s %s %s" % (self.channel, pitch, velocity))
         synth.send('/braid/note', self.channel, pitch, velocity)
 
     def send_params(self):
@@ -98,7 +96,7 @@ class Voice(object):
                         changed = True
         return changed
 
-    # these callbacks are in terms of cycles
+    # these callbacks are in terms of pattern cycles
     def add_callback(self, f, count=1):
         self.callbacks.append((f, count))
 
@@ -110,6 +108,17 @@ class Voice(object):
                 self.callbacks.remove(callback)
             else:                
                 self.callbacks[c] = f, count - 1
+
+    @property
+    def tempo(self):
+        return self.rate * 60.0 * 4.0
+
+    @tempo.setter
+    def tempo(self, value):
+        """Convert to a multiplier of 1hz cycles"""
+        value /= 60.0           # bpm -> bps
+        value /= 4.0            # measures instead of beats, ref 4/4        
+        self.rate = value
 
     @property
     def pattern(self):

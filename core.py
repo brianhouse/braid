@@ -8,7 +8,7 @@ class Driver(object):
     
     def __init__(self):
         self.voices = []
-        self._grain = 0.01   # hundredths are nailed by Granu, w/o load. ms are ignored.
+        self.grain = 0.01   # hundredths are nailed by Granu, w/o load. ms are ignored.
         self.t = 0.0
 
     def start(self, skip=0):
@@ -16,12 +16,12 @@ class Driver(object):
         last_ten = 0
         while True:
             for voice in self.voices:
-                voice.update()
-            time.sleep(self._grain)
+                voice.update(self.t)
+            time.sleep(self.grain)
             self.t = time.time() - start_t
             if int(self.t) // 10 != last_ten:
                 last_ten = int(self.t) // 10
-                print("<<%s>> %s" % (last_ten, self.t))
+                print("<<%s>> %d:%f" % (last_ten, self.t // 60.0, self.t % 60.0))
 
 
 class Synth(threading.Thread):

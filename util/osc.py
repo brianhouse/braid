@@ -74,7 +74,7 @@ class Sender(object):
             try:
                 target.send(message, timeout=1)
             except Exception as e:
-                log.error(log.exc(e))
+                log.error("%s (%s)" % (log.exc(e), message))
 
     def _get_host_port(self, *target):
         host, port = None, None
