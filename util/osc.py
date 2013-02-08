@@ -1,5 +1,33 @@
 #!/usr/bin/env python
 
+"""
+    Example:
+
+    import time
+    from osc import *
+
+    try:
+        address = sys.argv[1]
+    except:
+        address = "/hello/world"
+    try:
+        data = sys.argv[2]
+    except:
+        data = None
+
+    def message_handler(location, address, data):
+        print(location)
+        print(address)
+        print(data)
+
+    receiver = Receiver(23232, message_handler)
+
+    Sender(23232).send(address, data)
+
+    time.sleep(0.1)
+
+"""
+
 import sys, os, time, json, threading, queue
 from .config import config
 from .log import log
@@ -91,25 +119,3 @@ class Receiver(threading.Thread):
             log.info("%s: %s %s" % (location[0], address, data))
         if self.message_handler is not None:
             self.message_handler(location[0], address, data)
-
-
-if __name__ == "__main__":
-    try:
-        address = sys.argv[1]
-    except:
-        address = "/hello/world"
-    try:
-        data = sys.argv[2]
-    except:
-        data = None
-
-    def message_handler(location, address, data):
-        print(location)
-        print(address)
-        print(data)
-
-    receiver = Receiver(23232, message_handler)
-
-    Sender(23232).send(address, data)
-
-    time.sleep(0.1)
