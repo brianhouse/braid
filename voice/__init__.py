@@ -29,6 +29,8 @@ class Voice(object):
         i = int(p * len(self._steps))
         if i > self.index or (i == 0 and self.index == len(self._steps) - 1):
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
+        # if i != self.index:
+        #     self.index = i    
             if self.index == 0:
                 self._perform_callbacks()
                 if len(self.sequence):
