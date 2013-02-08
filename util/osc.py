@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import sys, os, time, json, threading, Queue
-from config import config
-from log import log
-from lib import OSC
+import sys, os, time, json, threading, queue
+from .config import config
+from .log import log
+from .lib import OSC
 
 verbose = True
 
@@ -42,7 +42,7 @@ class Sender(object):
             message.extend(data)
         if verbose:
             log.info("OSC send (%s): %s" % (len(self.targets), message))
-        for location, target in self.targets.iteritems():            
+        for location, target in self.targets.items():            
             try:
                 target.send(message, timeout=1)
             except Exception as e:
@@ -52,7 +52,7 @@ class Sender(object):
         host, port = None, None
         assert len(target) <= 2
         if len(target) == 1:
-            host, port = '0.0.0.0', target[0]
+            host, port = '127.0.0.1', target[0]
         if len(target) == 2:
             host, port = target
         if host is not None and port is not None:        
@@ -104,9 +104,9 @@ if __name__ == "__main__":
         data = None
 
     def message_handler(location, address, data):
-        print location
-        print address
-        print data
+        print(location)
+        print(address)
+        print(data)
 
     receiver = Receiver(23232, message_handler)
 

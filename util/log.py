@@ -1,6 +1,6 @@
 import os, logging, __main__, sys
 import logging.handlers
-import config    
+from .config import config, ConfigError
 
 try:
     name = os.path.basename(__main__.__file__).split('.')[0]    # log identifier/file will be the same as the file being run
@@ -13,8 +13,8 @@ log = logging.getLogger(name)
 log.setLevel(logging.DEBUG)
 
 try:
-    log_to_file = config.config['log']
-except config.ConfigError:
+    log_to_file = config['log']
+except ConfigError:
     log_to_file = False
 if log_to_file:        
     logdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs"))
@@ -26,8 +26,8 @@ if log_to_file:
     log.addHandler(logfile)
 
 try:
-    log_to_terminal = config.config['tail']
-except config.ConfigError:
+    log_to_terminal = config['tail']
+except ConfigError:
     log_to_terminal = True
 if log_to_terminal:
     terminal = logging.StreamHandler(sys.stdout)    
