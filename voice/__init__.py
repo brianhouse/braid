@@ -1,19 +1,14 @@
 import copy, math
 from collections import deque
-from .pattern import Pattern
-from .notation import *
-from .tween import *
-from .core import *
+from ..pattern import Pattern
+from ..notation import *
+from ..tween import *
+from ..core import *
 import collections
 
 class Voice(object):
         
-    def __init__(self, channel=1, cycles=1, active=True):          
-        if active:            # questionable
-            self.active = True
-            driver.voices.append(self)
-        else:
-            self.active = False
+    def __init__(self, channel=1, cycles=1):  
         self.channel = channel
         self.index = None
         self.index_played = False
@@ -21,7 +16,7 @@ class Voice(object):
         self.callbacks = []
         self.cycles = cycles    ## this cycles thing is a hack for now
         self.channel = channel
-        self.continuous = True  ## hack
+        self.continuous = False  # set to true to send params outside of notes, ie panning or reverb
 
         # setter params
         self._pattern = Pattern()        

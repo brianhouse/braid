@@ -50,7 +50,7 @@ class Pattern(list):
                 self._unroll(step, (divs / len(pattern)), r)
             else:
                 r.append(step)
-                for i in xrange((divs / len(pattern)) - 1):
+                for i in range((divs / len(pattern)) - 1):
                     r.append(0)
         return r        
 

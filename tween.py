@@ -1,7 +1,6 @@
 import time, random, math
 from .pattern import Pattern, lcm
 from .core import *
-from functools import wraps
 
 def clamp(pos):
     if pos > 1.0:
@@ -79,6 +78,17 @@ def get_breakpoint_f(*breakpoints):
     return breakpoint_f
 
 
+def get_signal_f(signal):
+    """Assumes the signal is normalized"""
+
+    def signal_f(pos):
+        index = int(pos / float(len(signal)))
+        value = signal[index]
+        return value
+
+    return signal_f
+
+
 class Tween(object):
 
     # speed is number of divisions of duration
@@ -154,7 +164,7 @@ class PatternTween(Tween):
 
 if __name__ == "__main__":
     
-    from housepy import drawing
+    from .util import drawing
 
     ctx = drawing.Context(800, 300, relative=True, flip=True)
 
