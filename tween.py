@@ -82,7 +82,7 @@ def get_signal_f(signal):
     """Assumes the signal is normalized"""
 
     def signal_f(pos):
-        index = int(pos / float(len(signal)))
+        index = int(pos * float(len(signal)))
         value = signal[index]
         return value
 
@@ -107,8 +107,8 @@ class Tween(object):
     def get_value(self):    
         position = (driver.t - self.start_t) / self.duration
         if position >= 1.0:
+            position = 1.0
             self.finished = True
-            return self.target_value
         position = self.transition(position)                    
         return self.calc_value(position)
 

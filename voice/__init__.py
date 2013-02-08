@@ -28,7 +28,7 @@ class Voice(object):
         p = (t * self.rate) % 1.0        
         i = int(p * len(self._steps))
         if i > self.index or (i == 0 and self.index == len(self._steps) - 1):
-            self.index = i
+            self.index = (self.index + 1) % len(self._steps) # dont skip steps
             if self.index == 0:
                 self._perform_callbacks()
                 if len(self.sequence):
@@ -55,8 +55,8 @@ class Voice(object):
                 velocity = 1.0 - (random.random() * 0.05)
                 velocity *= self.velocity                           
                 self.play(pitch, velocity)
-        elif params_changed and self.continuous:            
-            send_params()
+        elif params_changed and self.continuous:   
+            self.send_params()
 
     def play(self, pitch, velocity):
         """ To facilitate abstraction"""
@@ -84,7 +84,7 @@ class Voice(object):
 
     def _perform_tweens(self):
         changed = False
-        for param, tween in self.tweens.items():
+        for param, tween in list(self.tweens.items()):
             if tween.finished:          ## maybe take finisheds out, but might be needed for tail callbacks?
                 self.tweens.pop(param)
                 print('killed tween %s' % param)

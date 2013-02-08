@@ -2,8 +2,8 @@ from . import Voice
 
 class SoftSynth(Voice):
 
-    def __init__(self, channel=1, cycles=1):  
-        Voice.__init__(self, channel, cycles)
+    def __init__(self, channel=1, continuous=False):
+        Voice.__init__(self, channel, continuous)
         self._reverb = [1.0, 0.0, 0.0, 0.0, 0.0]     
         self._angle = 0.0
         self.pan = 0.5        
