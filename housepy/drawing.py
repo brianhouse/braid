@@ -55,9 +55,6 @@ Rotated shapes
 
 """
 
-### TODO
-# implement flip
-
 import cairo, colorsys, math, time, subprocess
 
 class Context(object):
@@ -76,6 +73,7 @@ class Context(object):
         if flip:
             self._ctx.scale(1, -1)
             self._ctx.translate(0, -1)
+        self._ctx.save()
 
 
     """Public Methods"""
@@ -91,10 +89,9 @@ class Context(object):
         return self._height    
 
     def line(self, x1, y1=None, x2=None, y2=None, stroke=(0.0, 0.0, 0.0, 1.0), thickness=1.0):
-        """Draw a line from x1,y1 to x2,y2, or between all points (as x,y pairs) in a list."""
-        thickness /= self.width # problematic?
+        """Draw a line from x1,y1 to x2,y2, or between all points (as x,y pairs) in a list."""        
         self._ctx.set_source_rgba(*stroke)
-        self._ctx.set_line_width(thickness)
+        self._ctx.set_line_cap(cairo.LINE_CAP_SQUARE)        
         if type(x1) == tuple or type(x1) == list:
             self._ctx.move_to(*x1[0])
             for point in x1[1:]:
@@ -102,6 +99,13 @@ class Context(object):
         else:
             self._ctx.move_to(x1, y1)
             self._ctx.line_to(x2, y2)
+        self._ctx.scale(1.0 / self._width, 1.0 / self._height)
+        self._ctx.set_line_width(thickness)
+        # self._ctx.set_line_join(cairo.LINE_JOIN_ROUND);        
+        # self._ctx.set_line_join(cairo.LINE_JOIN_BEVEL);                
+        self._ctx.stroke()
+        self._ctx.restore()                
+        self._ctx.save()
 
 
 
