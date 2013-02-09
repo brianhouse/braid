@@ -16,6 +16,7 @@ class Voice(object):
         self.callbacks = []
         self.channel = channel
         self.continuous = continuous  # set to true to send params outside of notes, ie panning or reverb
+        self.cycles = 0.0
         self.tempo = 120
         self._pattern = Pattern()        
         self._sequence = deque()
@@ -23,14 +24,13 @@ class Voice(object):
         self.chord = C, MAJ
         self.velocity = 1.0
 
-    def update(self, t):
+    def update(self, delta_t):
         params_changed = self._perform_tweens()   # might change to base on tempo/rate
-        p = (t * self.rate) % 1.0        
+        self.cycles += delta_t * self.rate
+        p = self.cycles % 1.0        
         i = int(p * len(self._steps))
-        if i > self.index or (i == 0 and self.index == len(self._steps) - 1):
+        if i != self.index:        
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
-        # if i != self.index:
-        #     self.index = i    
             if self.index == 0:
                 self._perform_callbacks()
                 if len(self.sequence):
