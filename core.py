@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time, threading, queue
-from .util import osc
+from .util import osc, log
 
 class Driver(object):
     """ This is a substitute for a realtime system """
@@ -14,13 +14,13 @@ class Driver(object):
 
     def start(self, skip=0):
         start_t = time.time() - skip
-        last_ten = 0
+        last_ten = -1
         while True:
             self.t = time.time() - start_t
             delta_t = self.t - self.previous_t
             if int(self.t) // 10 != last_ten:
                 last_ten = int(self.t) // 10
-                print("<<%s>> %d:%f" % (last_ten, self.t // 60.0, self.t % 60.0))            
+                log.info("/////////////// [%s] %d:%f ///////////////" % (last_ten, self.t // 60.0, self.t % 60.0))            
             for voice in self.voices:
                 voice.update(delta_t)
             self.previous_t = self.t                

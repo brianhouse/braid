@@ -82,7 +82,7 @@ def get_signal_f(signal):
     """Assumes the signal is normalized"""
 
     def signal_f(pos):
-        index = int(pos * float(len(signal)))
+        index = int(pos * (len(signal) - 1))
         value = signal[index]
         return value
 

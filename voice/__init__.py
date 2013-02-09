@@ -4,6 +4,7 @@ from ..pattern import Pattern
 from ..notation import *
 from ..tween import *
 from ..core import *
+from ..util import log
 import collections
 
 class Voice(object):
@@ -62,7 +63,6 @@ class Voice(object):
 
     def play(self, pitch, velocity):
         """ To facilitate abstraction"""
-        print("%s %s %s" % (self.channel, pitch, velocity))
         synth.send('/braid/note', self.channel, pitch, velocity)
 
     def send_params(self):
@@ -89,7 +89,7 @@ class Voice(object):
         for param, tween in list(self.tweens.items()):
             if tween.finished:          ## maybe take finisheds out, but might be needed for tail callbacks?
                 self.tweens.pop(param)
-                print('killed tween %s' % param)
+                log.info('Killed tween %s' % param)
             else:
                 if param != 'pattern':
                     value = tween.get_value()

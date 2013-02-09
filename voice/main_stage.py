@@ -8,5 +8,5 @@ class MainStage(Voice):
 
     def play(self, pitch, velocity):
         synth.send('/braid/note', self.channel, self.previous_pitch, 0)        
-        synth.send('/braid/note', self.channel, pitch, int(velocity * 127), self.tempo)
+        synth.send('/braid/note', self.channel, pitch, int(velocity * 127))
         self.previous_pitch = pitch
