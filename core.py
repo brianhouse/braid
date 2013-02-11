@@ -14,13 +14,13 @@ class Driver(object):
 
     def start(self, skip=0):
         start_t = time.time() - skip
-        last_ten = -1
+        last_cue = -1
         while True:
             self.t = time.time() - start_t
             delta_t = self.t - self.previous_t
-            if int(self.t) // 10 != last_ten:
-                last_ten = int(self.t) // 10
-                log.info("/////////////// [%s] %d:%f ///////////////" % (last_ten, self.t // 60.0, self.t % 60.0))            
+            if int(self.t) // 15 != last_cue:
+                last_cue = int(self.t) // 15
+                log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))            
             for voice in self.voices:
                 voice.update(delta_t)
             self.previous_t = self.t                
