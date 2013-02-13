@@ -1,11 +1,10 @@
 import random
 from .pattern import Pattern
 
-class Scale(dict):
+class Scale(list):
 
     def __init__(self, *args):
-        dict.__init__(self, *args)
-        self.indexes = [i * -1 for i in self.keys()] + list(self.keys()) + [len(self) + 1]
+        list.__init__(self, *args)
 
     def __getitem__(self, degree):
         assert(type(degree) == int or degree == R)
@@ -21,18 +20,16 @@ class Scale(dict):
             degree = ((degree - 1) % len(self)) + 1
             if degree == 0:
                 degree = len(self) - 1
-        tone = dict.__getitem__(self, degree)
+        tone = list.__getitem__(self, degree - 1)
         tone += octave_shift
         return tone
 
-    def __setitem__(self, key, value):
-        raise Exception("Cannot alter scale")
-
-    def __delitem__(self, key):
-        raise Exception("Cannot alter scale")
-
-    def clear(self):
-        raise Exception("Cannot alter scale")
+    def rotate(self, steps):
+        l = list(self)
+        scale = l[steps:] + l[:steps]
+        scale = [degree - scale[0] for degree in scale]
+        scale = [(degree + 12) if degree < 0 else degree for degree in scale]
+        return Scale(scale)
 
 
 K = 36
@@ -145,29 +142,32 @@ B8 = 119
 
 # western modes / chords
 
-ION = MAJ = Scale({1:0, 2:2, 3:4, 4:5, 5:7, 6:9, 7:11})
+ION = MAJ = Scale([0, 2, 4, 5, 7, 9, 11])
 
-DOR = Scale({1:0, 2:2, 3:3, 4:5, 5:7, 6:9, 7:10})
+DOR = ION.rotate(1)
 
-PRG = SUSb9 = Scale({1:0, 2:1, 3:3, 4:5, 5:7, 6:8, 7:10})
+PRG = SUSb9 = ION.rotate(2)
 
-LYD = Scale({1:0, 2:2, 3:4, 4:6, 5:7, 6:9, 7:11})
+LYD = ION.rotate(3)
 
-MYX = DOM = Scale({1:0, 2:2, 3:4, 4:5, 5:7, 6:9, 7:10})
+MYX = DOM = ION.rotate(4)
 
-AOL = Scale({1:0, 2:2, 3:3, 4:5, 5:7, 6:8, 7:10})
+AOL = ION.rotate(5)
 
-LOC = Scale({1:0, 2:1, 3:3, 4:5, 5:6, 6:8, 7:10})
+LOC = ION.rotate(6)
 
-MIN = Scale({1:0, 2:2, 3:3, 4:5, 5:7, 6:8, 7:11})
+MIN = Scale([0, 2, 3, 5, 7, 8, 11])
 
-BLU = Scale({1:0, 2:3, 3:5, 4:6, 5:7, 6:10})
+BLU = Scale([0, 3, 5, 6, 7, 10])
+
+JAM = Scale([0, 3, 3, 5, 6, 7, 10, 11])
+
 
 # gamelan
 
-SDR = Scale({1:0, 2:2, 3:5, 4:7, 5:9})
+SDR = Scale([0, 2, 5, 7, 9])
 
-PLG = Scale({1: 0, 2: 1, 3: 3, 4: 6, 5: 7, 6: 8, 7: 10})
+PLG = Scale([0, 1, 3, 6, 7, 8, 10])
 
 #
 
