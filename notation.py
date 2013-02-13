@@ -10,17 +10,19 @@ class Scale(dict):
     def __getitem__(self, degree):
         assert(type(degree) == int or degree == R)
         assert(degree != 0)
-        octave = 0
+        octave_shift = 0
         if degree == R:
             degree = random.choice(self.indexes)
         if degree < 0:
             degree = abs(degree)
-            octave -= 12
+            octave_shift -= 12
         if degree > len(self):
-            octave += (degree // len(self)) * 12
-            degree = (degree % len(self))
+            octave_shift += (degree // len(self)) * 12
+            degree = ((degree - 1) % len(self)) + 1
+            if degree == 0:
+                degree = len(self) - 1
         tone = dict.__getitem__(self, degree)
-        tone += octave
+        tone += octave_shift
         return tone
 
     def __setitem__(self, key, value):
@@ -158,6 +160,8 @@ AOL = Scale({1:0, 2:2, 3:3, 4:5, 5:7, 6:8, 7:10})
 LOC = Scale({1:0, 2:1, 3:3, 4:5, 5:6, 6:8, 7:10})
 
 MIN = Scale({1:0, 2:2, 3:3, 4:5, 5:7, 6:8, 7:11})
+
+BLU = Scale({1:0, 2:3, 3:5, 4:6, 5:7, 6:10})
 
 # gamelan
 

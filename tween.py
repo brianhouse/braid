@@ -92,13 +92,14 @@ def get_signal_f(signal):
 class Tween(object):
 
     # speed is number of divisions of duration
-    def __init__(self, start_value, target_value, duration, transition):
+    def __init__(self, start_value, target_value, duration, transition, callback=None):
         self.start_value = start_value
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration        
         self.transition = transition   
         self.finished = False     
+        self.callback = callback
         self.start()      
         
     def start(self):

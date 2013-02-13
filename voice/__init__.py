@@ -49,7 +49,9 @@ class Voice(object):
             step = self._steps[self.index]
             if isinstance(step, collections.Callable):
                 step = step(self)
-            if step:
+            if step is None:
+                self.play(0, 0)
+            elif step:
                 if type(step) == int and step > 20:
                     pitch = step
                 else:
@@ -69,27 +71,28 @@ class Voice(object):
         """ To facilitate abstraction"""
         synth.send('/braid/params', self.channel, self.velocity)
 
-    # could do tail callbacks, once we figure out how tweens are actually timed (seconds is kind of lame)
-    def tween(self, param, start_value, target_value, duration, transition=linear):
+    def tween(self, param, start_value, target_value, duration, transition=linear, callback=None):
         value = getattr(self, param)
         if type(value) == int or type(value) == float:
-            tween = ContinuousTween(start_value, target_value, duration, transition)
+            tween = ContinuousTween(start_value, target_value, duration, transition, callback)
         elif param == 'pattern':
             if type(start_value) != Pattern:
                 start_value = Pattern(start_value)
             if type(target_value) != Pattern:
                 target_value = Pattern(target_value)
-            tween = PatternTween(start_value, target_value, duration, transition)
+            tween = PatternTween(start_value, target_value, duration, transition, callback)
         else:
-            tween = DiscreteTween(start_value, target_value, duration, transition)
+            tween = DiscreteTween(start_value, target_value, duration, transition, callback)
         self.tweens[param] = tween
 
     def _perform_tweens(self):
         changed = False
         for param, tween in list(self.tweens.items()):
-            if tween.finished:          ## maybe take finisheds out, but might be needed for tail callbacks?
-                self.tweens.pop(param)
+            if tween.finished:
                 log.info('Killed tween %s' % param)
+                self.tweens.pop(param)
+                if tween.callback is not None:
+                    tween.callback(self)
             else:
                 if param != 'pattern':
                     value = tween.get_value()
