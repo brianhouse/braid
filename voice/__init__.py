@@ -52,7 +52,7 @@ class Voice(object):
             if step is None:
                 self.play(0, 0)
             elif step:
-                if type(step) == int and step > 20:
+                if type(step) == int and step >= 24:
                     pitch = step
                 else:
                     root, scale = self.chord
