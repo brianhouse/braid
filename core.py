@@ -11,20 +11,40 @@ class Driver(object):
         self.grain = 0.01   # hundredths are nailed by Granu, w/o load. ms are ignored.
         self.t = 0.0
         self.previous_t = 0.0
+        self.callbacks = []
+        self.running = True
 
     def start(self, skip=0):
         start_t = time.time() - skip
         last_cue = -1
-        while True:
+        while self.running:
             self.t = time.time() - start_t
-            delta_t = self.t - self.previous_t
             if int(self.t) // 15 != last_cue:
                 last_cue = int(self.t) // 15
-                log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))            
+                log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
+            self._perform_callbacks()
+            delta_t = self.t - self.previous_t
             for voice in self.voices:
                 voice.update(delta_t)
             self.previous_t = self.t                
             time.sleep(self.grain)
+
+    def stop(self):
+        self.running = False
+        for voice in self.voices:
+            voice.pattern = [None]
+            voice.update(0)
+        log.info("//////////////////// END /////////////////////")            
+
+    def callback(self, f, t):
+        self.callbacks.append((f, t))        
+
+    def _perform_callbacks(self):
+        for c, callback in enumerate(self.callbacks):
+            f, t = callback
+            if t <= self.t:
+                f()
+                self.callbacks.remove(callback)
 
 
 class Synth(threading.Thread):

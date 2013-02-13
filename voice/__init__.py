@@ -85,6 +85,10 @@ class Voice(object):
             tween = DiscreteTween(start_value, target_value, duration, transition, callback)
         self.tweens[param] = tween
 
+    def remove_tween(self, param):
+        if param in self.tweens:
+            self.tweens.pop(param)
+
     def _perform_tweens(self):
         changed = False
         for param, tween in list(self.tweens.items()):
@@ -101,12 +105,11 @@ class Voice(object):
                         changed = True
         return changed
 
-    # these callbacks are in terms of pattern cycles
     def add_callback(self, f, count=1):
         self.callbacks.append((f, count))
 
     def _perform_callbacks(self):
-        for c, callback in enumerate(list(self.callbacks)):
+        for c, callback in enumerate(self.callbacks):
             f, count = callback
             if count == 0:
                 f(self)
