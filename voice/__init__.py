@@ -51,7 +51,9 @@ class Voice(object):
                 step = step(self)
             if step is None:
                 self.play(0, 0)
-            elif step:
+            elif step == 0:
+                self.rest()
+            else:
                 if type(step) == int and step >= 24:
                     pitch = step
                 else:
@@ -66,6 +68,10 @@ class Voice(object):
     def play(self, pitch, velocity):
         """ To facilitate abstraction"""
         synth.send('/braid/note', self.channel, pitch, velocity)
+
+    def rest(self):
+        """ To facilitate abstraction"""
+        pass
 
     def send_params(self):
         """ To facilitate abstraction"""

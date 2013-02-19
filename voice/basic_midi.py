@@ -1,6 +1,6 @@
 from . import Voice, synth
 
-class MainStage(Voice):
+class BasicMidi(Voice):
 
     def __init__(self, channel=1):  
         Voice.__init__(self, channel)
