@@ -4,27 +4,78 @@ class Lilypond(BasicMidi):
 
     def __init__(self, channel=1):  
         BasicMidi.__init__(self, channel)
-        self.notation = []
+        self.staff = [Measure()]
 
     def play(self, pitch, velocity):
         BasicMidi.play(self, pitch, velocity)
-        self.notation.append([pitch, len(self._steps)]) # is this going to work when patterns get complicated?
+        remainder = self.staff[-1].append(pitch, float(len(self._steps))) # is this going to work when patterns get complicated?
+        if remainder is not None:
+            self.staff.append(Measure())
+            self.staff[-1].append(pitch, remainder)
+        # print(self.staff)
 
     def rest(self):
-        value = self.notation[-1][-1]
-        value /= 2      # questionable
-        if value < 1:
-            self.notation[-1][-1] = 1
-            self.notation.append(["~", ""])
-            self.notation.append([self.previous_pitch, len(self._steps)])
-        else:
-            self.notation[-1][-1] = int(value)
+        remainder = self.staff[-1].append(0, len(self._steps))
+        if remainder is not None:
+            self.staff.append(Measure())
+            self.staff[-1].append(self.previous_pitch, remainder)
+        # print(self.staff)
 
     def output(self):
-        engraves = ["%s%s" % (note_heads[note[0]], note[1]) for note in self.notation]
-        print("{")
-        print(" ".join(engraves))
+        print("{")        
+        last_pitch = None        
+        for measure in self.staff:
+            engraves = []
+            for note in measure.notes:
+                if note[1] % 1.0 == 0.0:
+                    timing = int(note[1])
+                elif 1 / note[1] == 0.75:
+                    timing = str(int(note[1]) * 2) + "."
+                elif 1 / note[1] == 0.375:
+                    timing = str(int(note[1]) * 2) + "."
+                elif note[1] == 1.6:
+                    engraves.append("%s%s" % (note_heads[note[0]], 8))  # yikes
+                    engraves.append("~")
+                    engraves.append("%s%s" % (note_heads[note[0]], 2))    
+                    last_pitch = note[0]
+                    continue
+                else:
+                    timing = note[1]
+                if note[0] == last_pitch:
+                    engraves.append("~")
+                engraves.append("%s%s" % (note_heads[note[0]], timing))
+                last_pitch = note[0]
+            print(" ".join(engraves))
         print("}")
+
+
+class Measure(object):
+
+    def __init__(self):
+        self.notes = []
+        self.percent_filled = 0.0
+
+    def append(self, pitch, value):
+        # print(value)
+        if self.percent_filled + (1 / value) <= 1.0:
+            if pitch == 0:
+                self.notes[-1][-1] = 1 / ((1 / self.notes[-1][-1]) + (1 / value))
+            else:
+                self.notes.append([pitch, value])
+            self.percent_filled += 1 / value
+            return None
+        else:
+            r_percent = 1.0 - self.percent_filled
+            if r_percent > 0:
+                r_value = 1.0 / r_percent
+                self.notes.append([pitch, r_value])
+                n_value = 1 / ((1 / value) - (1 / r_value))
+                return n_value
+            else:
+                return value
+
+    def __repr__(self):
+        return str(tuple(self.notes))
 
 
 note_heads = {
