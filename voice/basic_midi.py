@@ -10,3 +10,6 @@ class BasicMidi(Voice):
         synth.send('/braid/note', self.channel, self.previous_pitch, 0)        
         synth.send('/braid/note', self.channel, pitch, int(velocity * 127))
         self.previous_pitch = pitch
+
+    def end(self):
+        synth.send('/braid/note', self.channel, self.previous_pitch, 0)        

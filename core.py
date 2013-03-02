@@ -23,6 +23,8 @@ class Driver(object):
                 last_cue = int(self.t) // 15
                 log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
             self._perform_callbacks()
+            if not self.running:
+                break
             delta_t = self.t - self.previous_t
             for voice in self.voices:
                 voice.update(delta_t)
@@ -32,9 +34,8 @@ class Driver(object):
     def stop(self):
         self.running = False
         for voice in self.voices:
-            voice.pattern = [None]
-            voice.update(0)
-        log.info("//////////////////// END /////////////////////")            
+            voice.end()
+        log.info("//////////////////// END /////////////////////")    
 
     def callback(self, f, t):
         self.callbacks.append((f, t))        

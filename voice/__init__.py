@@ -73,6 +73,10 @@ class Voice(object):
         """ To facilitate abstraction"""
         pass
 
+    def end(self):
+        """ To facilitate abstraction"""
+        pass
+
     def send_params(self):
         """ To facilitate abstraction"""
         synth.send('/braid/params', self.channel, self.velocity)

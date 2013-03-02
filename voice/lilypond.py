@@ -1,4 +1,5 @@
 from .basic_midi import BasicMidi
+from ..util import log
 
 class Lilypond(BasicMidi):
 
@@ -8,7 +9,7 @@ class Lilypond(BasicMidi):
 
     def play(self, pitch, velocity):
         BasicMidi.play(self, pitch, velocity)
-        remainder = self.staff[-1].append(pitch, float(len(self._steps))) # is this going to work when patterns get complicated?
+        remainder = self.staff[-1].append(pitch, float(len(self._steps))) # is this going to work when patterns get poly complicated?
         if remainder is not None:
             self.staff.append(Measure())
             self.staff[-1].append(pitch, remainder)
@@ -22,7 +23,10 @@ class Lilypond(BasicMidi):
         # print(self.staff)
 
     def output(self):
-        print("{")        
+        log.info("///////////////// LILYPOND ///////////////////")            
+        ## so the translation between meter and note division is going to be the fun part with this, eventually
+        output = []
+        output.append("{")
         last_pitch = None        
         for measure in self.staff:
             engraves = []
@@ -45,8 +49,11 @@ class Lilypond(BasicMidi):
                     engraves.append("~")
                 engraves.append("%s%s" % (note_heads[note[0]], timing))
                 last_pitch = note[0]
-            print(" ".join(engraves))
-        print("}")
+            output.append(" ".join(engraves))
+        output.append("}")
+        output.append("\n")
+        output = "\n".join(output)
+        print(output)
 
 
 class Measure(object):
