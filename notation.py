@@ -1,5 +1,4 @@
 import random
-from .pattern import Pattern
 
 class Scale(list):
 
@@ -16,10 +15,8 @@ class Scale(list):
             degree = abs(degree)
             octave_shift -= 12
         if degree > len(self):
-            octave_shift += (degree // len(self)) * 12
-            degree = ((degree - 1) % len(self)) + 1
-            if degree == 0:
-                degree = len(self) - 1
+            octave_shift += ((degree - 1) // len(self)) * 12
+        degree = ((degree - 1) % len(self)) + 1
         tone = list.__getitem__(self, degree - 1)
         tone += octave_shift
         return tone
@@ -160,7 +157,7 @@ MIN = Scale([0, 2, 3, 5, 7, 8, 11])
 
 BLU = Scale([0, 3, 5, 6, 7, 10])
 
-JAM = Scale([0, 3, 3, 5, 6, 7, 10, 11])
+JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
 
 # chromatic
 

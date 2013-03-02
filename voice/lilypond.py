@@ -15,21 +15,28 @@ class Lilypond(BasicMidi):
             self.staff[-1].append(pitch, remainder)
         # print(self.staff)
 
-    def rest(self):
+    def hold(self):
         remainder = self.staff[-1].append(0, len(self._steps))
         if remainder is not None:
             self.staff.append(Measure())
             self.staff[-1].append(self.previous_pitch, remainder)
         # print(self.staff)
 
+    def rest(self):
+        self.play(0, 0)
+        print("resting")
+
     def output(self):
         log.info("///////////////// LILYPOND ///////////////////")            
-        ## so the translation between meter and note division is going to be the fun part with this, eventually
         output = []
         output.append("{")
         last_pitch = None        
+        print(self.staff)
         for measure in self.staff:
             engraves = []
+
+            ## so the translation between meter and note division is going to be the fun part with this, eventually
+            ## for now, just doing this manually
             for note in measure.notes:
                 if note[1] % 1.0 == 0.0:
                     timing = int(note[1])
@@ -37,10 +44,16 @@ class Lilypond(BasicMidi):
                     timing = str(int(note[1]) * 2) + "."
                 elif 1 / note[1] == 0.375:
                     timing = str(int(note[1]) * 2) + "."
-                elif note[1] == 1.6:
-                    engraves.append("%s%s" % (note_heads[note[0]], 8))  # yikes
+                elif 1 / note[1] == 0.625:
+                    engraves.append("%s%s" % (note_heads[note[0]], 2))
                     engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 2))    
+                    engraves.append("%s%s" % (note_heads[note[0]], 8))    
+                    last_pitch = note[0]
+                    continue
+                elif 1 / note[1] == 0.875:
+                    engraves.append("%s%s." % (note_heads[note[0]], 2))
+                    engraves.append("~")
+                    engraves.append("%s%s" % (note_heads[note[0]], 8))    
                     last_pitch = note[0]
                     continue
                 else:
@@ -52,7 +65,7 @@ class Lilypond(BasicMidi):
             output.append(" ".join(engraves))
         output.append("}")
         output.append("\n")
-        output = "\n".join(output)
+        output = "\n\t".join(output)
         print(output)
 
 
@@ -66,7 +79,11 @@ class Measure(object):
         # print(value)
         if self.percent_filled + (1 / value) <= 1.0:
             if pitch == 0:
-                self.notes[-1][-1] = 1 / ((1 / self.notes[-1][-1]) + (1 / value))
+                if not len(self.notes):
+                    pass
+                    ## make a rest here!
+                else:
+                    self.notes[-1][-1] = 1 / ((1 / self.notes[-1][-1]) + (1 / value))
             else:
                 self.notes.append([pitch, value])
             self.percent_filled += 1 / value

@@ -50,9 +50,9 @@ class Voice(object):
             if isinstance(step, collections.Callable):
                 step = step(self)
             if step is None:
-                self.play(0, 0)
-            elif step == 0:
                 self.rest()
+            elif step == 0:
+                self.hold()
             else:
                 if type(step) == int and step >= 24:
                     pitch = step
@@ -66,15 +66,15 @@ class Voice(object):
             self.send_params()
 
     def play(self, pitch, velocity):
-        """ To facilitate abstraction"""
         synth.send('/braid/note', self.channel, pitch, velocity)
 
-    def rest(self):
-        """ To facilitate abstraction"""
+    def hold(self):
         pass
 
+    def rest(self):
+        self.play(0, 0)
+
     def end(self):
-        """ To facilitate abstraction"""
         pass
 
     def send_params(self):
