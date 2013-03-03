@@ -36,28 +36,48 @@ class Lilypond(BasicMidi):
             engraves = []
 
             ## so the translation between meter and note division is going to be the fun part with this, eventually
+            ## when constructing staff, should probably just use 1/value, ie percent of measure
             ## for now, just doing this manually
             for note in measure.notes:
                 if note[1] % 1.0 == 0.0:
                     timing = int(note[1])
-                elif 1 / note[1] == 0.75:
-                    timing = str(int(note[1]) * 2) + "."
+                elif 1 / note[1] == 0.1875:
+                    engraves.append("%s%s" % (note_heads[note[0]], 8))  # 8 r16
+                    engraves.append("~")
+                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
+                    last_pitch = note[0]
+                    continue
+                elif 1 / note[1] == 0.3125:
+                    engraves.append("%s%s" % (note_heads[note[0]], 4))  # 4~16
+                    engraves.append("~")
+                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
+                    last_pitch = note[0]
+                    continue                    
                 elif 1 / note[1] == 0.375:
-                    timing = str(int(note[1]) * 2) + "."
+                    timing = str(int(note[1]) * 2) + "."    # 4.
+                elif 1 / note[1] == 0.5625:
+                    engraves.append("%s%s" % (note_heads[note[0]], 2))  # 2~16
+                    engraves.append("~")
+                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
+                    last_pitch = note[0]
+                    continue
                 elif 1 / note[1] == 0.625:
-                    engraves.append("%s%s" % (note_heads[note[0]], 2))
+                    engraves.append("%s%s" % (note_heads[note[0]], 2))  # 2~8
                     engraves.append("~")
                     engraves.append("%s%s" % (note_heads[note[0]], 8))    
                     last_pitch = note[0]
                     continue
+                elif 1 / note[1] == 0.75:
+                    timing = str(int(note[1]) * 2) + "."    # 2.                    
                 elif 1 / note[1] == 0.875:
-                    engraves.append("%s%s." % (note_heads[note[0]], 2))
+                    engraves.append("%s%s." % (note_heads[note[0]], 2)) # 2.~8
                     engraves.append("~")
                     engraves.append("%s%s" % (note_heads[note[0]], 8))    
                     last_pitch = note[0]
                     continue
                 else:
                     timing = note[1]
+                    print("bad timing: %s" % timing)
                 if note[0] == last_pitch:
                     engraves.append("~")
                 engraves.append("%s%s" % (note_heads[note[0]], timing))
@@ -110,7 +130,7 @@ note_heads = {
     27: "ees,,",
     28: "e,,",
     29: "f,,",
-    30: "ges,,",
+    30: "fis,,",
     31: "g,,",
     32: "aes,,",
     33: "a,,",
@@ -123,7 +143,7 @@ note_heads = {
     39: "ees,",
     40: "e,",
     41: "f,",
-    42: "ges,",
+    42: "fis,",
     43: "g,",
     44: "aes,",
     45: "a,",
@@ -136,7 +156,7 @@ note_heads = {
     51: "ees",
     52: "e",
     53: "f",
-    54: "ges",
+    54: "fis",
     55: "g",
     56: "aes",
     57: "a",
@@ -149,7 +169,7 @@ note_heads = {
     63: "ees'",
     64: "e'",
     65: "f'",
-    66: "ges'",
+    66: "fis'",
     67: "g'",
     68: "aes'",
     69: "a'",
@@ -162,7 +182,7 @@ note_heads = {
     75: "ees''",
     76: "e''",
     77: "f''",
-    78: "ges''",
+    78: "fis''",
     79: "g''",
     80: "aes''",
     81: "a''",
@@ -175,7 +195,7 @@ note_heads = {
     87: "ees'''",
     88: "e'''",
     89: "f'''",
-    90: "ges'''",
+    90: "fis'''",
     91: "g'''",
     92: "aes'''",
     93: "a'''",
@@ -188,7 +208,7 @@ note_heads = {
     99: "ees''''",
     100: "e''''",
     101: "f''''",
-    102: "ges''''",
+    102: "fis''''",
     103: "g''''",
     104: "aes''''",
     105: "a''''",
@@ -201,7 +221,7 @@ note_heads = {
     111: "ees'''''",
     112: "e'''''",
     113: "f'''''",
-    114: "ges'''''",
+    114: "fis'''''",
     115: "g'''''",
     116: "aes'''''",
     117: "a'''''",
