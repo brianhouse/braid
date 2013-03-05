@@ -32,55 +32,30 @@ class Lilypond(BasicMidi):
         output.append("{")
         last_pitch = None        
         print(self.staff)
+        ## this does not handle triplets
+        ## so the translation between meter and note division is going to be the fun part with this, eventually
         for measure in self.staff:
             engraves = []
-
-            ## so the translation between meter and note division is going to be the fun part with this, eventually
-            ## when constructing staff, should probably just use 1/value, ie percent of measure
-            ## for now, just doing this manually
             for note in measure.notes:
-                if note[1] % 1.0 == 0.0:
-                    timing = int(note[1])
-                elif 1 / note[1] == 0.1875:
-                    engraves.append("%s%s" % (note_heads[note[0]], 8))  # 8 r16
-                    engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
-                    last_pitch = note[0]
-                    continue
-                elif 1 / note[1] == 0.3125:
-                    engraves.append("%s%s" % (note_heads[note[0]], 4))  # 4~16
-                    engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
-                    last_pitch = note[0]
-                    continue                    
-                elif 1 / note[1] == 0.375:
-                    timing = str(int(note[1]) * 2) + "."    # 4.
-                elif 1 / note[1] == 0.5625:
-                    engraves.append("%s%s" % (note_heads[note[0]], 2))  # 2~16
-                    engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 16))    
-                    last_pitch = note[0]
-                    continue
-                elif 1 / note[1] == 0.625:
-                    engraves.append("%s%s" % (note_heads[note[0]], 2))  # 2~8
-                    engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 8))    
-                    last_pitch = note[0]
-                    continue
-                elif 1 / note[1] == 0.75:
-                    timing = str(int(note[1]) * 2) + "."    # 2.                    
-                elif 1 / note[1] == 0.875:
-                    engraves.append("%s%s." % (note_heads[note[0]], 2)) # 2.~8
-                    engraves.append("~")
-                    engraves.append("%s%s" % (note_heads[note[0]], 8))    
-                    last_pitch = note[0]
-                    continue
-                else:
-                    timing = note[1]
-                    print("bad timing: %s" % timing)
+                compound = []
+                remainder = 1 / note[1]
+                while True:
+                    element = 1
+                    while 1 / element > remainder:
+                        element *= 2
+                    if len(compound) and type(compound[-1]) == int and compound[-1] == element // 2:
+                        compound[-1] = "%s." % compound[-1]
+                    else:
+                        compound.append(element)
+                    remainder = remainder - (1 / element)
+                    if remainder == 0.0:
+                        break                 
                 if note[0] == last_pitch:
                     engraves.append("~")
-                engraves.append("%s%s" % (note_heads[note[0]], timing))
+                for e, element in enumerate(compound):
+                    engraves.append("%s%s" % (note_heads[note[0]], element))
+                    if e != len(compound) - 1:
+                        engraves.append("~")
                 last_pitch = note[0]
             output.append(" ".join(engraves))
         output.append("}")
@@ -228,4 +203,3 @@ note_heads = {
     118: "bes'''''",
     119: "b'''''",
 }
-
