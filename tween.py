@@ -56,12 +56,13 @@ def get_breakpoint_f(*breakpoints):
                             )
     """
     domain = max(breakpoints, key=lambda bp: bp[0])[0]
+    m = min(breakpoints, key=lambda bp: bp[1])[1]            
     resolution = max(breakpoints, key=lambda bp: bp[1])[1]
-    breakpoints = [[bp[0] / float(domain), bp[1] / float(resolution), None if not len(bp) == 3 else bp[2]] for bp in breakpoints]
+    breakpoints = [[bp[0] / float(domain), (bp[1] - m) / float(resolution), None if not len(bp) == 3 else bp[2]] for bp in breakpoints]
 
     def breakpoint_f(pos):        
         index = 0
-        while index < len(breakpoints) and breakpoints[index][0] < pos:      # optimize?
+        while index < len(breakpoints) and breakpoints[index][0] < pos:
             index += 1
         if index == 0:
             return breakpoints[index][1]
@@ -91,7 +92,6 @@ def get_signal_f(signal):
 
 class Tween(object):
 
-    # speed is number of divisions of duration
     def __init__(self, start_value, target_value, duration, transition, callback=None):
         self.start_value = start_value
         self.target_value = target_value

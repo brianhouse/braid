@@ -1,6 +1,6 @@
-from . import Voice
+from . import Voice, synth
 
-class SoftSynth(Voice):
+class MspSwerve(Voice):
 
     def __init__(self, channel=1, continuous=False):
         Voice.__init__(self, channel, continuous)
@@ -13,7 +13,7 @@ class SoftSynth(Voice):
         self.sustain = 0
         self.release = 200
         self.glide = 5
-        self.radius = 0.5 # is fully to the edge; 1.0 will make hard speakers                
+        self.radius = 0.5 # is fully to the edge; 1.0 will make hard speakers 
 
     def play(self, pitch, velocity):
         synth.send('/braid/note', self.channel, pitch, velocity, self.pan, self.fade, self.synth, self.attack, self.sustain, self.release, self.glide)
@@ -28,8 +28,6 @@ class SoftSynth(Voice):
     @reverb.setter
     def reverb(self, params):
         self._reverb = list(params)
-        if not self.active:
-            return        
         synth.send('/braid/reverb', self.channel, *params)
 
     @property
