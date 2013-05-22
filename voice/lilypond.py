@@ -1,11 +1,13 @@
+import subprocess
 from .basic_midi import BasicMidi
 from ..util import log
 
 class Lilypond(BasicMidi):
 
-    def __init__(self, channel=1):  
+    def __init__(self, channel=1, template=None):  
         BasicMidi.__init__(self, channel)
         self.staff = [Measure()]
+        self.template = template
 
     def play(self, pitch, velocity):
         BasicMidi.play(self, pitch, velocity)
@@ -27,11 +29,10 @@ class Lilypond(BasicMidi):
         print("resting")
 
     def output(self):
-        log.info("///////////////// LILYPOND ///////////////////")            
+        # log.info("///////////////// LILYPOND ///////////////////")            
         output = []
-        output.append("{")
         last_pitch = None        
-        print(self.staff)
+        # print(self.staff)
         ## this does not handle triplets
         ## so the translation between meter and note division is going to be the fun part with this, eventually
         for measure in self.staff:
@@ -58,10 +59,23 @@ class Lilypond(BasicMidi):
                         engraves.append("~")
                 last_pitch = note[0]
             output.append(" ".join(engraves))
-        output.append("}")
-        output.append("\n")
         output = "\n\t".join(output)
-        print(output)
+        self.make_file(output)
+
+    def make_file(self, output):
+        if self.template is None: 
+            print(output)
+            return
+        f = open("%s.template.ly" % self.template)
+        score_template = f.read()
+        f.close()
+        score = score_template.replace("SCOREDATA", output)
+        f = open("%s.ly" % self.template, "w")
+        f.write(score)
+        f.close()
+        subprocess.call("lilypond %s.ly" % self.template, shell=True)
+        subprocess.call("open %s.pdf" % self.template, shell=True)
+
 
 
 class Measure(object):
