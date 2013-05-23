@@ -4,62 +4,77 @@ from ..util import log
 
 class Lilypond(BasicMidi):
 
-    def __init__(self, channel=1, template=None):  
+    def __init__(self, channel=1, template=None, beats=4):      # in theory, should apply key signature dynamically
         BasicMidi.__init__(self, channel)
-        self.staff = [Measure()]
+        self.staff = [PulseDivision()]
         self.template = template
+        self.beats = beats        
 
     def play(self, pitch, velocity):
         BasicMidi.play(self, pitch, velocity)
-        remainder = self.staff[-1].append(pitch, float(len(self._steps))) # is this going to work when patterns get poly complicated?
+        remainder = self.staff[-1].append(pitch, (1.0 / len(self._steps)) * self.beats)
         if remainder is not None:
-            self.staff.append(Measure())
+            self.staff.append(PulseDivision())
             self.staff[-1].append(pitch, remainder)
-        # print(self.staff)
 
     def hold(self):
-        remainder = self.staff[-1].append(0, len(self._steps))
+        remainder = self.staff[-1].append(0, (1.0 / len(self._steps)) * self.beats)
         if remainder is not None:
-            self.staff.append(Measure())
+            self.staff[-1].tie = True            
+            self.staff.append(PulseDivision())
             self.staff[-1].append(self.previous_pitch, remainder)
-        # print(self.staff)
 
     def rest(self):
         self.play(0, 0)
-        print("resting")
+
 
     def output(self):
-        # log.info("///////////////// LILYPOND ///////////////////")            
-        output = []
-        last_pitch = None        
+        ## currently, this does not handle triplets
+        ## currently, this does not handle rests        
         # print(self.staff)
-        ## this does not handle triplets
-        ## so the translation between meter and note division is going to be the fun part with this, eventually
-        for measure in self.staff:
+        output = []
+        for d, division in enumerate(self.staff):
+            if d % self.beats == 0:
+                if d != 0:
+                    output.append("\n\t")            
+            else:
+                output.append(" ")
             engraves = []
-            for note in measure.notes:
+            for note in division.notes:
                 compound = []
-                remainder = 1 / note[1]
+                remainder = note[1] / self.beats # total duration value
                 while True:
+                    # 'element' is the duration part of the note
                     element = 1
-                    while 1 / element > remainder:
+
+                    # find the largest valid note value less than or equal to the element
+                    while 1 / element > remainder:  
                         element *= 2
+
+                    # if we already have something, and our new element is half of it, we could use a dot
                     if len(compound) and type(compound[-1]) == int and compound[-1] == element // 2:
                         compound[-1] = "%s." % compound[-1]
+
+                    # otherwise it's going to be a tied value
                     else:
                         compound.append(element)
+
+                    # loop if necessary
                     remainder = remainder - (1 / element)
                     if remainder == 0.0:
                         break                 
-                if note[0] == last_pitch:
-                    engraves.append("~")
+
+                # write out each duration element and tie them
                 for e, element in enumerate(compound):
                     engraves.append("%s%s" % (note_heads[note[0]], element))
                     if e != len(compound) - 1:
                         engraves.append("~")
-                last_pitch = note[0]
+
+            print(division.tie)
+            if division.tie:
+                engraves.append("~")
             output.append(" ".join(engraves))
-        output = "\n\t".join(output)
+        output = "".join(output)
         self.make_file(output)
 
     def make_file(self, output):
@@ -77,40 +92,38 @@ class Lilypond(BasicMidi):
         subprocess.call("open %s.pdf" % self.template, shell=True)
 
 
-
-class Measure(object):
+class PulseDivision(object):
 
     def __init__(self):
         self.notes = []
         self.percent_filled = 0.0
+        self.tie = False
 
     def append(self, pitch, value):
-        # print(value)
-        if self.percent_filled + (1 / value) <= 1.0:
+        if self.percent_filled + value <= 1.0:
             if pitch == 0:
                 if not len(self.notes):
                     pass
-                    ## make a rest here!
+                    ## this is a hold, but no note to hold. make a rest here?
                 else:
-                    self.notes[-1][-1] = 1 / ((1 / self.notes[-1][-1]) + (1 / value))
+                    self.notes[-1][-1] += value
             else:
                 self.notes.append([pitch, value])
-            self.percent_filled += 1 / value
+            self.percent_filled += value
             return None
-        else:
-            r_percent = 1.0 - self.percent_filled
-            if r_percent > 0:
-                r_value = 1.0 / r_percent
-                self.notes.append([pitch, r_value])
-                n_value = 1 / ((1 / value) - (1 / r_value))
-                return n_value
-            else:
-                return value
+        else:            
+            used_percent = 1.0 - self.percent_filled
+            if used_percent > 0:
+                self.notes.append([pitch, used_percent])
+                value -= used_percent
+                self.tie = True
+            return value
 
     def __repr__(self):
         return str(tuple(self.notes))
 
 
+## probably should not be constants, will have to address key sig
 note_heads = {
     "~": "~",
     24: "c,,",
