@@ -98,14 +98,14 @@ class Tween(object):
         self.start_t = driver.t
         self.duration = duration        
         self.transition = transition   
-        self.finished = False     
+        self.finished = False if self.duration > 0.0 else True
         self.callback = callback
         self.start()      
         
     def start(self):
         pass
 
-    def get_value(self):    
+    def get_value(self):            
         position = (driver.t - self.start_t) / self.duration
         if position >= 1.0:
             position = 1.0

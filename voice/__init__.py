@@ -19,16 +19,17 @@ class Voice(object):
         self.continuous = continuous  # set to true to send params outside of notes, ie panning or reverb
         self.cycles = 0.0
         self.tempo = 120
-        self._pattern = Pattern()        
+        self._pattern = Pattern((0, 0))
         self._sequence = deque()
         self._steps = self._pattern.resolve()
         self.chord = C, MAJ
         self.velocity = 1.0
+        self.phase = 0.0
 
     def update(self, delta_t):
         params_changed = self._perform_tweens()   # might change to base on tempo/rate
         self.cycles += delta_t * self.rate
-        p = self.cycles % 1.0        
+        p = (self.cycles + self.phase) % 1.0        
         i = int(p * len(self._steps))
         if i != self.index:        
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
@@ -54,7 +55,7 @@ class Voice(object):
             elif step == 0:
                 self.hold()
             else:
-                if type(step) == int and step >= 24:
+                if type(step) == int and step >= 12:
                     pitch = step
                 else:
                     root, scale = self.chord
@@ -65,7 +66,9 @@ class Voice(object):
         elif params_changed and self.continuous:   
             self.send_params()
 
-    def play(self, pitch, velocity):
+    def play(self, pitch, velocity=None):
+        if velocity is None:
+            velocity = self.velocity
         synth.send('/braid/note', self.channel, pitch, velocity)
 
     def hold(self):

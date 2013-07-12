@@ -15,7 +15,9 @@ class MspSwerve(Voice):
         self.glide = 5
         self.radius = 0.5 # is fully to the edge; 1.0 will make hard speakers 
 
-    def play(self, pitch, velocity):
+    def play(self, pitch, velocity=None):
+        if velocity is None:
+            velocity = self.velocity        
         synth.send('/braid/note', self.channel, pitch, velocity, self.pan, self.fade, self.synth, self.attack, self.sustain, self.release, self.glide)
 
     def send_params(self):

@@ -10,7 +10,9 @@ class Lilypond(BasicMidi):
         self.template = template
         self.beats = beats        
 
-    def play(self, pitch, velocity):
+    def play(self, pitch, velocity=None):
+        if velocity is None:
+            velocity = self.velocity        
         BasicMidi.play(self, pitch, velocity)
         remainder = self.staff[-1].append(pitch, (1.0 / len(self._steps)) * self.beats)
         if remainder is not None:
