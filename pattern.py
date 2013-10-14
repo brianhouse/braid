@@ -11,11 +11,11 @@ class Pattern(list):
         self.resolve()
 
     def resolve(self):
-        """ Choose a path through the Markov chain """
+        """Choose a path through the Markov chain"""
         return self._unroll(self._subresolve(self))
 
     def _subresolve(self, pattern):
-        """ Resolve a subbranch of the pattern """
+        """Resolve a subbranch of the pattern"""
         steps = []
         for step in pattern:
             if type(step) == tuple:
@@ -28,7 +28,7 @@ class Pattern(list):
         return steps
 
     def _pick(self, step):
-        """ Choose between options for a given step """
+        """Choose between options for a given step"""
         assert len(step) == 2 or len(step) == 3
         if len(step) == 2:
             if type(step[1]) == float: # (1, 0.5) is a 50% chance of playing a 1, otherwise 0
@@ -39,7 +39,7 @@ class Pattern(list):
         return step
 
     def _unroll(self, pattern, divs=None, r=None):    
-        """ Unroll a compacted form to a pattern with lcm steps """
+        """Unroll a compacted form to a pattern with lcm steps"""
         if divs is None:
             divs = self._get_divs(pattern)
             r = []
@@ -55,7 +55,7 @@ class Pattern(list):
         return r        
 
     def _get_divs(self, pattern):
-        """ Find lcm for a subpattern """
+        """Find lcm for a subpattern"""
         subs = [(self._get_divs(step) if type(step) == list else 1) * len(pattern) for step in pattern]
         divs = subs[0]
         for step in subs[1:]:

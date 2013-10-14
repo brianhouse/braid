@@ -120,17 +120,18 @@ class Voice(object):
                         changed = True
         return changed
 
-    def add_callback(self, f, count=1):
-        self.callbacks.append((f, count))
+    def callback(self, count, f):
+        """A a given number of cycles, call a function"""
+        self.callbacks.append((count, f))
 
     def _perform_callbacks(self):
         for c, callback in enumerate(self.callbacks):
-            f, count = callback
+            count, f = callback
             if count == 0:
                 f(self)
                 self.callbacks.remove(callback)
             else:                
-                self.callbacks[c] = f, count - 1
+                self.callbacks[c] = count - 1, f
 
     def mute(self):
         self.mute = True
