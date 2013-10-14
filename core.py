@@ -78,9 +78,9 @@ class Controller(object):
         self.queue = queue.Queue()
         def message_handler(location, address, data):
             if address != '/braid/control':
-                continue
+                return
             control, value = data
-            self.queue.put(control, value)
+            self.queue.put((control, value))
         self.receiver = osc.Receiver(5281, message_handler)
 
     def callback(self, control, f):
@@ -88,7 +88,7 @@ class Controller(object):
         self.callbacks[control] = f
 
     def perform_callbacks(self):
-        while True
+        while True:
             try:
                 control, value = self.queue.get_nowait()
             except queue.Empty:

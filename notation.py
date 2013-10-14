@@ -10,7 +10,7 @@ class Scale(list):
         assert(degree != 0)
         octave_shift = 0
         if degree == R:
-            degree = random.choice(self.indexes)
+            degree = list.__getitem__(self, random.randint(0, len(self) - 1))
         if degree < 0:
             degree = abs(degree)
             octave_shift -= 12

@@ -1,4 +1,5 @@
 import subprocess
+from . import synth
 from .basic_midi import BasicMidi
 from ..util import log
 
@@ -15,10 +16,10 @@ class Serotonin(BasicMidi):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity        
-        synth.send('/braid/note', self.channel, self.previous_pitch, 0)
+        synth.send('/braid/note', self.channel, midi_to_freq(self.previous_pitch), 0)
         synth.send('/braid/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
         self.previous_pitch = pitch
 
 
-def midi_to_freq(self, p):
+def midi_to_freq(p):
     return (2**((p - 69) / 12.0)) * 440
