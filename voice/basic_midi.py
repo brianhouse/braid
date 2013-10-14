@@ -2,7 +2,8 @@ from . import Voice, synth
 
 class BasicMidi(Voice):
 
-    """ Voice is suited for MIDI by default, but assumes monophonic. This handles general midi. """
+    """ Voice is suited for MIDI by default, but assumes a monophonic device.
+        This handles noteoffs for using general midi devices (but is still monophonic). """
 
     def __init__(self, channel=1):  
         Voice.__init__(self, channel)

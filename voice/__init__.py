@@ -57,7 +57,7 @@ class Voice(object):
                 elif step == 0:
                     self.hold()
                 else:
-                    if type(step) == int and step >= 12:
+                    if type(step) == int and step >= 23:       ## this is a weird cutoff if super low notes are played
                         pitch = step
                     else:
                         root, scale = self.chord
@@ -80,7 +80,7 @@ class Voice(object):
         self.play(0, 0)
 
     def end(self):
-        pass
+        self.play(0, 0)
 
     def send_params(self):
         """ To facilitate abstraction"""
