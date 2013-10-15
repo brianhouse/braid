@@ -25,7 +25,7 @@ class Voice(object):
         self.chord = C, MAJ
         self.velocity = 1.0
         self.phase = 0.0
-        self.mute = False
+        self._mute = False
 
     def update(self, delta_t):
         params_changed = self._perform_tweens()   # might change to base on tempo/rate
@@ -51,7 +51,7 @@ class Voice(object):
             step = self._steps[self.index]
             if isinstance(step, collections.Callable):
                 step = step(self)
-            if not self.mute:
+            if not self._mute:
                 if step is None:
                     self.rest()
                 elif step == 0:
@@ -65,7 +65,7 @@ class Voice(object):
                     velocity = 1.0 - (random.random() * 0.05)
                     velocity *= self.velocity                           
                     self.play(pitch, velocity)
-        elif params_changed and self.continuous and not self.mute:   
+        elif params_changed and self.continuous and not self._mute:   
             self.send_params()
 
     def play(self, pitch, velocity=None):
@@ -134,7 +134,11 @@ class Voice(object):
                 self.callbacks[c] = count - 1, f
 
     def mute(self):
-        self.mute = True
+        self._mute = True
+        self.rest()
+
+    def unmute(self):
+        self._mute = False
 
     @property
     def tempo(self):

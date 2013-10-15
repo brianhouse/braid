@@ -15,8 +15,7 @@ class Serotonin(BasicMidi):
 
     def play(self, pitch, velocity=None):
         if velocity is None:
-            velocity = self.velocity        
-        synth.send('/braid/note', self.channel, midi_to_freq(self.previous_pitch), 0)
+            velocity = self.velocity
         synth.send('/braid/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
         self.previous_pitch = pitch
 
