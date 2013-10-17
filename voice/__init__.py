@@ -88,6 +88,8 @@ class Voice(object):
 
     def tween(self, param, start_value, target_value, duration, transition=linear, callback=None):
         value = getattr(self, param)
+        if start_value is None:
+            start_value = value
         if type(value) == int or type(value) == float:
             tween = ContinuousTween(start_value, target_value, duration, transition, callback)
         elif param == 'pattern':
@@ -98,7 +100,7 @@ class Voice(object):
             tween = PatternTween(start_value, target_value, duration, transition, callback)
         else:
             tween = DiscreteTween(start_value, target_value, duration, transition, callback)
-        self.tweens[param] = tween
+        self.tweens[param] = tween      # only one active tween per parameter
 
     def remove_tween(self, param):
         if param in self.tweens:
@@ -107,17 +109,16 @@ class Voice(object):
     def _perform_tweens(self):
         changed = False
         for param, tween in list(self.tweens.items()):
+            if param != 'pattern':
+                value = tween.get_value()
+                if value != getattr(self, param):
+                    setattr(self, param, tween.get_value())
+                    changed = True            
             if tween.finished:
                 log.info('Killed tween %s' % param)
                 self.tweens.pop(param)
                 if tween.callback is not None:
                     tween.callback(self)
-            else:
-                if param != 'pattern':
-                    value = tween.get_value()
-                    if value != getattr(self, param):
-                        setattr(self, param, tween.get_value())
-                        changed = True
         return changed
 
     def callback(self, count, f):

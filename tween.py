@@ -18,7 +18,7 @@ def power(pos):
     pos = clamp(pos)
     pos *= (0.5 * math.pi)
     return math.sin(pos)
-    
+
 def ease_in(pos):
     pos = clamp(pos)    
     return pos**3
@@ -43,6 +43,21 @@ def ease_out_in(pos):
         return 0.5 * pos**3 + 0.5
     else:
         return 1.0 - (0.5 * pos**3 + 0.5)
+
+def partial(start_pos, target_pos, func=linear):
+    def f(pos):        
+        pos = func(pos)
+        pos *= (target_pos - start_pos)
+        pos += start_pos
+        return pos
+    return f
+        
+def reverse(func=linear):
+    def f(pos):        
+        pos = func(pos)
+        pos = 1.0 - pos
+        return pos
+    return f
 
 def get_breakpoint_f(*breakpoints):
     """ eg:
@@ -97,7 +112,8 @@ class Tween(object):
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration        
-        self.transition = transition   
+        self.transition = transition
+        assert callable(self.transition)
         self.finished = False if self.duration > 0.0 else True
         self.callback = callback
         self.start()      
@@ -105,16 +121,24 @@ class Tween(object):
     def start(self):
         pass
 
-    def get_value(self):            
-        position = (driver.t - self.start_t) / self.duration
+    @property
+    def position(self):     # can reference this to see where we are in the tween
+        position = (driver.t - self.start_t) / self.duration if self.duration > 0 else 1.0
         if position >= 1.0:
             position = 1.0
             self.finished = True
-        position = self.transition(position)                    
-        return self.calc_value(position)
+        return position        
+
+    @property
+    def transition_position(self):  # can reference this to see where we are on the function (or partial linear tweens, wrt kontrol)
+        position = self.position
+        return self.transition(position)
+
+    def get_value(self):            
+        return self.calc_value(self.transition_position)
 
     def calc_value(self, position):
-        return position
+        return None
 
     
 class ContinuousTween(Tween):
@@ -162,20 +186,6 @@ class PatternTween(Tween):
         pattern = Pattern(pattern)
         return pattern
 
-
-if __name__ == "__main__":
-    
-    from .util import drawing
-
-    ctx = drawing.Context(800, 300, relative=True, flip=True)
-
-    for x in range(0, 101):
-        x /= 100.0
-        ctx.arc(x, power(x), 3.0 / ctx.width, 3.0 / ctx.height, thickness=0, fill=(0, 0, 0))
-        ctx.arc(x, ease_out(x), 3.0 / ctx.width, 3.0 / ctx.height, thickness=0, fill=(1., 0, 0))
-        ctx.arc(x, ease_in(x), 3.0 / ctx.width, 3.0 / ctx.height, thickness=0, fill=(0, 0, 1.))
-
-    ctx.show()
 
 
 

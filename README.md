@@ -2,6 +2,8 @@ Braid: OSC sequencer for Python 3
 =================================
 
 
+No external dependencies.
+
 
 ### Copyright/License
 
