@@ -1,4 +1,7 @@
+from braid import *
 from braid.core import controller
+
+MAX_DURATION = 40   # in cycles
 
 vectors = [None] * 9
 
@@ -9,7 +12,7 @@ def width_f(v):
 
 def fade_f(v):
     def f(value):
-        vectors[v]['duration'] = int(value * 20)                 # default max duration, in cycles
+        vectors[v]['duration'] = int(value * MAX_DURATION)                 
     return f
 
 def trigger_f(v):
