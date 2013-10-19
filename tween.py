@@ -107,7 +107,7 @@ def get_signal_f(signal):
 
 class Tween(object):
 
-    def __init__(self, start_value, target_value, duration, transition, callback=None):
+    def __init__(self, start_value, target_value, duration, transition, callback=None, repeat=False):
         self.start_value = start_value
         self.target_value = target_value
         self.start_t = driver.t
@@ -116,10 +116,14 @@ class Tween(object):
         assert callable(self.transition)
         self.finished = False if self.duration > 0.0 else True
         self.callback = callback
+        self.repeat = repeat
         self.start()      
         
     def start(self):
         pass
+
+    def restart(self):
+        self.start_t = driver.t
 
     @property
     def position(self):     # can reference this to see where we are in the tween

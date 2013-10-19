@@ -86,20 +86,20 @@ class Voice(object):
         """ To facilitate abstraction"""
         synth.send('/braid/params', self.channel, self.velocity)
 
-    def tween(self, param, start_value, target_value, duration, transition=linear, callback=None):
+    def tween(self, param, start_value, target_value, duration, transition=linear, callback=None, repeat=False):
         value = getattr(self, param)
         if start_value is None:
             start_value = value
         if type(value) == int or type(value) == float:
-            tween = ContinuousTween(start_value, target_value, duration, transition, callback)
+            tween = ContinuousTween(start_value, target_value, duration, transition, callback, repeat)
         elif param == 'pattern':
             if type(start_value) != Pattern:
                 start_value = Pattern(start_value)
             if type(target_value) != Pattern:
                 target_value = Pattern(target_value)
-            tween = PatternTween(start_value, target_value, duration, transition, callback)
+            tween = PatternTween(start_value, target_value, duration, transition, callback, repeat)
         else:
-            tween = DiscreteTween(start_value, target_value, duration, transition, callback)
+            tween = DiscreteTween(start_value, target_value, duration, transition, callback, repeat)
         self.tweens[param] = tween      # only one active tween per parameter
 
     def remove_tween(self, param):
@@ -115,10 +115,13 @@ class Voice(object):
                     setattr(self, param, tween.get_value())
                     changed = True            
             if tween.finished:
-                log.info('Killed tween %s' % param)
-                self.tweens.pop(param)
                 if tween.callback is not None:
-                    tween.callback(self)
+                    tween.callback(self)         # better in this class, because we need the refs
+                if tween.repeat:
+                    tween.restart()
+                else:                    
+                    log.info("Killed tween %s" % param)
+                    self.tweens.pop(param)
         return changed
 
     def callback(self, count, f):

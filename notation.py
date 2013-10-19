@@ -1,4 +1,4 @@
-import random
+from random import randint, choice, random
 
 class Scale(list):
 
@@ -10,7 +10,7 @@ class Scale(list):
         assert(degree != 0)
         octave_shift = 0
         if degree == R:
-            degree = list.__getitem__(self, random.randint(0, len(self) - 1))
+            degree = list.__getitem__(self, randint(0, len(self) - 1))
         if degree < 0:
             degree = abs(degree)
             octave_shift -= 12
@@ -170,7 +170,7 @@ MIN = Scale([0, 2, 3, 5, 7, 8, 11])
 
 BLU = Scale([0, 3, 5, 6, 7, 10])
 
-JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
+# PEN = Scale([])
 
 # chromatic
 
@@ -182,6 +182,11 @@ CHR = Scale([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
 SDR = Scale([0, 2, 5, 7, 9])
 
 PLG = Scale([0, 1, 3, 6, 7, 8, 10])
+
+# custom
+
+JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
+
 
 #
 
