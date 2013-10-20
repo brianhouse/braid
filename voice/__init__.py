@@ -62,7 +62,7 @@ class Voice(object):
                     else:
                         root, scale = self.chord
                         pitch = root + scale[step]
-                    velocity = 1.0 - (random.random() * 0.05)
+                    velocity = 1.0 - (random() * 0.05)
                     velocity *= self.velocity                           
                     self.play(pitch, velocity)
         elif params_changed and self.continuous and not self._mute:   
@@ -111,17 +111,17 @@ class Voice(object):
         for param, tween in list(self.tweens.items()):
             if param != 'pattern':
                 value = tween.get_value()
-                if value != getattr(self, param):
+                if value != getattr(self, param):       # better in this class, because we need the refs
                     setattr(self, param, tween.get_value())
                     changed = True            
             if tween.finished:
-                if tween.callback is not None:
-                    tween.callback(self)         # better in this class, because we need the refs
                 if tween.repeat:
                     tween.restart()
                 else:                    
                     log.info("Killed tween %s" % param)
                     self.tweens.pop(param)
+                if tween.callback is not None:          # do this here in case the callback is restarting the tween with different params
+                    tween.callback(self)                             
         return changed
 
     def callback(self, count, f):

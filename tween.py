@@ -1,4 +1,5 @@
-import time, random, math
+import time, math
+from random import random
 from .pattern import Pattern, lcm
 from .core import *
 
@@ -158,7 +159,7 @@ class ContinuousTween(Tween):
 class DiscreteTween(Tween):
 
     def calc_value(self, position):    
-        if random.random() > position:
+        if random() > position:
             return self.start_value
         else:
             return self.target_value    
@@ -177,15 +178,15 @@ class PatternTween(Tween):
         target_div = len(pattern) / len(target_steps)                
         for i, cell in enumerate(pattern):
             if i % start_div == 0 and i % target_div == 0:
-                if random.random() > position:
+                if random() > position:
                     pattern[i] = start_steps[int(i / start_div)]
                 else:
                     pattern[i] = target_steps[int(i / target_div)]
             elif i % start_div == 0:     
-                if random.random() > position:               
+                if random() > position:               
                     pattern[i] = start_steps[int(i / start_div)]
             elif i % target_div == 0:
-                if random.random() <= position:
+                if random() <= position:
                     pattern[i] = target_steps[int(i / target_div)]
         pattern = Pattern(pattern)
         return pattern
