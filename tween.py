@@ -108,15 +108,15 @@ def get_signal_f(signal):
 
 class Tween(object):
 
-    def __init__(self, start_value, target_value, duration, transition, callback=None, repeat=False):
+    def __init__(self, start_value, target_value, duration, transition_f, callback_f=None, repeat=False):
         self.start_value = start_value
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration        
-        self.transition = transition
-        assert callable(self.transition)
+        self.transition_f = transition_f
+        assert callable(self.transition_f)
         self.finished = False if self.duration > 0.0 else True
-        self.callback = callback
+        self.callback_f = callback_f
         self.repeat = repeat
         self.start()      
         
@@ -135,9 +135,8 @@ class Tween(object):
         return position        
 
     @property
-    def transition_position(self):  # can reference this to see where we are on the function (or partial linear tweens, wrt kontrol)
-        position = self.position
-        return self.transition(position)
+    def transition_position(self):  # can reference this to see where we are on the transition function (or partial linear tweens, wrt kontrol)
+        return self.transition_f(self.position)
 
     def get_value(self):            
         return self.calc_value(self.transition_position)
@@ -171,6 +170,8 @@ class PatternTween(Tween):
         """ This only runs when a pattern is refreshed, not every step; 
             resolve steps for start and target, blend them, and return the result as a pattern
         """
+        if position >= 1.0:
+            return self.target_value # need this to preserve markov tween destinations
         start_steps = self.start_value.resolve()
         target_steps = self.target_value.resolve()
         pattern = [None] * lcm(len(start_steps), len(target_steps))

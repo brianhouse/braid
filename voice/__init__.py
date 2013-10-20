@@ -28,7 +28,7 @@ class Voice(object):
         self._mute = False
 
     def update(self, delta_t):
-        params_changed = self._perform_tweens()   # might change to base on tempo/rate
+        params_changed = self._perform_tweens()
         self.cycles += delta_t * self.rate
         p = (self.cycles + self.phase) % 1.0        
         i = int(p * len(self._steps))
@@ -52,9 +52,9 @@ class Voice(object):
             if isinstance(step, collections.Callable):
                 step = step(self)
             if not self._mute:
-                if step is None:
+                if step == Z:
                     self.rest()
-                elif step == 0:
+                elif step == 0 or step is None:
                     self.hold()
                 else:
                     if type(step) == int and step >= 23:       ## this is a weird cutoff if super low notes are played
@@ -86,20 +86,20 @@ class Voice(object):
         """ To facilitate abstraction"""
         synth.send('/braid/params', self.channel, self.velocity)
 
-    def tween(self, param, start_value, target_value, duration, transition=linear, callback=None, repeat=False):
+    def tween(self, param, start_value, target_value, duration, transition_f=linear, callback_f=None, repeat=False):
         value = getattr(self, param)
         if start_value is None:
             start_value = value
         if type(value) == int or type(value) == float:
-            tween = ContinuousTween(start_value, target_value, duration, transition, callback, repeat)
+            tween = ContinuousTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         elif param == 'pattern':
             if type(start_value) != Pattern:
                 start_value = Pattern(start_value)
             if type(target_value) != Pattern:
                 target_value = Pattern(target_value)
-            tween = PatternTween(start_value, target_value, duration, transition, callback, repeat)
+            tween = PatternTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         else:
-            tween = DiscreteTween(start_value, target_value, duration, transition, callback, repeat)
+            tween = DiscreteTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         self.tweens[param] = tween      # only one active tween per parameter
 
     def remove_tween(self, param):
@@ -120,13 +120,20 @@ class Voice(object):
                 else:                    
                     log.info("Killed tween %s" % param)
                     self.tweens.pop(param)
-                if tween.callback is not None:          # do this here in case the callback is restarting the tween with different params
-                    tween.callback(self)                             
+                if tween.callback_f is not None:          # do this here in case the callback is restarting the tween with different params
+                    tween.callback_f(self)                             
         return changed
 
     def callback(self, count, f):
         """A a given number of cycles, call a function"""
         self.callbacks.append((count, f))
+
+    def clear_callback(self, clear_f):
+        for c, callback in enumerate(self.callbacks):
+            count, f = callback
+            if f == clear_f:
+                self.callbacks.remove(callback)
+                print("CALLBACK CLEARED")
 
     def _perform_callbacks(self):
         for c, callback in enumerate(self.callbacks):
@@ -190,8 +197,8 @@ def velocity(velocity):
         voice.velocity = velocity
     return f
 
-def tween(param, start_value, target_value, duration, transition=linear):
+def tween(param, start_value, target_value, duration, transition_f=linear):
     def f(voice):
-        voice.tween(param, start_value, target_value, duration, transition=linear)
+        voice.tween(param, start_value, target_value, duration, transition_f=linear)
     return f
 

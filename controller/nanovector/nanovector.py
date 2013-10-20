@@ -3,7 +3,7 @@ from braid.core import controller
 
 MAX_DURATION = 40   # in cycles
 
-vectors = [None] * 9
+vectors = [None] * 9        ## awkward to have these 0-indexed when everything else is 1-indexed
 
 def width_f(v):
     def f(value):
@@ -22,7 +22,6 @@ def trigger_f(v):
         for voice, params in vector.items():
             if voice in ('duration', 'target_width', 'current_width') or voice is None:
                 continue
-            print(params)
             for param, values in params.items():
                 start_value, target_value = values        
                 current_width = voice.tweens[param].transition_position if param in voice.tweens else vector['current_width']   # if tween is still in progress, we should only tween from that

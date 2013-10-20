@@ -20,7 +20,7 @@ class Pattern(list):
         for step in pattern:
             if type(step) == tuple:
                 step = self._pick(step)
-                if type(step) == tuple or type(step) == list:   ## so Im limiting it to one layer of nesting?
+                if type(step) == tuple or type(step) == list:
                     step = self._subresolve(step)
             elif type(step) == list:
                 step = self._subresolve(step)

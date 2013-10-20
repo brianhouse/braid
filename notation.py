@@ -183,14 +183,16 @@ SDR = Scale([0, 2, 5, 7, 9])
 
 PLG = Scale([0, 1, 3, 6, 7, 8, 10])
 
-# custom
+
+# personal
 
 JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
 
 
 #
 
-R = 'R'
+R = 'R'         # random
+Z = 'REST'      # rest
 
 OCT = 12
 
