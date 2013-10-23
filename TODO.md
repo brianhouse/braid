@@ -11,10 +11,17 @@
 
 - tweening patterns that include parens? does that work right?
 no. tweening resolves the patterns, so when the tween ends, youre left looping a resolved pattern, not a markov one
-so if position >= 1.0, return the target value
+so if position >= 1.0, return the target value DONE
 this is still not going to work right for partial tweens
+wait. why? isnt it resolving each step? no, it's not, calc isnt being called because the tween is gone -- partial tweens shouldnt end, they have to keep calcing.
+automation control is the only purpose for partials, maybe there is a better system.
 
 - should have a static blend function to make new hybrid patterns
+-> this is the better system. blends would have to keep calculating.
+
+- how often would you want to repeat a tween without tweaking (or reversing) values?
+
+- should allow initialization of values in Voice
 
 
 ## bugs
