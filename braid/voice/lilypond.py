@@ -1,11 +1,11 @@
 import subprocess
-from .basic_midi import BasicMidi
+from . import Voice
 from ..util import log
 
-class Lilypond(BasicMidi):
+class Lilypond(Voice):
 
     def __init__(self, channel=1, template=None, beats=4):      # in theory, should apply key signature dynamically
-        BasicMidi.__init__(self, channel)
+        Voice.__init__(self, channel)
         self.staff = [PulseDivision()]
         self.template = template
         self.beats = beats        
@@ -13,7 +13,7 @@ class Lilypond(BasicMidi):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity        
-        BasicMidi.play(self, pitch, velocity)
+        Voice.play(self, pitch, velocity)
         remainder = self.staff[-1].append(pitch, (1.0 / len(self._steps)) * self.beats)
         if remainder is not None:
             self.staff.append(PulseDivision())

@@ -26,6 +26,7 @@ class Voice(object):
         self.velocity = 1.0
         self.phase = 0.0
         self._mute = False
+        self.previous_pitch = 0
 
     def update(self, delta_t):
         params_changed = self._perform_tweens()
@@ -71,16 +72,18 @@ class Voice(object):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        synth.send('/braid/note', self.channel, pitch, velocity)
+        synth.send('/braid/note', self.channel, self.previous_pitch, 0)        
+        synth.send('/braid/note', self.channel, pitch, int(velocity * 127))
+        self.previous_pitch = pitch
 
     def hold(self):
         pass
 
     def rest(self):
-        self.play(0, 0)
+        synth.send('/braid/note', self.channel, self.previous_pitch, 0)        
 
     def end(self):
-        self.play(0, 0)
+        self.rest()
 
     def send_params(self):
         """ To facilitate abstraction"""

@@ -1,4 +1,3 @@
-import subprocess
 from . import synth
 from .basic_midi import BasicMidi
 from ..util import log
@@ -7,6 +6,7 @@ class Serotonin(BasicMidi):
 
     def __init__(self, channel=1):
         BasicMidi.__init__(self, channel)
+        # these numbers are ms, not midi
         self.attack = 20
         self.decay = 20
         self.sustain = 0.8

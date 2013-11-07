@@ -1,6 +1,6 @@
 from . import Voice, synth
 
-class MspSwerve(Voice):
+class Swerve(Voice):
 
     def __init__(self, channel=1, continuous=False):
         Voice.__init__(self, channel, continuous)
@@ -19,6 +19,9 @@ class MspSwerve(Voice):
         if velocity is None:
             velocity = self.velocity        
         synth.send('/braid/note', self.channel, pitch, velocity, self.pan, self.fade, self.synth, self.attack, self.sustain, self.release, self.glide)
+
+    def rest(self):
+        pass
 
     def send_params(self):
         synth.send('/braid/params', self.channel, self.velocity, self.pan, self.fade)

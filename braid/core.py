@@ -62,6 +62,10 @@ class Synth(threading.Thread):
         self.start()
 
     def send(self, address, *params):
+        params = list(params)
+        for i, param in enumerate(params):
+            if type(param) == bool:
+                params[i] = 1 if param else 0
         self.queue.put((address, params))
 
     def run(self):
