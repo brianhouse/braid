@@ -65,7 +65,7 @@ class Synth(threading.Thread):
         params = list(params)
         for i, param in enumerate(params):
             if type(param) == bool:
-                params[i] = 1 if param else 0
+                params[i] = 127 if param else 0
         self.queue.put((address, params))
 
     def run(self):
