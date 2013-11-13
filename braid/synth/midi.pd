@@ -1,0 +1,14 @@
+#N canvas 571 408 235 106 10;
+#X obj 82 39 noteout;
+#X obj 139 39 ctlout;
+#X obj 15 17 loadbang;
+#X msg 15 39 midi.pd;
+#X obj 15 61 print;
+#X obj 82 17 r note;
+#X obj 139 17 r control;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 5 0 0 0;
+#X connect 5 0 4 0;
+#X connect 6 0 1 0;
+#X connect 6 0 4 0;

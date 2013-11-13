@@ -23,10 +23,10 @@ def s():
         v.pwm = False
         v.decay = 50
         v.filter_decay = 10
-        v.cutoff = 20
+        v.cutoff = 127
         v.filter_env = 127
         v.a_noise = True
-        v.b_enable = True
+        v.b_enable = False
         v.b_octave = True        
         return C8
     return f
@@ -42,7 +42,7 @@ def h():
     return f
 
 v1 = Meeblip(5)
-v1.tempo = 240
+v1.tempo = 120
 v1.chord = C, DOM
 v1.pattern = [
             k(),
@@ -50,5 +50,8 @@ v1.pattern = [
             k(),
             [s(), 0, 0, 0]
             ]
+
+v1.pattern = k(), s(), k(), s(), k(), s(), k(), s()
+
 
 driver.start()

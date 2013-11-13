@@ -21,10 +21,6 @@ automation control is the only purpose for partials, maybe there is a better sys
 
 - should allow initialization of values in Voice
 
-/
-
-BasicMidi correcting for the non-noteoffs...
-why would we ever need the default if that's the case? make this the default and avoid the imports
 
 ## bugs
 uh oh -- skipping the driver doesnt skip the tweens. not sure how that's going to get fixed.
@@ -43,6 +39,14 @@ if controller has sub folders that include py and maxpat, separating voice and s
 voice -> synth? synth -> voice?
 voice is better in the syntax
 controller -> hand?
+
+
+## raspi
+
+ok, libpd is out. however, it could still work as a separate headless process. even launched from within python. though we'd still have the settings problems.
+
+could go the implemented MIDI rtmidi route. this would be more elegant.
+
 
 
 
