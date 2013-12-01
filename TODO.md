@@ -1,5 +1,7 @@
 ## changes
 
+- convert to sched
+
 - signal_f needs to interpolate between indexes to avoid stairstepping at low source res
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
@@ -19,7 +21,12 @@ automation control is the only purpose for partials, maybe there is a better sys
 
 - how often would you want to repeat a tween without tweaking (or reversing) values?
 
-- should allow initialization of values in Voice
+- should allow initialization of values in Voice (named dictionary **)
+
+* make nanovector work properly -- it should always tween from the current state to the target, dynamically, not to an absolute dial position.
+
+- separate params -> v.adsr = 10, 10, 1.0, 50
+[but how do you tween lists?]
 
 
 ## bugs
@@ -40,12 +47,16 @@ voice -> synth? synth -> voice?
 voice is better in the syntax
 controller -> hand?
 
+- lilypond should be integrated, not a separate voice
+
 
 ## raspi
 
 ok, libpd is out. however, it could still work as a separate headless process. even launched from within python. though we'd still have the settings problems.
 
 could go the implemented MIDI rtmidi route. this would be more elegant.
+
+this is maybe not the thing to do for shim'ring. but for embeddable installation things it would be awesome.
 
 
 

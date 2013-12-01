@@ -23,11 +23,11 @@ class Meeblip(Voice):
 
         # toggles
         self.a_noise = False    # 77
-        self.a_pwm = False       # 79
+        self.a_pwm = False      # 79
         self.pwm_sweep = False  # 78
         self.b_enable = False   # 74
         self.b_square = False   # 75     
-        self.b_octave = False      # 73
+        self.b_octave = False   # 73
 
         self.antialias = False  # 72
         self.sustain = False    # 76
