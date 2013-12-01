@@ -1,5 +1,4 @@
 from . import synth, Voice
-from ..util import log
 
 class Meeblip(Voice):
 

@@ -1,6 +1,5 @@
 import subprocess
 from . import Voice
-from ..util import log
 
 class Lilypond(Voice):
 

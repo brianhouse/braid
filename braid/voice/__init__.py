@@ -101,6 +101,8 @@ class Voice(object):
             if type(target_value) != Pattern:
                 target_value = Pattern(target_value)
             tween = PatternTween(start_value, target_value, duration, transition_f, callback_f, repeat)
+        elif type(value) == list or type(value) == tuple:
+            tween = TupleTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         else:
             tween = DiscreteTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         self.tweens[param] = tween      # only one active tween per parameter
@@ -204,4 +206,9 @@ def tween(param, start_value, target_value, duration, transition_f=linear):
     def f(voice):
         voice.tween(param, start_value, target_value, duration, transition_f=linear)
     return f
+
+
+from .serotonin import Serotonin
+from .meeblip import Meeblip
+from .swerve import Swerve
 

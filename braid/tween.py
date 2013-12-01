@@ -153,7 +153,21 @@ class ContinuousTween(Tween):
     def calc_value(self, position):        
         value = (position * self.change) + self.start_value
         return value
+
         
+class TupleTween(Tween):
+
+    def start(self):
+        self.change = []
+        for i in range(len(self.target_value)):
+            self.change.append(self.target_value[i] - self.start_value[i])
+
+    def calc_value(self, position):
+        values = []
+        for i in range(len(self.target_value)):
+            values.append((position * self.change[i]) + self.start_value[i])
+        return values
+
 
 class DiscreteTween(Tween):
 

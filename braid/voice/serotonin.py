@@ -1,11 +1,9 @@
-from . import synth
-from .basic_midi import BasicMidi
-from ..util import log
+from . import synth, Voice
 
-class Serotonin(BasicMidi):
+class Serotonin(Voice):
 
     def __init__(self, channel=1):
-        BasicMidi.__init__(self, channel)
+        Voice.__init__(self, channel)
         # these numbers are ms, not midi
         self.attack = 20
         self.decay = 20
@@ -18,6 +16,17 @@ class Serotonin(BasicMidi):
             velocity = self.velocity
         synth.send('/braid/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
         self.previous_pitch = pitch
+
+    @property
+    def adsr(self):
+        return self.attack, self.decay, self.sustain, self.release
+
+    @adsr.setter
+    def adsr(self, *params):
+        self.attack = params[0][0]
+        self.decay = params[0][1]
+        self.sustain = params[0][2]
+        self.release = params[0][3]
 
 
 def midi_to_freq(p):

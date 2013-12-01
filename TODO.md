@@ -1,12 +1,14 @@
 ## changes
 
-- convert to sched
-
 - signal_f needs to interpolate between indexes to avoid stairstepping at low source res
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
 - lilypond should take a template filename, and fill in the score data, and auto-run lilypond
 - more useful for resolve to not have a weight, but include arbitrary possibilities? or if the third term is a float, it's a weight, otherwise arbitrary possibilities
+
+- how often would you want to repeat a tween without tweaking (or reversing) values?
+
+- should allow initialization of values in Voice (named dictionary **)
 
 
 - tweening patterns that include parens? does that work right?
@@ -19,9 +21,6 @@ automation control is the only purpose for partials, maybe there is a better sys
 - should have a static blend function to make new hybrid patterns
 -> this is the better system. blends would have to keep calculating.
 
-- how often would you want to repeat a tween without tweaking (or reversing) values?
-
-- should allow initialization of values in Voice (named dictionary **)
 
 * make nanovector work properly -- it should always tween from the current state to the target, dynamically, not to an absolute dial position.
 
