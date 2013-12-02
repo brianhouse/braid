@@ -1,13 +1,13 @@
+from random import random
 from braid import *
-from braid.core import controller
 
 MAX_DURATION = 40   # in cycles
 
-vectors = [None] * 9        ## awkward to have these 0-indexed when everything else is 1-indexed
+vectors = [None] * 10        # first index is ignored -- 1-index
 
 def width_f(v):
     def f(value):
-        vectors[v]['target_width'] = value
+        vectors[v]['width'] = value
     return f
 
 def fade_f(v):
@@ -18,21 +18,32 @@ def fade_f(v):
 def trigger_f(v):
     def f(value):
         vector = vectors[v]
-        log.info("Triggering %s at [%s] for %s cycles" % (v+1, vector['target_width'], vector['duration']))        
+        log.info("Triggering %s at [%s] for %s cycles" % (v, vector['width'], vector['duration']))        
         for voice, params in vector.items():
-            if voice in ('duration', 'target_width', 'current_width') or voice is None:
+            if voice in ('duration', 'width') or voice is None:
                 continue
+            width = vector['width']
             for param, values in params.items():
-                start_value, target_value = values        
-                current_width = voice.tweens[param].transition_position if param in voice.tweens else vector['current_width']   # if tween is still in progress, we should only tween from that
-                voice.tween(param, start_value, target_value, vector['duration'], partial(current_width, vector['target_width']))
-        vector['current_width'] = vector['target_width']
+                left_value, right_value = values        
+                if type(left_value) == int or type(left_value) == float:
+                    target_value = (left_value * width) + (right_value * (1.0 - width))
+                elif param == 'pattern':
+                    target_value = CrossPattern(left_value, right_value, width)
+                elif type(left_value) == list or type(left_value) == tuple:
+                    target_value = []
+                    for i in range(len(left_value)):
+                        target_value.append((width * (right_value[i] - left_value[i])) + left_value[i])
+                else:
+                    target_value = left_value if random() > width else right_value
+                voice.tween(param, None, target_value, vector['duration'])
     return f
 
 
-def init(v1=None, v2=None, v3=None, v4=None):
-    for i in range(9):
-        vectors[i] = {'target_width': 0, 'current_width': 0, 'duration': 0, v1: {}, v2: {}, v3: {}, v4: {}}
-        controller.callback("%s_width" % (i+1), width_f(i))
-        controller.callback("%s_fade" % (i+1), fade_f(i))
-        controller.callback("%s_trigger" % (i+1), trigger_f(i))
+def init(*voices):
+    for i in range(1, 10):
+        vectors[i] = {voice: {} for voice in voices}
+        vectors[i].update({'width': 0, 'duration': 0})
+        control.callback("%s_width" % i, width_f(i))
+        control.callback("%s_fade" % i, fade_f(i))
+        control.callback("%s_trigger" % i, trigger_f(i))
+

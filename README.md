@@ -1,10 +1,9 @@
 Braid: OSC sequencer for Python 3
 =================================
 
+Requires Python 3.3+
+
     sudo pip-3.3 install -r requirements.txt
-
-
-No external dependencies.
 
 
 ### Copyright/License

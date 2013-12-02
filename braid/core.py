@@ -21,7 +21,7 @@ class Driver(object):
             if int(self.t) // 15 != last_cue:
                 last_cue = int(self.t) // 15
                 log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-            controller.perform_callbacks()
+            control.perform_callbacks()
             self._perform_callbacks()
             if not self.running:
                 break
@@ -74,7 +74,7 @@ class Synth(threading.Thread):
             self.sender.send(address, params)
 
 
-class Controller(object):
+class Control(object):
     """Receive OSC and perform callbacks"""
 
     def __init__(self):
@@ -102,7 +102,7 @@ class Controller(object):
 
 
 synth = Synth()
-controller = Controller()
+control = Control()
 driver = Driver()
 
 

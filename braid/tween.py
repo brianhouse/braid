@@ -104,11 +104,7 @@ class Tween(object):
         self.finished = False if self.duration > 0.0 else True
         self.callback_f = callback_f
         self.repeat = repeat
-        self.start()      
         
-    def start(self):
-        pass
-
     def restart(self):
         self.start_t = driver.t
 
@@ -121,7 +117,7 @@ class Tween(object):
         return position        
 
     @property
-    def transition_position(self):  # can reference this to see where we are on the transition function (or partial linear tweens, wrt kontrol)
+    def transition_position(self):  # can reference this to see where we are on the transition function
         return self.transition_f(self.position)
 
     def get_value(self):            
@@ -133,25 +129,17 @@ class Tween(object):
     
 class ContinuousTween(Tween):
 
-    def start(self):
-        self.change = self.target_value - self.start_value        
-
     def calc_value(self, position):        
-        value = (position * self.change) + self.start_value
+        value = (position * (self.target_value - self.start_value)) + self.start_value
         return value
 
         
 class TupleTween(Tween):
 
-    def start(self):
-        self.change = []
-        for i in range(len(self.target_value)):
-            self.change.append(self.target_value[i] - self.start_value[i])
-
     def calc_value(self, position):
         values = []
         for i in range(len(self.target_value)):
-            values.append((position * self.change[i]) + self.start_value[i])
+            values.append((position * (self.target_value[i] - self.start_value[i])) + self.start_value[i])
         return values
 
 

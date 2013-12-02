@@ -96,9 +96,9 @@ class Voice(object):
         if type(value) == int or type(value) == float:
             tween = ContinuousTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         elif param == 'pattern':
-            if type(start_value) != Pattern:
+            if not isinstance(start_value, Pattern):
                 start_value = Pattern(start_value)
-            if type(target_value) != Pattern:
+            if not isinstance(target_value, Pattern):
                 target_value = Pattern(target_value)
             tween = PatternTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         elif type(value) == list or type(value) == tuple:
@@ -173,7 +173,7 @@ class Voice(object):
 
     @pattern.setter
     def pattern(self, value):
-        if type(value) == Pattern or type(value) == CrossPattern:
+        if isinstance(value, Pattern):
             self._pattern = value
         else:
             self._pattern = Pattern(value)
