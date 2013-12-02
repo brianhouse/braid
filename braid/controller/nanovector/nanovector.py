@@ -26,7 +26,7 @@ def trigger_f(v):
             for param, values in params.items():
                 left_value, right_value = values        
                 if type(left_value) == int or type(left_value) == float:
-                    target_value = (left_value * width) + (right_value * (1.0 - width))
+                    target_value = (left_value * (1.0 - width)) + (right_value * width)
                 elif param == 'pattern':
                     target_value = CrossPattern(left_value, right_value, width)
                 elif type(left_value) == list or type(left_value) == tuple:
