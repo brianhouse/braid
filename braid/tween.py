@@ -1,6 +1,6 @@
 import time, math
 from random import random
-from .pattern import Pattern, lcm
+from .pattern import Pattern, blend
 from .core import *
 
 def clamp(pos):
@@ -45,20 +45,6 @@ def ease_out_in(pos):
     else:
         return 1.0 - (0.5 * pos**3 + 0.5)
 
-def partial(start_pos, target_pos, func=linear):
-    def f(pos):        
-        pos = func(pos)
-        pos *= (target_pos - start_pos)
-        pos += start_pos
-        return pos
-    return f
-        
-def reverse(func=linear):
-    def f(pos):        
-        pos = func(pos)
-        pos = 1.0 - pos
-        return pos
-    return f
 
 def get_breakpoint_f(*breakpoints):
     """ eg:
@@ -186,26 +172,6 @@ class PatternTween(Tween):
         """
         if position >= 1.0:
             return self.target_value # need this to preserve markov tween destinations
-        start_steps = self.start_value.resolve()
-        target_steps = self.target_value.resolve()
-        pattern = [None] * lcm(len(start_steps), len(target_steps))
-        start_div = len(pattern) / len(start_steps)
-        target_div = len(pattern) / len(target_steps)                
-        for i, cell in enumerate(pattern):
-            if i % start_div == 0 and i % target_div == 0:
-                if random() > position:
-                    pattern[i] = start_steps[int(i / start_div)]
-                else:
-                    pattern[i] = target_steps[int(i / target_div)]
-            elif i % start_div == 0:     
-                if random() > position:               
-                    pattern[i] = start_steps[int(i / start_div)]
-            elif i % target_div == 0:
-                if random() <= position:
-                    pattern[i] = target_steps[int(i / target_div)]
-        pattern = Pattern(pattern)
+        pattern = blend(self.start_value, self.target_value, position)
         return pattern
-
-
-
 

@@ -2,13 +2,12 @@
     ... with the addition of the Markov expansion of tuples on calling resolve
 """
 
-import random
+from random import random
 
 class Pattern(list):
     
     def __init__(self, value=[0]):
         list.__init__(self, value)
-        self.resolve()
 
     def resolve(self):
         """Choose a path through the Markov chain"""
@@ -35,7 +34,7 @@ class Pattern(list):
                 step = step[0], [0, 0], step[1] ## it's a 0, 0 because 0 patterns dont progress, and this could be the root level: is this a bug?
             else:
                 step = step[0], step[1], 0.5 # (1, 2) is a 50% chance of playing a 1 vs a 2
-        step = step[0] if step[2] > random.random() else step[1]    # (1, 2, 0.5) is full form          ## expand this to accommodate any number of options
+        step = step[0] if step[2] > random() else step[1]    # (1, 2, 0.5) is full form          ## expand this to accommodate any number of options
         return step
 
     def _unroll(self, pattern, divs=None, r=None):    
@@ -61,6 +60,45 @@ class Pattern(list):
         for step in subs[1:]:
             divs = lcm(divs, step)
         return divs
+
+
+class CrossPattern(Pattern):
+
+    def __init__(self, pattern_1, pattern_2, balance=0.5):
+        self.pattern_1 = pattern_1 if type(pattern_1) == Pattern else Pattern(pattern_1)
+        self.pattern_2 = pattern_2 if type(pattern_2) == Pattern else Pattern(pattern_2)
+        self.balance = balance
+        self.resolve()
+
+    def resolve(self):
+        """Choose a path through the Markov chain"""
+        pattern = blend(self.pattern_1, self.pattern_2, self.balance)
+        result = self._unroll(self._subresolve(pattern))
+        list.__init__(self, result)
+        return result
+        
+
+def blend(pattern_1, pattern_2, balance=0.5):
+    """Probabalistically blend two Patterns"""
+    p1_steps = pattern_1.resolve()
+    p2_steps = pattern_2.resolve()        
+    pattern = [None] * lcm(len(p1_steps), len(p2_steps))
+    p1_div = len(pattern) / len(p1_steps)
+    p2_div = len(pattern) / len(p2_steps)                
+    for i, cell in enumerate(pattern):
+        if i % p1_div == 0 and i % p2_div == 0:
+            if random() > balance:
+                pattern[i] = p1_steps[int(i / p1_div)]
+            else:
+                pattern[i] = p2_steps[int(i / p2_div)]
+        elif i % p1_div == 0:     
+            if random() > balance:               
+                pattern[i] = p1_steps[int(i / p1_div)]
+        elif i % p2_div == 0:
+            if random() <= balance:
+                pattern[i] = p2_steps[int(i / p2_div)]
+    pattern = Pattern(pattern)
+    return pattern
 
 
 def lcm(a, b):

@@ -11,21 +11,13 @@
 - should allow initialization of values in Voice (named dictionary **)
 
 
-- tweening patterns that include parens? does that work right?
-no. tweening resolves the patterns, so when the tween ends, youre left looping a resolved pattern, not a markov one
-so if position >= 1.0, return the target value DONE
-this is still not going to work right for partial tweens
-wait. why? isnt it resolving each step? no, it's not, calc isnt being called because the tween is gone -- partial tweens shouldnt end, they have to keep calcing.
-automation control is the only purpose for partials, maybe there is a better system.
-
 - should have a static blend function to make new hybrid patterns
 -> this is the better system. blends would have to keep calculating.
 
-
 * make nanovector work properly -- it should always tween from the current state to the target, dynamically, not to an absolute dial position.
 
-- separate params -> v.adsr = 10, 10, 1.0, 50
-[but how do you tween lists?]
+so the target is a CrossTween, the source is the current tween.
+
 
 
 ## bugs
