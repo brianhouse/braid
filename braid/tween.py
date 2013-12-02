@@ -170,6 +170,8 @@ class PatternTween(Tween):
         """ This only runs when a pattern is refreshed, not every step; 
             resolve steps for start and target, blend them, and return the result as a pattern
         """
+        if position <= 0.0:
+            return self.start_value
         if position >= 1.0:
             return self.target_value # need this to preserve markov tween destinations
         pattern = blend(self.start_value, self.target_value, position)

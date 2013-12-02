@@ -1,6 +1,6 @@
 import copy, math
 from collections import deque
-from ..pattern import Pattern
+from ..pattern import *
 from ..notation import *
 from ..tween import *
 from ..core import *
@@ -173,7 +173,7 @@ class Voice(object):
 
     @pattern.setter
     def pattern(self, value):
-        if type(value) == Pattern:
+        if type(value) == Pattern or type(value) == CrossPattern:
             self._pattern = value
         else:
             self._pattern = Pattern(value)
