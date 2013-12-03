@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import time, threading, queue
+import time, threading, queue, atexit
 from .util import osc, log
 
 class Driver(object):
@@ -16,20 +16,23 @@ class Driver(object):
     def start(self, skip=0):
         start_t = time.time() - skip
         last_cue = -1
-        while self.running:
-            self.t = time.time() - start_t
-            if int(self.t) // 15 != last_cue:
-                last_cue = int(self.t) // 15
-                log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-            control.perform_callbacks()
-            self._perform_callbacks()
-            if not self.running:
-                break
-            delta_t = self.t - self.previous_t
-            for voice in self.voices:
-                voice.update(delta_t)
-            self.previous_t = self.t                
-            time.sleep(self.grain)
+        try:
+            while self.running:
+                self.t = time.time() - start_t
+                if int(self.t) // 15 != last_cue:
+                    last_cue = int(self.t) // 15
+                    log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
+                control.perform_callbacks()
+                self._perform_callbacks()
+                if not self.running:
+                    break
+                delta_t = self.t - self.previous_t
+                for voice in self.voices:
+                    voice.update(delta_t)
+                self.previous_t = self.t                
+                time.sleep(self.grain)
+        except KeyboardInterrupt:
+            pass
 
     def stop(self):
         self.running = False
@@ -105,4 +108,7 @@ synth = Synth()
 control = Control()
 driver = Driver()
 
+def exit_handler():
+    driver.stop()
+atexit.register(exit_handler)
 
