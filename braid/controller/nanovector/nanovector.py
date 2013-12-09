@@ -29,7 +29,7 @@ def trigger_f(v):
                     target_value = (left_value * (1.0 - width)) + (right_value * width)
                 elif param == 'pattern':
                     target_value = CrossPattern(left_value, right_value, width)
-                elif type(left_value) == list or type(left_value) == tuple:
+                elif param != 'chord' and (type(left_value) == list or type(left_value) == tuple):
                     target_value = []
                     for i in range(len(left_value)):
                         target_value.append((width * (right_value[i] - left_value[i])) + left_value[i])

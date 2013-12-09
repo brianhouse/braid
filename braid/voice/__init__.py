@@ -101,7 +101,7 @@ class Voice(object):
             if not isinstance(target_value, Pattern):
                 target_value = Pattern(target_value)
             tween = PatternTween(start_value, target_value, duration, transition_f, callback_f, repeat)
-        elif type(value) == list or type(value) == tuple:
+        elif param != 'chord' and (type(value) == list or type(value) == tuple):
             tween = TupleTween(start_value, target_value, duration, transition_f, callback_f, repeat)
         else:
             tween = DiscreteTween(start_value, target_value, duration, transition_f, callback_f, repeat)

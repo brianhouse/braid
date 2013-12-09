@@ -39,7 +39,7 @@ class Driver(object):
         for voice in self.voices:
             voice.end()
         log.info("/////////////// END %d:%f ///////////////" % (self.t // 60.0, self.t % 60.0)) 
-        time.sleep(1) # for osc to finish        
+        time.sleep(0.5) # for osc to finish        
 
     def callback(self, duration, f):
         """After a given duration, call a function"""
