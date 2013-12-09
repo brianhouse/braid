@@ -41,7 +41,7 @@ class Voice(object):
                     while True:
                         next = self.sequence[0]
                         self.sequence.rotate(-1)
-                        if type(next) == Pattern:
+                        if isinstance(next, Pattern):
                             self.pattern = next
                             break
                         elif isinstance(next, collections.Callable):
@@ -184,8 +184,10 @@ class Voice(object):
 
     @sequence.setter
     def sequence(self, items):
+        items = list(items)
         for i, item in enumerate(items):
-            if type(item) == list:
+            print(item)
+            if type(item) == list or type(item) == tuple:
                 items[i] = Pattern(item)
         self._sequence = deque(items)
 
