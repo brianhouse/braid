@@ -29,11 +29,12 @@ def k():
         return randint(C1, D1)
     return f
 
+s_opened = False
 def s():
     def f(v):
         v.velocity = 5.0
-        v.adsr = 0, 5, 0.0, 20
-        return C7
+        v.adsr = (0, 5, 0.0, 20) if not s_opened else (0, 50, 0.0, 0)
+        return C7 if not s_opened else C4
     return f
 
 def h():
@@ -52,7 +53,17 @@ e = [0, s()], [s(), s(), s()]
 
 v1_cloudclick = (a, b), (c, d), (e, b), (c, d)
 v2_cloudclick = (c, d), (a, b), (e, b), (a, b)
+v3_cloudclick = [(k(), 0), 0, 0, Z] * 4
+v4_cloudclick = [Z, (k(), 0), 0, 0] * 4
 
+
+def open_s(on):
+    global s_opened
+    if on:
+        s_opened = True
+    else:
+        s_opened = False
+control.callback("1_onoff", open_s)
 
 
 ### daito
@@ -111,8 +122,8 @@ v4_daito_cross = CrossPattern(v3_daito, v4_daito)
 
 nv.vectors[1][v1] = {'pattern': (v1_cloudclick, v1_daito_cross)}
 nv.vectors[1][v2] = {'pattern': (v2_cloudclick, v2_daito_cross)}
-nv.vectors[1][v3] = {'pattern': ([0, 0], v3_daito_cross)}
-nv.vectors[1][v4] = {'pattern': ([0, 0], v4_daito_cross)}
+nv.vectors[1][v3] = {'pattern': (v3_cloudclick, v3_daito_cross)}
+nv.vectors[1][v4] = {'pattern': (v4_cloudclick, v4_daito_cross)}
 
 
 def straighten_daito(value):
@@ -130,7 +141,7 @@ def straighten_daito(value):
         v3.pattern = v3_daito_cross
         v4.clear_sequence()
         v4.pattern = v4_daito_cross
-control.callback("1_onoff", straighten_daito)
+control.callback("2_onoff", straighten_daito)
 
 
 ###
@@ -213,8 +224,8 @@ nv.vectors[5][v4] = {'tempo': (30, 200)}
 
 v1.pattern = v1_cloudclick
 v2.pattern = v2_cloudclick
-v3.pattern = 0, 0
-v4.pattern = 0, 0
+v3.pattern = v3_cloudclick
+v4.pattern = v4_cloudclick
 
 
 driver.start()
