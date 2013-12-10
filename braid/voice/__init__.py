@@ -21,6 +21,7 @@ class Voice(object):
         self.tempo = 120
         self._pattern = Pattern((0, 0))
         self._sequence = deque()
+        self._queue = deque()
         self._steps = self._pattern.resolve()
         self.chord = C, MAJ
         self.velocity = 1.0
@@ -37,15 +38,17 @@ class Voice(object):
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
             if self.index == 0:
                 self._perform_callbacks()
+                while len(self.queue):
+                    self.queue.popleft()(self)
                 if len(self.sequence):
                     while True:
-                        next = self.sequence[0]
-                        self.sequence.rotate(-1)
-                        if isinstance(next, Pattern):
-                            self.pattern = next
+                        item = self.sequence[0]
+                        self.sequence.rotate(-1)                        
+                        if isinstance(item, Pattern):
+                            self.pattern = item
                             break
-                        elif isinstance(next, collections.Callable):
-                            next(self)
+                        elif isinstance(item, collections.Callable):    # execute unlimited functions, but break on new pattern
+                            item(self)
                 elif 'pattern' in self.tweens:
                     self.pattern = self.tweens['pattern'].get_value()
                 self._steps = self.pattern.resolve()
@@ -186,10 +189,28 @@ class Voice(object):
     def sequence(self, items):
         items = list(items)
         for i, item in enumerate(items):
-            print(item)
             if type(item) == list or type(item) == tuple:
                 items[i] = Pattern(item)
+            else:
+                assert isinstance(item, collections.Callable)
         self._sequence = deque(items)
+
+    def clear_sequence(self):
+        self._sequence = deque()
+
+    @property
+    def queue(self):
+        return self._queue
+
+    @queue.setter
+    def queue(self, items):
+        items = list(items)
+        for i, item in enumerate(items):
+            assert isinstance(item, collections.Callable)
+        self._queue = deque(items)
+
+    def clear_queue(self):
+        self._queue = deque()
 
 
 """ Wrappers for sequenced changes """

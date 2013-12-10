@@ -9,6 +9,7 @@
 - how often would you want to repeat a tween without tweaking (or reversing) values?
 - should allow initialization of values in Voice (named dictionary **)
 - do I need a reverse power function? I think yes
+- hard channel assignments for voices is maybe something iffy with serotonin -- should be settable per note?
 
 
 ## bugs

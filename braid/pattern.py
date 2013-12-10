@@ -65,8 +65,8 @@ class Pattern(list):
 class CrossPattern(Pattern):
 
     def __init__(self, pattern_1, pattern_2, balance=0.5):
-        self.pattern_1 = pattern_1 if type(pattern_1) == Pattern else Pattern(pattern_1)
-        self.pattern_2 = pattern_2 if type(pattern_2) == Pattern else Pattern(pattern_2)
+        self.pattern_1 = pattern_1 if isinstance(pattern_1, Pattern) else Pattern(pattern_1)
+        self.pattern_2 = pattern_2 if isinstance(pattern_2, Pattern) else Pattern(pattern_2)
         self.balance = balance
         self.resolve()
 
