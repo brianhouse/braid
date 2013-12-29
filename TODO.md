@@ -29,7 +29,7 @@ voice -> synth? synth -> voice?
 voice is better in the syntax
 controller -> hand?
 
-
+then again, a synth comprises multiple voices, a controller is singular
 
 
 
