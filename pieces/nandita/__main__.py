@@ -106,7 +106,7 @@ spirit3.tween('velocity', 0.0, spirit3.velocity, DURATION, spirit3_velocity_f)
 
 def sq1(pitch):
     def f(v):
-        v.tween('pan', 0.0, 1.0, 3.0)
+        v.tween('pan', 0.0, 1.0, 18.0)
         return choice([1, 2])
     return f
 wind_pattern = sq1(1), 0, sq1(1), 0
@@ -115,7 +115,7 @@ wind_pattern = sq1(1), 0, sq1(1), 0
 def sq2(pitch):
     def f(v):
         a = random()
-        v.tween('pan', 1.0, 0.0, 3.0)        
+        v.tween('pan', 1.0, 0.0, 18.0)        
         return choice([3, 4, 5])
     return f
 wind2_pattern = [0, sq2(5), 0, 0], [0, sq2(5), 0, 0]
