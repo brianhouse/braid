@@ -2,8 +2,8 @@ from . import Voice, synth
 
 class Swerve(Voice):
 
-    def __init__(self, channel=1):
-        Voice.__init__(self, channel)
+    def __init__(self, channel=1, continuous=False):
+        Voice.__init__(self, channel, continuous)
         self._reverb = [1.0, 0.0, 0.0, 0.0, 0.0]     # dry, wet, roomsize, damping, width
         self.pan = 0.5        
         self.synth = 'cycle'

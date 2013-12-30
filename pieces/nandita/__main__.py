@@ -85,23 +85,28 @@ branch.tween('velocity', 0.0, branch.velocity, DURATION, branch_velocity_f)
 
 ##
 
-spirit1.pattern = [0, 0, 1, 0]
-spirit2.pattern = [([1, 0, 4, 0], [3, 0, 4], 0.6)]
-spirit3.pattern = [([3, 0, 1, 0], [[-7, 1], 0, [3, 1, -7], 0], 0.5)]
+def sp(pitch):
+    def f(v):
+        v.pan = random()
+        return pitch
+    return f
+
+spirit1.pattern = [0, 0, sp(1), 0]
+spirit2.pattern = [([sp(1), 0, sp(4), 0], [sp(3), 0, sp(4)], 0.6)]
+spirit3.pattern = [([sp(3), 0, sp(1), 0], [[sp(-7), sp(1)], 0, [sp(3), sp(1), sp(-7)], 0], 0.5)]
 
 spirit1.tween('velocity', 0.0, spirit1.velocity, DURATION, spirit1_velocity_f)
 spirit2.tween('velocity', 0.0, spirit2.velocity, DURATION, spirit2_velocity_f)
 spirit3.tween('velocity', 0.0, spirit3.velocity, DURATION, spirit3_velocity_f)
 
-spirit2.tween('pan', 0.0, 1.0, DURATION, spirit_angle_f)
-spirit3.tween('pan', 1.0, 0.0, DURATION, spirit_angle_f)
+# spirit2.tween('pan', 0.0, 1.0, DURATION, spirit_angle_f)
+# spirit3.tween('pan', 1.0, 0.0, DURATION, spirit_angle_f)
 
 ##
 
 def sq1(pitch):
     def f(v):
-        a = random()
-        v.tween('pan', a, 1.0 - a, 12.0)
+        v.tween('pan', 0.0, 1.0, 3.0)
         return choice([1, 2])
     return f
 wind_pattern = sq1(1), 0, sq1(1), 0
@@ -110,14 +115,14 @@ wind_pattern = sq1(1), 0, sq1(1), 0
 def sq2(pitch):
     def f(v):
         a = random()
-        v.tween('pan', a, 1.0 - a, 8.0)        
+        v.tween('pan', 1.0, 0.0, 3.0)        
         return choice([3, 4, 5])
     return f
 wind2_pattern = [0, sq2(5), 0, 0], [0, sq2(5), 0, 0]
 
 
-wind.tween('velocity', 0.0, wind.velocity, DURATION, wind_velocity_f)
-wind2.tween('velocity', 0.0, wind2.velocity, DURATION, wind_velocity_f)
+# wind.tween('velocity', 0.0, wind.velocity, DURATION, wind_velocity_f)
+# wind2.tween('velocity', 0.0, wind2.velocity, DURATION, wind_velocity_f)
 wind.tween('pattern', [0, 0], wind_pattern, DURATION, wind_pattern_f)
 wind2.tween('pattern', [0, 0], wind2_pattern, DURATION, wind_pattern_f)
 
