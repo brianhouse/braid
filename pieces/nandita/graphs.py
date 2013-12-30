@@ -173,17 +173,16 @@ spirit_tempo_f = get_breakpoint_f(      [0, 0],
 
 #
 
-# plot(bass_velocity_f, (1., 0, 0))
-# plot(cicada_entrain_f, (0., 1., 0.))
-# plot(cicada_velocity_f, (0., 0., 1.))
-# plot(cricket_velocity_f, (1., 0., 1.))
-# plot(wind_velocity_f, (1., 0., 1.))
-# plot(wind_pattern_f, (0., 1., 1.))
-# plot(branch_velocity_f, (0., 0., 1.))
-# plot(met_velocity_f, (0., 1., 1.))
-# plot(owl_velocity_f, (1., 0., 0.))
-# plot(spirit2_velocity_f, (1., 0., 0.))
-# plot(spirit3_velocity_f, (0., 1., 0.))
-
 if __name__ == "__main__":
+    plot(bass_velocity_f, "red")
+    # plot(cicada_entrain_f, "green")
+    plot(cicada_velocity_f, "blue")
+    plot(cricket_velocity_f, "yellow")
+    # plot(wind_velocity_f, "orange")
+    # plot(wind_pattern_f, "purple")
+    # plot(branch_velocity_f, "brown")
+    # plot(met_velocity_f, "green")
+    # plot(owl_velocity_f, "purple")
+    # plot(spirit2_velocity_f, (1., 0., 0.))
+    # plot(spirit3_velocity_f, (0., 1., 0.))
     show_plots()

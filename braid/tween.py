@@ -15,7 +15,7 @@ def linear(pos):
     pos = clamp(pos)
     return pos
 
-def power(pos):
+def power(pos):     ## questionable. handle gain/cross on the synth level.
     pos = clamp(pos)
     pos *= (0.5 * math.pi)
     return math.sin(pos)
@@ -196,4 +196,5 @@ def plot(bp_f, color="red"):
 
 def show_plots():
     Plotter.show_plots()
+
 

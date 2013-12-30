@@ -4,12 +4,14 @@ from braid import *
 from sounds import *
 from graphs import *
 
-DURATION = 2 * 60
+DURATION = 2.5 * 60
 
+##
 
 bass.pattern = [([1, 0, 0, 0], [2, 0, 0, 0], 0.8)]
 bass.tween('velocity', 0.0, bass.velocity, DURATION, bass_velocity_f)
 
+##
 
 def rp(pitch):
     def f(v):
@@ -32,7 +34,6 @@ cicada_ambient = [(
                         0.5)],
                      0.2
                      )]
-
 cicada.tween('velocity', 0.0, cicada.velocity, DURATION, cicada_velocity_f)
 cicada2.tween('velocity', 0.0, cicada2.velocity, DURATION, cicada_velocity_f)
 cicada.pattern = cicada_groove
@@ -40,7 +41,7 @@ cicada2.pattern = cicada_groove
 cicada.tween('pattern', cicada_ambient, cicada_groove, DURATION, cicada_entrain_f)
 cicada2.tween('pattern', cicada_ambient, cicada_groove, DURATION, cicada_entrain_f)
 
-
+##
 
 def cp(pitch):
     def f(v):
@@ -55,11 +56,12 @@ def cp(pitch):
 cricket.pattern = cp(1), [0, cp(4)], 0, 0
 cricket.tween('velocity', 0.0, cricket.velocity, DURATION, cricket_velocity_f)
 
+##
 
 met.tween('velocity', 0.0, met.velocity, DURATION, met_velocity_f)
 met.pattern = [([0, 0, B3, 0], [0, [0, B3], 0, 0])]
 
-
+##
 
 def op(pitch):
     def f(v):
@@ -70,7 +72,7 @@ def op(pitch):
 owl.pattern = [([[op(6), 1, 0, 0, 0, 0, 0], 0, 0, 0], 0.5)]
 owl.tween('velocity', 0.0, owl.velocity, DURATION, owl_velocity_f)
 
-
+##
 
 branch.pattern = Pattern([      (
                                         ( [[0, 1], 0, 0, 0], [0, 1, 0, [0, 1]] ), 
@@ -81,7 +83,7 @@ branch.pattern = Pattern([      (
                         ])
 branch.tween('velocity', 0.0, branch.velocity, DURATION, branch_velocity_f)
 
-
+##
 
 spirit1.pattern = [0, 0, 1, 0]
 spirit2.pattern = [([1, 0, 4, 0], [3, 0, 4], 0.6)]
@@ -94,7 +96,7 @@ spirit3.tween('velocity', 0.0, spirit3.velocity, DURATION, spirit3_velocity_f)
 spirit2.tween('pan', 0.0, 1.0, DURATION, spirit_angle_f)
 spirit3.tween('pan', 1.0, 0.0, DURATION, spirit_angle_f)
 
-
+##
 
 def sq1(pitch):
     def f(v):
@@ -119,7 +121,7 @@ wind2.tween('velocity', 0.0, wind2.velocity, DURATION, wind_velocity_f)
 wind.tween('pattern', [0, 0], wind_pattern, DURATION, wind_pattern_f)
 wind2.tween('pattern', [0, 0], wind2_pattern, DURATION, wind_pattern_f)
 
-
+##
 
 
 driver.start()
