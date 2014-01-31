@@ -107,6 +107,7 @@ class Tween(object):
         
     def restart(self):
         self.start_t = driver.t
+        self.finished = False if self.duration > 0.0 else True        
 
     @property
     def position(self):     # can reference this to see where we are in the tween

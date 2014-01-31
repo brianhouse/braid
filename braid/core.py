@@ -35,6 +35,8 @@ class Driver(object):
             pass
 
     def stop(self):
+        if not self.running:
+            return
         self.running = False
         for voice in self.voices:
             voice.end()

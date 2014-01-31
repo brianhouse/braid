@@ -8,9 +8,12 @@
 - more useful for resolve to not have a weight, but include arbitrary possibilities? or if the third term is a float, it's a weight, otherwise arbitrary possibilities
 - how often would you want to repeat a tween without tweaking (or reversing) values?
 - should allow initialization of values in Voice (named dictionary **)
-- do I need a reverse power function? I think yes
 - hard channel assignments for voices is maybe something iffy with serotonin -- should be settable per note?
 
+- absolute pitch vs steps is awkward with a cutoff value. use chord = None?
+- the plotter has to be closed for the sequence to start. try encapsulating everything of the plotter within a run()
+
+! have to prefix /note by the synth name to be able to use overlapping synths
 
 ## bugs
 uh oh -- skipping the driver doesnt skip the tweens. not sure how that's going to get fixed.
@@ -20,6 +23,10 @@ start_t = driver.t - driver.skip   # or something?
 ## tempo
 seem to be taking the approach where everything runs independently
 maybe it's just a matter of implementing correction -- find the phase difference, and if it's incorrect (not within a tolerance of a lcd), tween it
+
+
+## data
+include normalize?
 
 
 ## structure
@@ -32,4 +39,5 @@ controller -> hand?
 then again, a synth comprises multiple voices, a controller is singular
 
 
+is config really needed? could avoid the yaml dependency. would be great to have a pure python3 import.
 

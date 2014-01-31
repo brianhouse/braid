@@ -61,7 +61,7 @@ class Voice(object):
                 elif step == 0 or step is None:
                     self.hold()
                 else:
-                    if type(step) == int and step >= 23:       ## this is a weird cutoff if super low notes are played
+                    if self.chord is None:
                         pitch = step
                     else:
                         root, scale = self.chord
@@ -93,6 +93,8 @@ class Voice(object):
         synth.send('/braid/params', self.channel, self.velocity)
 
     def tween(self, param, start_value, target_value, duration, transition_f=linear, callback_f=None, repeat=False):
+        if not hasattr(self, param):    # can initialize properties with a tween, useful for reference values
+            setattr(self, param, 0.0)
         value = getattr(self, param)
         if start_value is None:
             start_value = value

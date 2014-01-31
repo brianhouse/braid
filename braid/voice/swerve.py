@@ -14,13 +14,13 @@ class Swerve(Voice):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity        
-        synth.send('/braid/note', self.channel, midi_to_freq(pitch), velocity, self.pan, self.synth, self.attack, self.decay, self.glide)
+        synth.send('/braid/swerve/note', self.channel, midi_to_freq(pitch), velocity, self.pan, self.synth, self.attack, self.decay, self.glide)
 
     def rest(self):
         pass
 
     def send_params(self):
-        synth.send('/braid/params', self.channel, self.velocity, self.pan)
+        synth.send('/braid/swerve/params', self.channel, self.velocity, self.pan)
 
     @property
     def reverb(self):
@@ -29,7 +29,7 @@ class Swerve(Voice):
     @reverb.setter
     def reverb(self, params):
         self._reverb = list(params)
-        synth.send('/braid/reverb', self.channel, *params)
+        synth.send('/braid/swerve/reverb', self.channel, *params)
 
 
 def midi_to_freq(p):
