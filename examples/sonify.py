@@ -83,11 +83,6 @@ kick.mute()
 snare.mute()
 hat.mute()
 
-def unmute(v):
-    print('ok')
-    return 
-
-
 kick.callback(0, hat.unmute)
 kick.callback(0, bv.unmute)
 bv.velocity = 0.0
