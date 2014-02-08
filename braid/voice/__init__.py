@@ -1,11 +1,10 @@
-import copy, math
+import copy, math, collections
 from collections import deque
 from ..pattern import *
 from ..notation import *
 from ..tween import *
 from ..core import *
-from ..util import log
-import collections
+from ..util import log, num_args
 
 class Voice(object):
         
@@ -131,7 +130,7 @@ class Voice(object):
                     log.info("Killed tween %s" % param)
                     self.tweens.pop(param)
                 if tween.callback_f is not None:          # do this here in case the callback is restarting the tween with different params
-                    tween.callback_f(self)                             
+                    tween.callback_f(self) if num_args(tween.callback_f) else tween.callback_f()                           
         return changed
 
     def callback(self, count, f):
@@ -149,16 +148,16 @@ class Voice(object):
         for c, callback in enumerate(self.callbacks):
             count, f = callback
             if count == 0:
-                f(self)
+                f(self) if num_args(f) else f()
                 self.callbacks.remove(callback)
             else:                
                 self.callbacks[c] = count - 1, f
 
-    def mute(self, nop=True):
+    def mute(self, nop=True):   # nop allows direct callbacks
         self._mute = True
         self.rest()
 
-    def unmute(self, nop=True):
+    def unmute(self, nop=True):   # nop allows direct callbacks
         self._mute = False
 
     @property

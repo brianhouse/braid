@@ -14,7 +14,7 @@ doctors_f = get_signal_f(doctors)
 plot(bachelors_f, color="red")
 plot(masters_f, color="blue")
 plot(doctors_f, color="green")
-show_plots()
+# show_plots()
 
 
 DURATION = 30
@@ -83,12 +83,15 @@ kick.mute()
 snare.mute()
 hat.mute()
 
+def unmute(v):
+    print('ok')
+    return 
 
 
 kick.callback(0, hat.unmute)
 kick.callback(0, bv.unmute)
 bv.velocity = 0.0
-def fade_bass(v):
+def fade_bass():
     bv.tween('velocity', 0.0, 1.0, 8.0, power)
 kick.callback(1, fade_bass)
 kick.callback(8, kick.unmute)
@@ -96,20 +99,20 @@ kick.callback(15, snare.unmute)
 
 kick.callback(32, mv.unmute)
 ##
-def fade_bass_down(v):
+def fade_bass_down():
     bv.tween('velocity', 1.0, 0.0, 8.0)
 kick.callback(48, fade_bass_down)
 kick.callback(48, snare.mute)
 kick.callback(48, hat.mute)
 
 dv.velocity = 0.0
-def fade_dv(v):
+def fade_dv():
     dv.tween('velocity', 0.0, 1.0, 8.0, power)
 kick.callback(50, fade_dv)
 
 kick.callback(68, hat.unmute)
 
-def bv_loud(v):
+def bv_loud():
     bv.velocity = 1.0
 kick.callback(74, bv_loud)    
 kick.callback(74, bv.unmute)
