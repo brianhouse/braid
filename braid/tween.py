@@ -82,14 +82,19 @@ def get_breakpoint_f(*breakpoints):
 
 
 def get_signal_f(signal):
-    """Assumes the signal is normalized"""
-
+    signal = normalize(signal)
     def signal_f(pos):
         index = int(pos * (len(signal) - 1))        ## this needs to interpolate
         value = signal[index]
         return value
-
     return signal_f
+
+
+def normalize(signal):
+    """For normalizing signals"""
+    min_value = min(signal)
+    max_value = max(signal)
+    return [(v - min_value) / (max_value - min_value) for v in signal]
 
 
 class Tween(object):

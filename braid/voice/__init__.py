@@ -154,11 +154,11 @@ class Voice(object):
             else:                
                 self.callbacks[c] = count - 1, f
 
-    def mute(self):
+    def mute(self, nop=True):
         self._mute = True
         self.rest()
 
-    def unmute(self):
+    def unmute(self, nop=True):
         self._mute = False
 
     @property

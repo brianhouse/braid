@@ -14,7 +14,7 @@ class Serotonin(Voice):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        synth.send('/braid/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
+        synth.send('/braid/serotonin/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
         self.previous_pitch = pitch
 
     @property

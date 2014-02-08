@@ -13,7 +13,6 @@
 - absolute pitch vs steps is awkward with a cutoff value. use chord = None?
 - the plotter has to be closed for the sequence to start. try encapsulating everything of the plotter within a run()
 
-! have to prefix /note by the synth name to be able to use overlapping synths
 
 ## bugs
 uh oh -- skipping the driver doesnt skip the tweens. not sure how that's going to get fixed.
