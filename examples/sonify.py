@@ -121,10 +121,3 @@ kick.callback(74, dv.unmute)
 
 
 driver.start()
-
-"""
-if callback takes arguments, else... (kill nops)
-
-sequence patterns..
-
-"""
