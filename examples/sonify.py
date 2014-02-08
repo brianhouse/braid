@@ -14,7 +14,7 @@ doctors_f = get_signal_f(doctors)
 plot(bachelors_f, color="red")
 plot(masters_f, color="blue")
 plot(doctors_f, color="green")
-# show_plots()
+show_plots()
 
 
 DURATION = 30

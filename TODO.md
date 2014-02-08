@@ -11,7 +11,6 @@
 - hard channel assignments for voices is maybe something iffy with serotonin -- should be settable per note?
 
 - absolute pitch vs steps is awkward with a cutoff value. use chord = None? prevents mixing.
-- the plotter has to be closed for the sequence to start. try encapsulating everything of the plotter within a run()
 
 
 ## bugs

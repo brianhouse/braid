@@ -194,8 +194,7 @@ class Plotter():
 
     @classmethod
     def show_plots(cls):
-        cls.instance.master.mainloop()
-
+        cls.instance.master.update()
 
 def plot(bp_f, color="red"):
     Plotter.plot(bp_f, color)
