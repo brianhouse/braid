@@ -15,11 +15,11 @@ class Volcabeats(Voice):
         # claves = 75 # 39
         # agogo = 67 # 31
         # crash = 49  # 13
-        drums = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
-        self.chord = C2, drums
+        self.drums = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
+        self.chord = C2, self.drums
 
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        velocity = 1
-        synth.send('/braid/note', self.channel, pitch, int(velocity * 127))
+        synth.send('/braid/control', self.channel, self.drums.index(pitch - 36) + 40, int(velocity * 127))
+        synth.send('/braid/note', self.channel, pitch, 127)
