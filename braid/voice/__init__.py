@@ -53,7 +53,7 @@ class Voice(object):
                 self._steps = self.pattern.resolve()
             step = self._steps[self.index]
             if isinstance(step, collections.Callable):
-                step = step(self)
+                step = step(self) if num_args(step) else step()
             if not self._mute:
                 if step == Z:
                     self.rest()
@@ -235,4 +235,5 @@ def tween(param, start_value, target_value, duration, transition_f=linear):
 from .serotonin import Serotonin
 from .meeblip import Meeblip
 from .swerve import Swerve
+from .volcabeats import Volcabeats
 

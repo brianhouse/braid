@@ -32,6 +32,7 @@ controller -> hand?
 
 then again, a synth comprises multiple voices, a controller is singular
 
+...and really, modifying the core files shouldnt be necessary to add a synth/voice. 
 
 is config really needed? could avoid the yaml dependency. would be great to have a pure python3 import.
 
