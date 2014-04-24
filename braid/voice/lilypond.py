@@ -3,6 +3,7 @@ from . import Voice
 
 class Lilypond(Voice):
 
+    ## broken
     def __init__(self, channel=1, template=None, beats=4):      # in theory, should apply key signature dynamically
         Voice.__init__(self, channel)
         self.staff = [PulseDivision()]

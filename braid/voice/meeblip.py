@@ -1,9 +1,9 @@
-from . import synth, Voice
+from . import midi_synth, Voice
 
 class Meeblip(Voice):
 
-    def __init__(self, channel=1):
-        Voice.__init__(self, channel)
+    def __init__(self, channel, **params):
+        Voice.__init__(self, channel, **params)
         # these numbers are midi, not ms
 
         # dials

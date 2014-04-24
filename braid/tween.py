@@ -99,7 +99,7 @@ def normalize(signal):
 
 class Tween(object):
 
-    def __init__(self, start_value, target_value, duration, transition_f, callback_f=None, repeat=False):
+    def __init__(self, start_value, target_value, duration, transition_f, repeat=False):    ## would be great to kill start_value and repeat
         self.start_value = start_value
         self.target_value = target_value
         self.start_t = driver.t
@@ -107,9 +107,12 @@ class Tween(object):
         self.transition_f = transition_f
         assert callable(self.transition_f)
         self.finished = False if self.duration > 0.0 else True
-        self.callback_f = callback_f
-        self.repeat = repeat
+        # self.repeat = repeat
         
+    def finish(f):
+        self.finish_f = f
+        return self
+
     def restart(self):
         self.start_t = driver.t
         self.finished = False if self.duration > 0.0 else True        

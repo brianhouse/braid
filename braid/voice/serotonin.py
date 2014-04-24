@@ -1,20 +1,20 @@
-from . import synth, Voice
+from . import osc_synth, Voice
 
 class Serotonin(Voice):
 
-    def __init__(self, channel=1):
-        Voice.__init__(self, channel)
+    def __init__(self, channel, **params):
         # these numbers are ms, not midi
         self.attack = 20
-        self.decay = 20
-        self.sustain = 0.8
-        self.release = 20
+        self.decay = 100
+        self.sustain = 0.5
+        self.release = 10
         self.bend = 0.0
+        Voice.__init__(self, channel, **params)        
 
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        synth.send('/braid/serotonin/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
+        osc_synth.send('/braid/serotonin/note', self.channel, midi_to_freq((pitch + self.bend)), velocity, [self.attack, self.decay, self.sustain, self.release])
         self.previous_pitch = pitch
 
     @property

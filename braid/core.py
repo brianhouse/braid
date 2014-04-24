@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import time, threading, queue, atexit
+import rtmidi
+from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from .util import osc, log
 
 class Driver(object):
@@ -22,14 +24,14 @@ class Driver(object):
                 if int(self.t) // 15 != last_cue:
                     last_cue = int(self.t) // 15
                     log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-                control.perform_callbacks()
+                osc_control.perform_callbacks()
                 self._perform_callbacks()
                 if not self.running:
                     break
                 delta_t = self.t - self.previous_t
                 for voice in self.voices:
                     voice.update(delta_t)
-                self.previous_t = self.t                
+                self.previous_t = self.t     
                 time.sleep(self.grain)
         except KeyboardInterrupt:
             pass
@@ -56,7 +58,52 @@ class Driver(object):
                 self.callbacks.remove(callback)
 
 
-class Synth(threading.Thread):
+class MidiSynth(threading.Thread):
+
+    def __init__(self, port=0):
+        threading.Thread.__init__(self)
+        self.daemon = True     
+        self.queue = queue.Queue()
+        self.midi = rtmidi.MidiOut()
+        available_ports = self.midi.get_ports()
+        print("Ports: %s" % available_ports)
+        if available_ports:
+            print("Opening %s" % available_ports[port])
+            self.midi.open_port(port)
+        else:
+            print("Opening virtual output...")
+            self.midi.open_virtual_port("Braid")   
+        time.sleep(1)         
+        print("Ready")
+        self.start()           
+
+    def send_control(self, channel, control, value):
+        self.queue.put((channel, (control, value), None))
+
+    def send_note(self, channel, pitch, velocity):
+        self.queue.put((channel, None, (pitch, velocity)))
+
+    def run(self):
+        while True:
+            channel, control, note = self.queue.get()
+            if control is not None:
+                control, value = control
+                if type(value) == bool:
+                    value = 127 if value else 0
+                log.info("MIDI crtl %s %s %s" % (channel, control, value))                    
+                channel -= 1
+                self.midi.send_message([CONTROLLER_CHANGE | (channel & 0xF), control, value])                
+            if note is not None:
+                pitch, velocity = note
+                log.info("MIDI note %s %s %s" % (channel, pitch, velocity))
+                channel -= 1
+                if velocity:            
+                    self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
+                else:
+                    self.midi.send_message([NOTE_OFF | (channel & 0xF), pitch & 0x7F, 0])
+
+
+class OSCSynth(threading.Thread):
     """Consume notes and send OSC"""
 
     def __init__(self):
@@ -79,7 +126,7 @@ class Synth(threading.Thread):
             self.sender.send(address, params)
 
 
-class Control(object):
+class OSCControl(object):
     """Receive OSC and perform callbacks"""
 
     def __init__(self):
@@ -106,8 +153,9 @@ class Control(object):
                 self.callbacks[control](value)
 
 
-synth = Synth()
-control = Control()
+midi_synth = MidiSynth()
+osc_synth = OSCSynth()
+osc_control = OSCControl()
 driver = Driver()
 
 def exit_handler():
