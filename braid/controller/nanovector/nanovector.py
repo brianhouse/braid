@@ -43,7 +43,7 @@ def init(*voices):
     for i in range(1, 10):
         vectors[i] = {voice: {} for voice in voices}
         vectors[i].update({'width': 0, 'duration': 0})
-        control.callback("%s_width" % i, width_f(i))
-        control.callback("%s_fade" % i, fade_f(i))
-        control.callback("%s_trigger" % i, trigger_f(i))
+        osc_control.callback("%s_width" % i, width_f(i))
+        osc_control.callback("%s_fade" % i, fade_f(i))
+        osc_control.callback("%s_trigger" % i, trigger_f(i))
 

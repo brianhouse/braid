@@ -108,6 +108,7 @@ class Tween(object):
         assert callable(self.transition_f)
         self.finished = False if self.duration > 0.0 else True
         # self.repeat = repeat
+        self.finish_f = None
         
     def finish(f):
         self.finish_f = f

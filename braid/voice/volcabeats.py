@@ -21,5 +21,9 @@ class Volcabeats(Voice):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
+        # print('volca play')            
+
+        if pitch == 36:
+            velocity /= 3.0
         midi_synth.send_control(self.channel, self.drums.index(pitch - 36) + 40, int(velocity * 127))
         midi_synth.send_note(self.channel, pitch, 127)

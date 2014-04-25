@@ -44,7 +44,7 @@ class Voice(object):
                 # while len(self.queue):
                 #     self.queue.popleft()(self)
                 if 'pattern' in self.tweens:
-                    # this overrides sequencing
+                    # this overrides sequencing         ## problem for new model
                     self._pattern = self.tweens['pattern'].get_value()                
                 # if len(self.sequence):
                 else:
@@ -73,6 +73,7 @@ class Voice(object):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
+        print('default play')
         midi_synth.send_note(self.channel, self.previous_pitch, 0)
         midi_synth.send_note(self.channel, pitch, int(velocity * 127))
         self.previous_pitch = pitch

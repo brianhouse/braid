@@ -42,31 +42,45 @@ class Meeblip(Voice):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        synth.send('/braid/note', self.channel, pitch, int(velocity * 127), self.attack, 
-                                                                            self.decay, 
-                                                                            self.filter_attack, 
-                                                                            self.filter_decay, 
-                                                                            self.osc_detune, 
-                                                                            self.pwm, 
-                                                                            self.glide, 
-                                                                            self.filter_env, 
-                                                                            self.ifo_depth, 
-                                                                            self.lfo_rate, 
-                                                                            self.cutoff, 
-                                                                            self.resonance, 
-                                                                            self.a_noise, 
-                                                                            self.a_pwm, 
-                                                                            self.pwm_sweep, 
-                                                                            self.b_enable, 
-                                                                            self.b_square, 
-                                                                            self.b_octave, 
-                                                                            self.antialias, 
-                                                                            self.sustain, 
-                                                                            self.lfo_dest, 
-                                                                            self.lfo_enable, 
-                                                                            self.lfo_square, 
-                                                                            self.lfo_random, 
-                                                                            self.fm, 
-                                                                            self.filter_mode, 
-                                                                            self.distortion)
+
+
+        # midi_synth.send_control(self.channel, self.drums.index(pitch - 36) + 40, int(velocity * 127))
+
+        ## ok, so how does this work? cant send every parameter individually before every note
+        ## will need to keep track of changes
+        ## for now, it's manual
+
+        # remember to map velocity to cutoff or whatever
+
+        # print('meeblip play')
+        midi_synth.send_control(self.channel, 49, int(velocity * 127))
+        midi_synth.send_note(self.channel, pitch, 127)
+
+                                                                            # self.attack, 
+                                                                            # self.decay, 
+                                                                            # self.filter_attack, 
+                                                                            # self.filter_decay, 
+                                                                            # self.osc_detune, 
+                                                                            # self.pwm, 
+                                                                            # self.glide, 
+                                                                            # self.filter_env, 
+                                                                            # self.ifo_depth, 
+                                                                            # self.lfo_rate, 
+                                                                            # self.cutoff, 
+                                                                            # self.resonance, 
+                                                                            # self.a_noise, 
+                                                                            # self.a_pwm, 
+                                                                            # self.pwm_sweep, 
+                                                                            # self.b_enable, 
+                                                                            # self.b_square, 
+                                                                            # self.b_octave, 
+                                                                            # self.antialias, 
+                                                                            # self.sustain, 
+                                                                            # self.lfo_dest, 
+                                                                            # self.lfo_enable, 
+                                                                            # self.lfo_square, 
+                                                                            # self.lfo_random, 
+                                                                            # self.fm, 
+                                                                            # self.filter_mode, 
+                                                                            # self.distortion)
         self.previous_pitch = pitch

@@ -1,4 +1,7 @@
+there is a structural issue with crosspatterns, sequences and the new syntax
+
 ## changes
+- volcabeats to volca
 - check for proper underscored variables (good to show intent in lack of documentation)
 - tweens timed via cycles or t is an issue (floats or ints)
 - driver.on_t
