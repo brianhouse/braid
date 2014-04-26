@@ -35,7 +35,10 @@ def trigger_f(v):
                         target_value.append((width * (right_value[i] - left_value[i])) + left_value[i])
                 else:
                     target_value = left_value if random() > width else right_value
-                voice.tween(param, None, target_value, vector['duration'])
+                def set_sequence(voice):
+                    print("SET_SEQUENCE")
+                    voice.set(voice._pattern).repeat()   # allows a CrossPattern to persist in the sequence after the tween ends
+                voice.tween(param, None, target_value, vector['duration']).finish(set_sequence)
     return f
 
 

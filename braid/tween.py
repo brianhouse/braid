@@ -110,7 +110,7 @@ class Tween(object):
         # self.repeat = repeat
         self.finish_f = None
         
-    def finish(f):
+    def finish(self, f):
         self.finish_f = f
         return self
 
