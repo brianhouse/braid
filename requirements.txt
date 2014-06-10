@@ -1,1 +1,2 @@
-PyYAML==3.10
+PyYAML>=3.10
+python-rtmidi>=0.4.3b1.dev
