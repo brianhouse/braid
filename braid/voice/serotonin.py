@@ -9,7 +9,10 @@ class Serotonin(Voice):
         self.sustain = 0.5
         self.release = 10
         self.bend = 0.0
-        Voice.__init__(self, channel, **params)        
+        Voice.__init__(self, channel, **params)  
+
+    def connect(self):
+        osc_synth.connect()   
 
     def play(self, pitch, velocity=None):
         if velocity is None:

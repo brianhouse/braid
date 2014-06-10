@@ -30,7 +30,11 @@ class Voice(object):
         self.set(self._pattern)                                       
         for param, value in params.items():
             if hasattr(self, param):
-                setattr(self, param, value)         
+                setattr(self, param, value)      
+        self.connect()
+
+    def connect(self):
+        midi_synth.connect()   
 
     def update(self, delta_t):
         params_changed = self._perform_tweens()
@@ -73,7 +77,6 @@ class Voice(object):
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity
-        print('default play')
         midi_synth.send_note(self.channel, self.previous_pitch, 0)
         midi_synth.send_note(self.channel, pitch, int(velocity * 127))
         self.previous_pitch = pitch

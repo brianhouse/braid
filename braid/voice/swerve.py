@@ -11,6 +11,9 @@ class Swerve(Voice):
         self.decay = 300
         self.glide = 5
 
+    def connect(self):
+        osc_synth.connect()   
+
     def play(self, pitch, velocity=None):
         if velocity is None:
             velocity = self.velocity        

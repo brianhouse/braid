@@ -63,19 +63,29 @@ class MidiSynth(threading.Thread):
     def __init__(self, port=0):
         threading.Thread.__init__(self)
         self.daemon = True     
+        self.midi = None
+        self.queue = None        
+
+    def connect(self):
+        if self.midi is not None:
+            return
+        log.info("MIDI connecting...")
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()
         available_ports = self.midi.get_ports()
-        print("Ports: %s" % available_ports)
+        if len(available_ports):
+            log.info("MIDI outputs available: %s" % available_ports)
+        else:
+            log.info("No MIDI outputs available")
         if available_ports:
-            print("Opening %s" % available_ports[port])
+            log.info("Opening %s" % available_ports[port])
             self.midi.open_port(port)
         else:
-            print("Opening virtual output...")
+            log.info("Opening virtual output (\"Braid\")...")
             self.midi.open_virtual_port("Braid")   
-        time.sleep(1)         
-        print("Ready")
-        self.start()           
+        time.sleep(0.5)         
+        self.start()   
+        log.info("MIDI started")                
 
     def send_control(self, channel, control, value):
         self.queue.put((channel, (control, value), None))
@@ -109,9 +119,17 @@ class OSCSynth(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.daemon = True
+        self.sender = None
+        self.queue = None
+
+    def connect(self):
+        if self.sender is not None:
+            return        
+        log.info("OSC connecting...")
         self.sender = osc.Sender(5280)
         self.queue = queue.Queue()
         self.start()
+        log.info("OSC started")
 
     def send(self, address, *params):
         params = list(params)
