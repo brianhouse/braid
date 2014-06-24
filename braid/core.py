@@ -64,7 +64,8 @@ class MidiSynth(threading.Thread):
         threading.Thread.__init__(self)
         self.daemon = True     
         self.midi = None
-        self.queue = None        
+        self.queue = None      
+        self.port = port  
 
     def connect(self):
         if self.midi is not None:
@@ -78,8 +79,8 @@ class MidiSynth(threading.Thread):
         else:
             log.info("No MIDI outputs available")
         if available_ports:
-            log.info("Opening %s" % available_ports[port])
-            self.midi.open_port(port)
+            log.info("Opening %s" % available_ports[self.port])
+            self.midi.open_port(self.port)
         else:
             log.info("Opening virtual output (\"Braid\")...")
             self.midi.open_virtual_port("Braid")   
@@ -171,12 +172,21 @@ class OSCControl(object):
                 self.callbacks[control](value)
 
 
+def exit_handler():
+    driver.stop()
+atexit.register(exit_handler)
+
+
 midi_synth = MidiSynth()
 osc_synth = OSCSynth()
 osc_control = OSCControl()
 driver = Driver()
 
-def exit_handler():
-    driver.stop()
-atexit.register(exit_handler)
 
+def tempo(value):
+    for voice in driver.voices:
+        voice.tempo = value
+
+def rate(value):
+    for voice in driver.voices:
+        voice.rate = value

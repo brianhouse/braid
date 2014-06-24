@@ -7,9 +7,11 @@ from ..core import *
 from ..util import log, num_args
 
 class Voice(object):
+
+    voices = driver.voices
         
     def __init__(self, channel, **params):
-        driver.voices.append(self)        
+        Voice.voices.append(self)        
         self.channel = channel
         self.index = -1
         self.tweens = {}
@@ -69,7 +71,7 @@ class Voice(object):
                         root, scale = self.chord
                         pitch = root + scale[step]
                     velocity = 1.0 - (random() * 0.05)
-                    velocity *= self.velocity                           
+                    velocity *= self.velocity                      
                     self.play(pitch, velocity)
         elif params_changed and self.continuous and not self._mute:   
             self.send_params()

@@ -1,5 +1,7 @@
 there is a structural issue with crosspatterns, sequences and the new syntax
 
+need @decorators for note wrappers
+
 ## changes
 - volcabeats to volca
 - check for proper underscored variables (good to show intent in lack of documentation)
