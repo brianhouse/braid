@@ -29,6 +29,7 @@ class Voice(object):
         self._pattern = Pattern([0, 0])
         self._steps = self._pattern.resolve()        
         self._sequence = None
+        self.last_step = 1
         self.set(self._pattern)                                       
         for param, value in params.items():
             if hasattr(self, param):
@@ -73,6 +74,7 @@ class Voice(object):
                     velocity = 1.0 - (random() * 0.05)
                     velocity *= self.velocity                      
                     self.play(pitch, velocity)
+            self.last_step = step
         elif params_changed and self.continuous and not self._mute:   
             self.send_params()
 
@@ -231,6 +233,11 @@ class Voice(object):
         ## if type(Sequence) make a copy
         self._sequence = Sequence(items)                
         return self._sequence
+
+    # maybe separate scale and root internally, but make chord the accessor? how does chord tween again?
+    @property
+    def scale(self):
+        return self.chord[0] if self.chord is not None else None
 
 
 class Sequence(list):

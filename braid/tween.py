@@ -46,7 +46,7 @@ def ease_out_in(pos):
         return 1.0 - (0.5 * pos**3 + 0.5)
 
 
-def get_breakpoint_f(*breakpoints):
+def get_breakpoint_f(*breakpoints):     ## change name? essentially wavetable function
     """ eg:
         get_breakpoint_f(   [0, 0],
                             [2, 1, linear], 
@@ -57,10 +57,11 @@ def get_breakpoint_f(*breakpoints):
                             [15, 0, ease_in_out]
                             )
     """
-    domain = max(breakpoints, key=lambda bp: bp[0])[0]
-    m = min(breakpoints, key=lambda bp: bp[1])[1]            
-    resolution = max(breakpoints, key=lambda bp: bp[1])[1]
-    breakpoints = [[bp[0] / float(domain), (bp[1] - m) / float(resolution), None if not len(bp) == 3 else bp[2]] for bp in breakpoints]
+    min_x = min(breakpoints, key=lambda bp: bp[0])[0]
+    domain = max(breakpoints, key=lambda bp: bp[0])[0] - min_x
+    min_y = min(breakpoints, key=lambda bp: bp[1])[1]
+    resolution = max(breakpoints, key=lambda bp: bp[1])[1] - min_y
+    breakpoints = [[(bp[0] - min_x) / float(domain), (bp[1] - min_y) / float(resolution), None if not len(bp) == 3 else bp[2]] for bp in breakpoints]
 
     def breakpoint_f(pos):        
         index = 0

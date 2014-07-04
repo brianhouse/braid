@@ -57,6 +57,10 @@ ROOTS =       [D,   A,   E,   F3,  G2,  E,   A3,  F,   B3,  A,   E3,  B,   D3,  
 SCALES =      [MYX, DOR, MAJ, LYD, MYX, PRG, AOL, LYD, LOC, AOL, PRG, LOC, DOR, MAJ, MAJ]
 HARMONY = [1, 2, 3, 4, 5, 6, 7, -7, -6, -5, -4, -3, -2, -2, -2]
 
+# ROOTS =       [D,   A,   E,   F3,  G2,  E,   A3,  F,   B3,  A,   E3,  B,   D3,  C5,  C2]   
+# SCALES =      [AOL, DOR, PRG, MYX, LOC, PRG, AOL, LYD, LOC, AOL, PRG, LOC, DOR, MAJ, MAJ]
+# HARMONY = [3, 2, 1, -6, 5, 6, 7, -7, -6, -5, -4, -3, -2, -2, -2]
+
 
 # get start time and readjust min_t to start at previous midnight
 period = 24.0 * 60.0 * 60.0 # 24 hours
@@ -218,7 +222,6 @@ for unit, location in enumerate(units):
         harmony = HARMONY[index % len(HARMONY)]
         velocity = 1.0 - 0.25
         velocity += (random() * 0.5) - 0.25   
-        velocity = int(velocity * 127)    
 
         def note_f(n, chord, velocity):
             def f(v):
@@ -249,6 +252,29 @@ class LongVoice(Voice):
         pass
 v2 = Voice(2)
 v2.set(*sequence).repeat()
+
+
+def K1(v):
+    v.velocity = 1.0
+    return K
+
+def H1(v):
+    v.velocity = 1.0
+    return H
+
+def H2(v):
+    v.velocity = 0.5
+    return H
+
+v3 = Voice(3)
+v3.chord = None
+v3.set([K1, [H1, H2], K1, [H1, H2], K1, [H1, H2]]).repeat()
+
+v4 = Voice(3)
+v4.chord = None ## should make this default?
+v4.set([0, (S, [S, S], 0.6), 0]).repeat()
+
+# v1.mute()
 # v2.mute()
 
 # set universal tempo and go

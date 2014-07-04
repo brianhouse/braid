@@ -1,4 +1,4 @@
-from random import randint, choice, random
+from random impor[ randint, choice, random
 
 class Scale(list):
 
@@ -17,9 +17,9 @@ class Scale(list):
         if degree > len(self):
             octave_shift += ((degree - 1) // len(self)) * 12
         degree = ((degree - 1) % len(self)) + 1
-        tone = list.__getitem__(self, degree - 1)
-        tone += octave_shift
-        return tone
+        semitone = list.__getitem__(self, degree - 1)
+        semitone += octave_shift
+        return semitone
 
     def rotate(self, steps):
         l = list(self)
@@ -27,6 +27,10 @@ class Scale(list):
         scale = [degree - scale[0] for degree in scale]
         scale = [(degree + 12) if degree < 0 else degree for degree in scale]
         return Scale(scale)
+
+    def add(self, degree, semitones):
+        semitone = self[degree] + semitones
+        # convert to degree
 
 
 K = 36
