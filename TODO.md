@@ -2,6 +2,8 @@ there is a structural issue with crosspatterns, sequences and the new syntax
 
 need @decorators for note wrappers
 
+how to connect directly to AU DLS Synth
+
 ## changes
 - volcabeats to volca
 - check for proper underscored variables (good to show intent in lack of documentation)

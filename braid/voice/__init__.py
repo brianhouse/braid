@@ -75,7 +75,7 @@ class Voice(object):
                     velocity *= self.velocity                      
                     self.play(pitch, velocity)
             self.last_step = step
-        elif params_changed and self.continuous and not self._mute:   
+        elif params_changed and self.continuous and not self._mute:   ## this will have to change?
             self.send_params()
 
     def play(self, pitch, velocity=None):
@@ -237,7 +237,7 @@ class Voice(object):
     # maybe separate scale and root internally, but make chord the accessor? how does chord tween again?
     @property
     def scale(self):
-        return self.chord[0] if self.chord is not None else None
+        return self.chord[1] if self.chord is not None else None
 
 
 class Sequence(list):

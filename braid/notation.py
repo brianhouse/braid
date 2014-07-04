@@ -1,16 +1,23 @@
-from random impor[ randint, choice, random
+from random import randint, choice, random
 
 class Scale(list):
+
+    """Allows for specifying scales by degree, up to one octave below and two octaves above"""
+    """Any number of scale steps is supported, but for MAJ: """
+    """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
+    """use the +- OCT convention otherwise"""
 
     def __init__(self, *args):
         list.__init__(self, *args)
 
     def __getitem__(self, degree):
-        assert(type(degree) == int or degree == R)
-        assert(degree != 0)
+        if not ((type(degree) == int or degree == R) and degree != 0):
+            raise ScaleError(degree)
         octave_shift = 0
         if degree == R:
             degree = list.__getitem__(self, randint(0, len(self) - 1))
+        if degree > len(self) * 2 or degree < 0 - len(self):
+            raise ScaleError(degree)
         if degree < 0:
             degree = abs(degree)
             octave_shift -= 12
@@ -28,10 +35,38 @@ class Scale(list):
         scale = [(degree + 12) if degree < 0 else degree for degree in scale]
         return Scale(scale)
 
-    def add(self, degree, semitones):
-        semitone = self[degree] + semitones
-        # convert to degree
+    def add(self, degree, steps):
+        """Just returns original degree if result is invalid, which may be surprising"""
+        if steps < 0:
+            return self.subtract(degree, abs(steps))
+        assert(steps > -1)
+        self[degree] # check validity
+        if degree > 0:
+            return degree if degree + steps > len(self) * 2 else degree + steps
+        else:
+            d = abs((degree - steps) + len(self)) if degree - steps < 0 - len(self) else degree - steps
+            return d if d < len(self) * 2 else degree
 
+    def subtract(self, degree, steps):
+        """Just returns original degree if result is invalid, which may be surprising"""
+        if steps < 0:
+            return self.add(degree, abs(steps))        
+        assert(steps > -1)
+        self[degree] # check validity
+        if degree < 0:
+            return degree if degree + steps > -1 else degree + steps
+        else:
+            if degree - steps < 0 - len(self):
+                return degree
+            else:
+                return (0 - len(self)) + abs(degree - steps) if degree - steps < 1 else degree - steps
+            
+
+class ScaleError(Exception):
+    def __init__(self, degree):
+        self.degree = degree
+    def __str__(self):
+        return repr("Illegal scale degree '%s'" % self.degree)
 
 K = 36
 S = 38
