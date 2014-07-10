@@ -29,7 +29,7 @@ class Voice(object):
         self._pattern = Pattern([0, 0])
         self._steps = self._pattern.resolve()        
         self._sequence = None
-        self.last_step = 1
+        self.prev_step = 1
         self.set(self._pattern)                                       
         for param, value in params.items():
             if hasattr(self, param):
@@ -60,21 +60,24 @@ class Voice(object):
             step = self._steps[self.index]
             if isinstance(step, collections.Callable):
                 step = step(self) if num_args(step) else step()
-            if not self._mute:
-                if step == Z:
-                    self.rest()
-                elif step == 0 or step is None:
-                    self.hold()
+            if step == Z:
+                self.rest()
+            elif step == 0 or step is None:
+                self.hold()
+            else:
+                if step == P:
+                    step = self.prev_step
+                if self.chord is None:
+                    pitch = step
                 else:
-                    if self.chord is None:
-                        pitch = step
-                    else:
-                        root, scale = self.chord
-                        pitch = root + scale[step]
-                    velocity = 1.0 - (random() * 0.05)
-                    velocity *= self.velocity                      
+                    root, scale = self.chord
+                    pitch = root + scale[step]
+                velocity = 1.0 - (random() * 0.05)
+                velocity *= self.velocity                      
+                if not self._mute:                
                     self.play(pitch, velocity)
-            self.last_step = step
+            if step != 0:        
+                self.prev_step = step
         elif params_changed and self.continuous and not self._mute:   ## this will have to change?
             self.send_params()
 
@@ -238,6 +241,10 @@ class Voice(object):
     @property
     def scale(self):
         return self.chord[1] if self.chord is not None else None
+
+    @property
+    def root(self):
+        return self.chord[0] if self.chord is not None else None
 
 
 class Sequence(list):
