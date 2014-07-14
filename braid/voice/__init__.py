@@ -15,29 +15,28 @@ class Voice(object):
         self.channel = channel
         self.index = -1
         self.tweens = {}
-        # self.cyclebacks = []
-        self.channel = channel
-        self.continuous = False  # set to true to send params outside of notes, ie panning or reverb
         self.cycles = 0.0
         self.tempo = 120
         self.chord = C, MAJ
         self.velocity = 1.0
         self.phase = 0.0
-        self.previous_pitch = 0
-        self._queue = deque()         # perform a series of functions on the next cycle                
-        self._mute = False
+        self.previous_pitch = 60
+        self.previous_step = 1        
+        self.controls = {}              # in the form {'attack': 54, 'decay': 53, 'cutoff': 52}
+        self.control_values = {}
         self._pattern = Pattern([0, 0])
         self._steps = self._pattern.resolve()        
         self._sequence = None
-        self.prev_step = 1
+        self._queue = deque()           # perform a series of functions on the next cycle                
+        self._mute = False
         self.set(self._pattern)                                       
         for param, value in params.items():
             if hasattr(self, param):
-                setattr(self, param, value)      
-        self.connect()
-
-    def connect(self):
-        midi_synth.connect()   
+                setattr(self, param, value)
+            else:
+                raise AttributeError("Voice has no property %s" % param)    
+        for control in self.controls: 
+            setattr(self, control, 0)
 
     def update(self, delta_t):
         params_changed = self._perform_tweens()
@@ -47,9 +46,6 @@ class Voice(object):
         if i != self.index:        
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
             if self.index == 0:
-                # self._perform_cyclebacks()
-                # while len(self.queue):
-                #     self.queue.popleft()(self)
                 if 'pattern' in self.tweens:
                     # this overrides sequencing         ## problem for new model
                     self._pattern = self.tweens['pattern'].get_value()                
@@ -58,49 +54,51 @@ class Voice(object):
                     self._pattern = self.sequence._shift(self)
                 self._steps = self.pattern.resolve()
             step = self._steps[self.index]
-            if isinstance(step, collections.Callable):
-                step = step(self) if num_args(step) else step()
-            if step == Z:
-                self.rest()
-            elif step == 0 or step is None:
-                self.hold()
-            else:
-                if step == P:
-                    step = self.prev_step
-                if self.chord is None:
-                    pitch = step
-                else:
-                    root, scale = self.chord
-                    pitch = root + scale[step]
-                velocity = 1.0 - (random() * 0.05)
-                velocity *= self.velocity                      
-                if not self._mute:                
-                    self.play(pitch, velocity)
-            if step != 0:        
-                self.prev_step = step
-        elif params_changed and self.continuous and not self._mute:   ## this will have to change?
-            self.send_params()
+            self.play(step)
+        if not self._mute:
+            for control in self.controls:
+                value = int(getattr(self, control))
+                if control not in self.control_values or value != self.control_values[control]:
+                    midi.send_control(self.channel, self.controls[control], value)
+                    self.control_values[control] = value
 
-    def play(self, pitch, velocity=None):
-        if velocity is None:
-            velocity = self.velocity
-        midi_synth.send_note(self.channel, self.previous_pitch, 0)
-        midi_synth.send_note(self.channel, pitch, int(velocity * 127))
-        self.previous_pitch = pitch
+    def play(self, step, velocity=None):
+        if isinstance(step, collections.Callable):
+            step = step(self) if num_args(step) else step()
+        if step == Z:
+            self.rest()
+        elif step == 0 or step is None:
+            self.hold()
+        else:
+            if step == P:
+                step = self.previous_step
+            if self.chord is None:
+                pitch = step
+            else:
+                root, scale = self.chord
+                pitch = root + scale[step]
+            velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
+            velocity *= self.velocity                      
+            if not self._mute:                
+                midi.send_note(self.channel, self.previous_pitch, 0)
+                midi.send_note(self.channel, pitch, int(velocity * 127))
+            self.previous_pitch = pitch
+        if step != 0:        
+            self.previous_step = step            
+
+    def play_at(self, t, step, velocity=None):
+        def p():
+            self.play(step, velocity)
+        driver.callback(t, p)        
 
     def hold(self):
         pass
 
     def rest(self):
-        midi_synth.send_note(self.channel, self.previous_pitch, 0)        
+        midi.send_note(self.channel, self.previous_pitch, 0)        
 
     def end(self):
         self.rest()
-
-    def send_params(self):
-        """ To facilitate abstraction"""
-        ## hmm
-        osc_synth.send('/braid/params', self.channel, self.velocity)
 
     def tween(self, param, start_value, target_value, duration, transition_f=linear):
         if not hasattr(self, param):    # can initialize properties with a tween, useful for reference values
@@ -149,28 +147,6 @@ class Voice(object):
                     else:
                         tween.finish_f()                           
         return changed
-
-    ## do we need this? maybe this just works on the driver
-    ## so sequencing is either relative with voices, or with cycles of the driver
-    ## or with tweening the driver
-    # def on_cycle(self, count, f):
-    #     """A a given number of cycles, call a function"""
-    #     self.cyclebacks.append((count, f))
-
-    # def clear_cycleback(self, clear_f):
-    #     for c, cycleback in enumerate(self.cyclebacks):
-    #         count, f = cycleback
-    #         if f == clear_f:
-    #             self.cyclebacks.remove(cycleback)
-
-    # def _perform_cyclebacks(self):
-    #     for c, cycleback in enumerate(self.callbacks):
-    #         count, f = cycleback
-    #         if count == 0:
-    #             f(self) if num_args(f) else f()
-    #             self.cyclebacks.remove(cycleback)
-    #         else:                
-    #             self.cyclebacks[c] = count - 1, f
 
     def mute(self, nop=True):   # nop allows direct callbacks
         self._mute = True
@@ -237,14 +213,13 @@ class Voice(object):
         self._sequence = Sequence(items)                
         return self._sequence
 
-    # maybe separate scale and root internally, but make chord the accessor? how does chord tween again?
     @property
-    def scale(self):
-        return self.chord[1] if self.chord is not None else None
+    def chord(self):
+        return self.root, self.scale
 
-    @property
-    def root(self):
-        return self.chord[0] if self.chord is not None else None
+    @chord.setter
+    def chord(self, value):
+        self.root, self.scale = value
 
 
 class Sequence(list):
@@ -319,12 +294,3 @@ def tween(param, start_value, target_value, duration, transition_f=linear):
     def f(voice):
         voice.tween(param, start_value, target_value, duration, transition_f=linear)
     return f
-
-
-from .serotonin import Serotonin
-from .meeblip import Meeblip
-from .swerve import Swerve
-from .volcabeats import Volcabeats
-
-
-

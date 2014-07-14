@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 
-import time, threading, queue, atexit
+import sys, time, threading, atexit
+try:
+    import queue
+except ImportError:
+    import Queue
 import rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from .util import osc, log
 
-class Driver(object):
+class Driver(threading.Thread):
 
     def __init__(self):
+        threading.Thread.__init__(self)
+        self.daemon = True
         self.voices = []
         self.grain = 0.01   # hundredths are nailed by Granu, w/o load. ms are ignored.
         self.t = 0.0
@@ -15,8 +21,18 @@ class Driver(object):
         self.callbacks = []
         self.running = True
 
-    def start(self, skip=0):
-        start_t = time.time() - skip
+    def play(self, skip=0, blocking=True):     ## this cant be threadsafe. but allows braid to integrate.
+        self.skip = skip
+        self.start()
+        if blocking:
+            try:
+                while self.running:
+                    time.sleep(0.1)
+            except KeyboardInterrupt:
+                pass
+
+    def run(self):
+        start_t = time.time() - self.skip
         last_cue = -1
         try:
             while self.running:
@@ -58,19 +74,13 @@ class Driver(object):
                 self.callbacks.remove(callback)
 
 
-class MidiSynth(threading.Thread):
+class Midi(threading.Thread):
 
     def __init__(self, port=0):
         threading.Thread.__init__(self)
-        self.daemon = True     
-        self.midi = None
-        self.queue = None      
-        self.port = port  
-
-    def connect(self):
-        if self.midi is not None:
-            return
         log.info("MIDI connecting...")
+        self.daemon = True
+        self.port = port  
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()
         available_ports = self.midi.get_ports()
@@ -79,12 +89,14 @@ class MidiSynth(threading.Thread):
         else:
             log.info("No MIDI outputs available")
         if available_ports:
+            if self.port >= len(available_ports):
+                log.info("Port index %s not available" % self.port)
+                exit()
             log.info("Opening %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
             log.info("Opening virtual output (\"Braid\")...")
             self.midi.open_virtual_port("Braid")   
-        time.sleep(0.5)         
         self.start()   
         log.info("MIDI started")                
 
@@ -101,7 +113,7 @@ class MidiSynth(threading.Thread):
                 control, value = control
                 if type(value) == bool:
                     value = 127 if value else 0
-                log.info("MIDI crtl %s %s %s" % (channel, control, value))                    
+                log.info("MIDI ctrl %s %s %s" % (channel, control, value))                    
                 channel -= 1
                 self.midi.send_message([CONTROLLER_CHANGE | (channel & 0xF), control, value])                
             if note is not None:
@@ -112,37 +124,6 @@ class MidiSynth(threading.Thread):
                     self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
                 else:
                     self.midi.send_message([NOTE_OFF | (channel & 0xF), pitch & 0x7F, 0])
-
-
-class OSCSynth(threading.Thread):
-    """Consume notes and send OSC"""
-
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.daemon = True
-        self.sender = None
-        self.queue = None
-
-    def connect(self):
-        if self.sender is not None:
-            return        
-        log.info("OSC connecting...")
-        self.sender = osc.Sender(5280)
-        self.queue = queue.Queue()
-        self.start()
-        log.info("OSC started")
-
-    def send(self, address, *params):
-        params = list(params)
-        for i, param in enumerate(params):
-            if type(param) == bool:
-                params[i] = 127 if param else 0
-        self.queue.put((address, params))
-
-    def run(self):
-        while True:
-            address, params = self.queue.get()            
-            self.sender.send(address, params)
 
 
 class OSCControl(object):
@@ -171,17 +152,13 @@ class OSCControl(object):
             if control in self.callbacks:
                 self.callbacks[control](value)
 
-
 def exit_handler():
     driver.stop()
 atexit.register(exit_handler)
 
-
-midi_synth = MidiSynth()
-osc_synth = OSCSynth()
-osc_control = OSCControl()
 driver = Driver()
-
+osc_control = OSCControl()
+midi = Midi(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 
 def tempo(value):
     for voice in driver.voices:
