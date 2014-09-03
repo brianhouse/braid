@@ -15,11 +15,6 @@ def linear(pos):
     pos = clamp(pos)
     return pos
 
-def power(pos):     ## questionable. handle gain/cross on the synth level.
-    pos = clamp(pos)
-    pos *= (0.5 * math.pi)
-    return math.sin(pos)
-
 def ease_in(pos):
     pos = clamp(pos)    
     return pos**3
@@ -85,10 +80,11 @@ def get_breakpoint_f(*breakpoints):     ## change name? essentially wavetable fu
 def get_signal_f(signal):
     signal = normalize(signal)
     def signal_f(pos):
-        index = int(pos * (len(signal) - 1))        ## this needs to interpolate
-        value = signal[index]
+        indexf = pos * (len(signal) - 1)
+        pos = indexf % 1.0
+        value = (signal[math.floor(indexf)] * (1.0 - pos)) + (signal[math.ceil(indexf)] * pos)
         return value
-    return signal_f
+    return signal_f    
 
 
 def normalize(signal):
