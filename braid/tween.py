@@ -1,3 +1,5 @@
+from .signal import linear
+
 class Tween(object):
 
     ### utility to calculate t from cycles?

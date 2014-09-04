@@ -17,11 +17,12 @@ class Driver(threading.Thread):
         self.voices = []
         self.grain = 0.01   # hundredths are nailed by Granu, w/o load. ms are ignored.
         self.t = 0.0
+        self.rate = 1.0
         self.previous_t = 0.0
         self.callbacks = []
         self.running = True
 
-    def play(self, skip=0, blocking=True):     ## this cant be threadsafe. but allows braid to integrate.
+    def play(self, skip=0, blocking=True):     ### this cant be threadsafe. but allows braid to integrate.
         self.skip = skip
         self.start()
         if blocking:
@@ -59,7 +60,7 @@ class Driver(threading.Thread):
         for voice in self.voices:
             voice.end()
         log.info("/////////////// END %d:%f ///////////////" % (self.t // 60.0, self.t % 60.0)) 
-        time.sleep(0.5) # for osc to finish        
+        time.sleep(0.1) # for osc to finish        
 
     def callback(self, duration, f):
         """After a given duration, call a function"""
@@ -161,9 +162,7 @@ osc_control = OSCControl()
 midi = Midi(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 
 def tempo(value):
-    for voice in driver.voices:
-        voice.tempo = value
-
-def rate(value):
-    for voice in driver.voices:
-        voice.rate = value
+    """Convert to a multiplier of 1hz cycles"""
+    value /= 60.0
+    value /= 4.0
+    driver.rate = value

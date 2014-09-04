@@ -1,4 +1,5 @@
-from pattern import Pattern
+import collections
+from .pattern import Pattern
 
 class Sequence(list):
 
@@ -12,8 +13,9 @@ class Sequence(list):
         self._index = 0
         self._repeat = False
         self._endwith_f = None
-        args = [self._check(item) for item in args[0]]
-        list.__init__(self, args)        
+        args = [self._check(item) for item in args]
+        list.__init__(self, args)   
+        return self     
 
     def append(self, item):
         list.append(self, self._check(item))
@@ -36,12 +38,12 @@ class Sequence(list):
             item = self[self._index]
             if isinstance(item, collections.Callable): # execute unlimited functions, but break on new pattern
                 item(voice)        
-            self._index = self._index + 1
+            self._index += 1
             if self._index == len(self):
                 if type(self._repeat) is int:
                     self._repeat -= 1
                 if not self._repeat:
-                    voice.sequence.set([0, 0])
+                    voice.sequence.set([0])
                     if self._endwith_f is not None:
                         if num_args(self._endwith_f) > 0:
                             self._endwith_f(voice)

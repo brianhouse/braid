@@ -1,7 +1,12 @@
+import collections
 from .attribute import Attribute
 from .sequence import Sequence
+from .core import driver, midi
+from .notation import *
+from .pattern import Pattern
+from .util import num_args
 
-class Voice(Attribute):
+class Voice(object):
 
     voices = driver.voices
 
@@ -13,32 +18,33 @@ class Voice(Attribute):
         self.chord = Attribute(self, (C, MAJ))
         self.mute = Attribute(self, False)
         self.phase = Attribute(self, 0.0)
-        self.rate = Attribute(self, 120)
+        self.rate = Attribute(self, 1.0)
         self.velocity = Attribute(self, 1.0)
 
-        self.pattern = Pattern([0, 0])                
-        self.sequence = Sequence()                
+        self.pattern = None
+        self.sequence = Sequence([0])
 
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
         self.controls = {} if 'controls' not in params else params['controls'] 
         self.control_values = {}
         for control in self.controls: 
-            setattr(self, control, Attribute(0))
+            setattr(self, control, Attribute(self, 0))
+
+        # private reference variables
+        self._cycles = 0.0
+        self._last_edge = 0
+        self._index = -1      
+        self._steps = [0]
+        self._previous_pitch = 60
+        self._previous_step = 1
 
         # set passed defaults
         for param, value in params.items():
             if hasattr(self, param):
-                setattr(self, param, value)
+                setattr(self, param, Attribute(self, value))
             else:
                 raise AttributeError("Cannot set property %s in constructor" % param)    
-
-        # private reference variables
-        self._cycles = 0.0
-        self._index = -1      
-        self._steps = self.pattern.resolve()
-        self._previous_pitch = 60
-        self._previous_step = 1
 
 
     def update(self, delta_t):
@@ -49,19 +55,20 @@ class Voice(Attribute):
             attribute.tween.update()
 
         # calculate step
-        self._cycles += delta_t * self.rate.value
+        self._cycles += delta_t * self.rate.value * driver.rate
         p = (self._cycles + self.phase.value) % 1.0        
         i = int(p * len(self._steps))
-        if i != self._index:        
+        if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge):    # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                if self.pattern.tween is not None: # tweening patterns override sequence                
+                if self.pattern is not None and self.pattern.tween is not None: # tweening patterns override sequence                
                     self.pattern.tween.update()
                 else:
                     self.pattern = self.sequence._shift(self)
                 self._steps = self.pattern.resolve()
-            step = self._steps[self.index]
+            step = self._steps[self._index]
             self.play(step)
+        self._last_edge = int(self._cycles)
 
         # check if MIDI attributes have changed, and send if so
         if not self.mute.value:
@@ -86,11 +93,11 @@ class Voice(Attribute):
             if self.chord is None:
                 pitch = step
             else:
-                root, scale = self.chord
+                root, scale = self.chord.value
                 pitch = root + scale[step]
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity.value
-            if not self._mute:             
+            if not self.mute.value:
                 midi.send_note(self.channel.value, self._previous_pitch, 0)
                 midi.send_note(self.channel.value, pitch, int(velocity * 127))
             self._previous_pitch = pitch
@@ -114,3 +121,7 @@ class Voice(Attribute):
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
+
+    def set(self, sequence):
+        """Convenience method, synonym for voice.sequence.set"""
+        return self.sequence.set(sequence)

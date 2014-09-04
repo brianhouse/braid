@@ -1,7 +1,5 @@
 import time, math
 from random import random
-from .pattern import Pattern, blend
-from .core import *
 
 def clamp(pos):
     if pos > 1.0:
@@ -41,16 +39,16 @@ def ease_out_in(pos):
         return 1.0 - (0.5 * pos**3 + 0.5)
 
 
-def get_breakpoint_f(*breakpoints):     ## change name? essentially wavetable function
+def signal_from_breakpoints(*breakpoints):     ## change name? essentially wavetable function
     """ eg:
-        get_breakpoint_f(   [0, 0],
-                            [2, 1, linear], 
-                            [6, 2, ease_out], 
-                            [7, 0],
-                            [12, 3, ease_in], 
-                            [14, 2, ease_out], 
-                            [15, 0, ease_in_out]
-                            )
+        signal_from_breakpoints(    [0, 0],
+                                    [2, 1, linear], 
+                                    [6, 2, ease_out], 
+                                    [7, 0],
+                                    [12, 3, ease_in], 
+                                    [14, 2, ease_out], 
+                                    [15, 0, ease_in_out]
+                                    )
     """
     min_x = min(breakpoints, key=lambda bp: bp[0])[0]
     domain = max(breakpoints, key=lambda bp: bp[0])[0] - min_x
@@ -77,7 +75,7 @@ def get_breakpoint_f(*breakpoints):     ## change name? essentially wavetable fu
     return breakpoint_f
 
 
-def get_signal_f(signal):
+def signal_from_timeseries(signal):
     signal = normalize(signal)
     def signal_f(pos):
         indexf = pos * (len(signal) - 1)

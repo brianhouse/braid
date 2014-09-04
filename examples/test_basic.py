@@ -2,7 +2,11 @@
 
 from braid import *
 
-v1 = Voice(1, tempo=120, chord=(C, DOM))
-v1.set([1, 3, 5, 7]).repeat()
+tempo(100)
 
-driver.start()
+v1 = Voice(1, rate=1, chord=(C, DOM))
+def done():
+    print("done!")
+v1.set([1, 3, 5, 7]).endwith(done)
+
+driver.play()

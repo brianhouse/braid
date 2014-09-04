@@ -1,3 +1,5 @@
+from .signal import linear
+
 class Attribute(object):
 
     def __init__(self, voice, value):
