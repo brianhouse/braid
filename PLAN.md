@@ -108,3 +108,10 @@ repeat should take a count
 does endwith fire with each repeat or no?
 
 then absolute callbacks with driver
+
+
+////
+
+sequencing --
+
+write everything as functions, then use endwith to invoke
