@@ -46,7 +46,7 @@ class Voice(object):
         if i != self.index:        
             self.index = (self.index + 1) % len(self._steps) # dont skip steps
             if self.index == 0:
-                if 'pattern' in self.tweens:
+                if self._pattern.tween is not None:
                     # this overrides sequencing         ## problem for new model
                     self._pattern = self.tweens['pattern'].get_value()                
                 # if len(self.sequence):

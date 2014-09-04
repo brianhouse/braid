@@ -1,10 +1,10 @@
-""" Pattern is just a list (of whatever) that can be specified in compacted form
-    ... with the addition of the Markov expansion of tuples on calling resolve
-"""
-
 from random import random
 
 class Pattern(list):
+
+    """ Pattern is just a list (of whatever) that can be specified in compacted form
+        ... with the addition of the Markov expansion of tuples on calling resolve
+    """
     
     def __init__(self, value=[0]):
         list.__init__(self, value)

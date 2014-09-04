@@ -5,20 +5,14 @@ need @decorators for note wrappers
 how to connect directly to AU DLS Synth
 
 ## changes
-- volcabeats to volca
-- check for proper underscored variables (good to show intent in lack of documentation)
 - tweens timed via cycles or t is an issue (floats or ints)
 - driver.on_t
 - note that sharing sequences among voices will result in bad shit v2.set(v1.sequence) -- need copy function
-- implement MIDI
-- signal_f needs to interpolate between indexes to avoid stairstepping at low source res (resampling)
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
 - lilypond should take a template filename, and fill in the score data, and auto-run lilypond
 - lilypond should be integrated, not a separate voice
 - more useful for resolve to not have a weight, but include arbitrary possibilities? or if the third term is a float, it's a weight, otherwise arbitrary possibilities
-- how often would you want to repeat a tween without tweaking (or reversing) values?
-- hard channel assignments for voices is maybe something iffy with serotonin -- should be settable per note?
 
 
 ## bugs
