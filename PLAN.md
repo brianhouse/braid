@@ -22,7 +22,7 @@ Voice(Attribute)
 
 Tween
 
-    repeat()
+    cycle()
     endwith()
 
     update()        # needs to return the equiv of get_value()
@@ -35,7 +35,6 @@ Sequence(list)
 
     repeat()
     endwith()
-    cycle() -- repeat, but reverses itself
 
 
 Pattern(Attribute)
@@ -50,6 +49,7 @@ and is there access to pattern?
 v.pattern.endswith(f)   <-- take multiple functions?
 ah, look at the repeat below... repeat takes endwith
 
+what about reference tweens?
 
 //////
 
@@ -63,8 +63,8 @@ v.sequence.set([1, 1, 1, 1]).repeat().endwith("measure").tween(Pattern([1, 0, 1]
 
 works. or:
 
-p1 = Pattern([1, 1, 1, 1]).repeat().endwith("measure")
-p2 = Pattern([1, 0, 1]).endwith("new pattern").repeat()
+p1 = Sequence([1, 1, 1, 1]).repeat().endwith("measure")
+p2 = Sequence([1, 0, 1]).endwith("new pattern").repeat()
 v.sequence.set(p1).tween(p2, 4.0, a_signal).endwith("tween").cycle()
 
 

@@ -1,27 +1,46 @@
 class Tween(object):
 
-    def __init__(self, start_value, target_value, duration, signal_f, repeat=False):    ## would be great to kill start_value and repeat
-        self.start_value = start_value
+    ### utility to calculate t from cycles?
+
+    def __init__(self, attribute, target_value, duration, signal_f):
+        self.attribute = attribute
+        self.start_value = attribute.value
         self.target_value = target_value
         self.start_t = driver.t
-        self.duration = duration        
+        self.duration = duration
         self.signal_f = signal_f
         assert callable(self.signal_f)
         self.finished = False if self.duration > 0.0 else True
-        # self.repeat = repeat
-        self.finish_f = None
-        return self
-        
-    def finish(self, f):
-        self.finish_f = f
+        self._repeat = False
+        self._endwith_f = None
         return self
 
-    def restart(self):
-        self.start_t = driver.t
-        self.finished = False if self.duration > 0.0 else True        
+    def update(self):
+        self.attribute.value = self.get_value()
+        if self.finished:
+            if type(self._repeat) is int:
+                self._repeat -= 1
+                self.attribute.tween(start_value, self.duration, self.signal_f) # flipped
+            if not self._repeat:
+                if self._endwith_f is not None:
+                    if num_args(tween._endwith_f) > 1:
+                        tween._endwith_f(self.attribute.voice, self)
+                    elif num_args(tween._endwith_f) > 0:
+                        tween._endwith_f(self.attribute.voice)
+                    else:
+                        tween._endwith_f()                                                   
+
+    def repeat(self, n=True):
+        self._repeat = n
+        return self
+
+    def endwith(self, f):
+        assert isinstance(f, collections.Callable)
+        self._endwith_f = f
+        return self
 
     @property
-    def position(self):     # can reference this to see where we are in the tween
+    def position(self): # can reference this to see where we are in the tween
         position = (driver.t - self.start_t) / self.duration if self.duration > 0 else 1.0
         if position >= 1.0:
             position = 1.0
@@ -29,7 +48,7 @@ class Tween(object):
         return position        
 
     @property
-    def transition_position(self):  # can reference this to see where we are on the transition function
+    def signal_position(self): # can reference this to see where we are on the signal function
         return self.signal_f(self.position)
 
     def get_value(self):            

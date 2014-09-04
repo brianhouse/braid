@@ -38,19 +38,21 @@ class Sequence(list):
                 item(voice)        
             self._index = self._index + 1
             if self._index == len(self):
+                if type(self._repeat) is int:
+                    self._repeat -= 1
                 if not self._repeat:
-                    voice.set([0, 0])
-                if self._endwith_f is not None:
-                    if num_args(self._endwith_f) > 0:
-                        self._endwith_f(voice)
-                    else:
-                        self._endwith_f()
+                    voice.sequence.set([0, 0])
+                    if self._endwith_f is not None:
+                        if num_args(self._endwith_f) > 0:
+                            self._endwith_f(voice)
+                        else:
+                            self._endwith_f()
                 self._index = 0
             if isinstance(item, Pattern):
                 return item
 
-    def repeat(self):
-        self._repeat = True
+    def repeat(self, n=True):
+        self._repeat = n
         return self
 
     def endwith(self, f):

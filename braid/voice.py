@@ -6,15 +6,16 @@ class Voice(Attribute):
     voices = driver.voices
 
     def __init__(self, channel, **params):
-        self.channel = channel
-
+        Voice.voices.append(self)        
+        
         # built-in attributes
-        self.chord = Attribute((C, MAJ))
-        self.mute = Attribute(False)
-        self.phase = Attribute(0.0)
-        self.rate = Attribute(120)
+        self.channel = Attribute(self, channel)
+        self.chord = Attribute(self, (C, MAJ))
+        self.mute = Attribute(self, False)
+        self.phase = Attribute(self, 0.0)
+        self.rate = Attribute(self, 120)
         self.sequence = Sequence()        
-        self.velocity = Attribute(1.0)
+        self.velocity = Attribute(self, 1.0)
 
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
@@ -47,13 +48,12 @@ class Voice(Attribute):
             attribute.tween.update()
 
         # calculate step
-        self._cycles += delta_t * self.rate
-        p = (self._cycles + self.phase) % 1.0        
+        self._cycles += delta_t * self.rate.value
+        p = (self._cycles + self.phase.value) % 1.0        
         i = int(p * len(self._steps))
         if i != self._index:        
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                ### need some endwith love? or repeat love? where does that come in?
                 if self._pattern.tween is not None: # tweening patterns override sequence                
                     self._pattern.tween.update()
                 else:
@@ -63,7 +63,7 @@ class Voice(Attribute):
             self.play(step)
 
         # check if MIDI attributes have changed, and send if so
-        if not self.mute:
+        if not self.mute.value:
             for control in self.controls:
                 value = int(getattr(self, control))
                 if control not in self.control_values or value != self.control_values[control]:
@@ -88,10 +88,10 @@ class Voice(Attribute):
                 root, scale = self.chord
                 pitch = root + scale[step]
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
-            velocity *= self.velocity                      
-            if not self._mute:                
-                midi.send_note(self.channel, self._previous_pitch, 0)
-                midi.send_note(self.channel, pitch, int(velocity * 127))
+            velocity *= self.velocity.value
+            if not self._mute:             
+                midi.send_note(self.channel.value, self._previous_pitch, 0)
+                midi.send_note(self.channel.value, pitch, int(velocity * 127))
             self._previous_pitch = pitch
         if step != 0:        
             self._previous_step = step            
@@ -108,7 +108,7 @@ class Voice(Attribute):
 
     def rest(self):
         """Send a MIDI off"""
-        midi.send_note(self.channel, self._previous_pitch, 0)        
+        midi.send_note(self.channel.value, self._previous_pitch, 0)        
 
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
