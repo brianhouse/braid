@@ -14,8 +14,10 @@ class Voice(Attribute):
         self.mute = Attribute(self, False)
         self.phase = Attribute(self, 0.0)
         self.rate = Attribute(self, 120)
-        self.sequence = Sequence()        
         self.velocity = Attribute(self, 1.0)
+
+        self.pattern = Pattern([0, 0])                
+        self.sequence = Sequence()                
 
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
@@ -34,8 +36,7 @@ class Voice(Attribute):
         # private reference variables
         self._cycles = 0.0
         self._index = -1      
-        self._pattern = Pattern([0, 0])
-        self._steps = self._pattern.resolve()
+        self._steps = self.pattern.resolve()
         self._previous_pitch = 60
         self._previous_step = 1
 
@@ -54,10 +55,10 @@ class Voice(Attribute):
         if i != self._index:        
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                if self._pattern.tween is not None: # tweening patterns override sequence                
-                    self._pattern.tween.update()
+                if self.pattern.tween is not None: # tweening patterns override sequence                
+                    self.pattern.tween.update()
                 else:
-                    self._pattern = self.sequence._shift(self)
+                    self.pattern = self.sequence._shift(self)
                 self._steps = self.pattern.resolve()
             step = self._steps[self.index]
             self.play(step)
