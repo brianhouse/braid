@@ -1,7 +1,7 @@
 import collections
 from .attribute import Attribute
 from .sequence import Sequence
-from .core import driver, midi
+from .core import driver, midi_out
 from .notation import *
 from .pattern import Pattern
 from .util import num_args

@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 
-import sys, time, threading, atexit
-try:
-    import queue
-except ImportError:
-    import Queue
-import rtmidi
+import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
-from .util import osc, log
+from .util import log
 
 class Driver(threading.Thread):
 
@@ -41,7 +36,7 @@ class Driver(threading.Thread):
                 if int(self.t) // 15 != last_cue:
                     last_cue = int(self.t) // 15
                     log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-                osc_control.perform_callbacks()
+                # osc_control.perform_callbacks()
                 self._perform_callbacks()
                 if not self.running:
                     break
@@ -79,11 +74,10 @@ class MidiOut(threading.Thread):
 
     def __init__(self, port=0):
         threading.Thread.__init__(self)
-        log.info("MIDI connecting...")
         self.daemon = True
         self.port = port  
         self.queue = queue.Queue()
-        self.midi = rtmidi.MidiOut()
+        self.midi = rtmidi.MidiOut()            
         available_ports = self.midi.get_ports()
         if len(available_ports):
             log.info("MIDI outputs available: %s" % available_ports)
@@ -93,13 +87,12 @@ class MidiOut(threading.Thread):
             if self.port >= len(available_ports):
                 log.info("Port index %s not available" % self.port)
                 exit()
-            log.info("Opening %s" % available_ports[self.port])
+            log.info("MIDI OUT opening %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
             log.info("Opening virtual output (\"Braid\")...")
             self.midi.open_virtual_port("Braid")   
         self.start()   
-        log.info("MIDI started")                
 
     def send_control(self, channel, control, value):
         self.queue.put((channel, (control, value), None))
@@ -127,38 +120,54 @@ class MidiOut(threading.Thread):
                     self.midi.send_message([NOTE_OFF | (channel & 0xF), pitch & 0x7F, 0])
 
 
-class OSCControl(object):
-    """Receive OSC and perform callbacks"""
+class MidiIn(threading.Thread):
 
-    def __init__(self):
-        self.callbacks = {}
+    def __init__(self, port=0):
+        threading.Thread.__init__(self)
+        self.daemon = True
+        self.port = port  
         self.queue = queue.Queue()
-        def message_handler(location, address, data):
-            if address != '/braid/control':
-                return
-            control, value = data
-            self.queue.put((control, value))
-        self.receiver = osc.Receiver(5281, message_handler)
+        self.midi = rtmidi.MidiIn()
+        available_ports = self.midi.get_ports()
+        if len(available_ports):
+            if self.port >= len(available_ports):
+                log.info("Port index %s not available" % self.port)
+                exit()
+            log.info("MIDI IN  opening %s" % available_ports[self.port])
+            self.midi.open_port(self.port)
+        else:
+            log.info("No MIDI inputs available")
+            return
+        self.start()           
 
-    def callback(self, control, f):
-        """For a given control message, call a function"""
-        self.callbacks[control] = f
-
-    def perform_callbacks(self):
+    def run(self):
+        def receive_control(event, data=None):
+            message, deltatime = event
+            nop, control, value = message
+            print(control, value)
+        self.midi.set_callback(receive_control)
         while True:
-            try:
-                control, value = self.queue.get_nowait()
-            except queue.Empty:
-                return
-            if control in self.callbacks:
-                self.callbacks[control](value)
+            time.sleep(1)
+
+    # def perform_callbacks(self):
+    #     while True:
+    #         try:
+    #             control, value = self.queue.get_nowait()
+    #         except queue.Empty:
+    #             return
+    #         if control in self.callbacks:
+    #             self.callbacks[control](value)
+
+    # def callback(self, control, f):
+    #     """For a given control message, call a function"""
+    #     self.callbacks[control] = f                
+
 
 def exit_handler():
     driver.stop()
 atexit.register(exit_handler)
 
 driver = Driver()
-osc_control = OSCControl()
 midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
 

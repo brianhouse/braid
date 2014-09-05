@@ -122,3 +122,10 @@ future
 
 instead of log output, have a curses output showing the parameters of each voice
 ~sick~
+
+get rid of util/log, config
+just use prints with timing information
+well, and then curses
+config isnt being used for anything
+
+if I can get rid of the controller folder to -- then we are flat lean and beautiful.
