@@ -12,10 +12,7 @@ pattern_4 = 5, 3, 5, (3, [2, 2]), 5, 3, (3, [2, 2]), 3
 
 v1.set(pattern_1).repeat()
 
-# nanovector.init(v1)
-# nanovector.vectors[1][v1] = {'pattern': (pattern_1, pattern_2)}
-# nanovector.vectors[2][v1] = {'pattern': (pattern_2, pattern_3)}
-# nanovector.vectors[3][v1] = {'pattern': (pattern_3, pattern_4)}
+v1.rate.control(0, 1.0, 4.0)
 
 driver.play()
 

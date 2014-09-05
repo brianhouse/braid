@@ -129,3 +129,5 @@ well, and then curses
 config isnt being used for anything
 
 if I can get rid of the controller folder to -- then we are flat lean and beautiful.
+
+but maybe config can be used for setting up synth and controller mappings. that would be hot.

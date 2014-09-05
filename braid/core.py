@@ -36,7 +36,7 @@ class Driver(threading.Thread):
                 if int(self.t) // 15 != last_cue:
                     last_cue = int(self.t) // 15
                     log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-                # osc_control.perform_callbacks()
+                midi_in.perform_callbacks()
                 self._perform_callbacks()
                 if not self.running:
                     break
@@ -128,6 +128,7 @@ class MidiIn(threading.Thread):
         self.port = port  
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiIn()
+        self.callbacks = {}
         available_ports = self.midi.get_ports()
         if len(available_ports):
             if self.port >= len(available_ports):
@@ -144,23 +145,24 @@ class MidiIn(threading.Thread):
         def receive_control(event, data=None):
             message, deltatime = event
             nop, control, value = message
-            print(control, value)
+            # print(control, value)
+            self.queue.put((control, value / 127.0))
         self.midi.set_callback(receive_control)
         while True:
             time.sleep(1)
 
-    # def perform_callbacks(self):
-    #     while True:
-    #         try:
-    #             control, value = self.queue.get_nowait()
-    #         except queue.Empty:
-    #             return
-    #         if control in self.callbacks:
-    #             self.callbacks[control](value)
+    def perform_callbacks(self):
+        while True:
+            try:
+                control, value = self.queue.get_nowait()
+            except queue.Empty:
+                return
+            if control in self.callbacks:
+                self.callbacks[control](value)
 
-    # def callback(self, control, f):
-    #     """For a given control message, call a function"""
-    #     self.callbacks[control] = f                
+    def callback(self, control, f):
+        """For a given control message, call a function"""
+        self.callbacks[control] = f                
 
 
 def exit_handler():

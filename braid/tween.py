@@ -12,7 +12,7 @@ class Tween(object):
         self.running = False
 
     def __call__(self, target_value, duration, signal_f=linear):
-        print("made Tween on " % self.attribute)
+        print("made Tween on %s" % self.attribute)
         from .pattern import Pattern # avoid circular
         self.start_value = self.attribute.value if not isinstance(self.attribute, Pattern) else self.attribute
         self.target_value = target_value
@@ -29,7 +29,7 @@ class Tween(object):
     def update(self):
         if not self.running:
             return
-        print('updating')            
+        # print('updating')            
         self.attribute.value = self.get_value()
         if self.finished:
             self.running = False
