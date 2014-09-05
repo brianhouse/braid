@@ -1,5 +1,5 @@
 from random import random
-from .tween import *
+from .tween import PatternTween
 
 class Pattern(list):
 

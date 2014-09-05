@@ -18,3 +18,6 @@ class Attribute(object):
     def set(self, value):
         self.value = value
         return self
+
+    # def control(self, controller, left_value, right_value):
+        

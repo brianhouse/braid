@@ -75,7 +75,7 @@ class Driver(threading.Thread):
                 self.callbacks.remove(callback)
 
 
-class Midi(threading.Thread):
+class MidiOut(threading.Thread):
 
     def __init__(self, port=0):
         threading.Thread.__init__(self)
@@ -159,7 +159,8 @@ atexit.register(exit_handler)
 
 driver = Driver()
 osc_control = OSCControl()
-midi = Midi(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
+midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
+midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
 
 def tempo(value):
     """Convert to a multiplier of 1hz cycles"""

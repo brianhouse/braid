@@ -61,7 +61,7 @@ class Voice(object):
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge):    # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                if self.pattern is not None and self.pattern.tween is not None: # tweening patterns override sequence                
+                if self.pattern is not None and self.pattern.tween is not None and self.pattern.tween.running: # tweening patterns override sequence until tween is complete                
                     self.pattern.tween.update()
                 else:
                     self.pattern = self.sequence._shift(self)
@@ -75,7 +75,7 @@ class Voice(object):
             for control in self.controls:
                 value = int(getattr(self, control))
                 if control not in self.control_values or value != self.control_values[control]:
-                    midi.send_control(self.channel, self.controls[control], value)
+                    midi_out.send_control(self.channel, self.controls[control], value)
                     self.control_values[control] = value
 
 
@@ -98,8 +98,8 @@ class Voice(object):
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity.value
             if not self.mute.value:
-                midi.send_note(self.channel.value, self._previous_pitch, 0)
-                midi.send_note(self.channel.value, pitch, int(velocity * 127))
+                midi_out.send_note(self.channel.value, self._previous_pitch, 0)
+                midi_out.send_note(self.channel.value, pitch, int(velocity * 127))
             self._previous_pitch = pitch
         if step != 0:        
             self._previous_step = step            
@@ -116,7 +116,7 @@ class Voice(object):
 
     def rest(self):
         """Send a MIDI off"""
-        midi.send_note(self.channel.value, self._previous_pitch, 0)        
+        midi_out.send_note(self.channel.value, self._previous_pitch, 0)        
 
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""

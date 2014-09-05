@@ -1,5 +1,8 @@
 from random import random
 from braid import *
+from braid.util import log
+
+### this whole thing is a bit wack
 
 MAX_DURATION = 40   # in cycles
 
@@ -35,10 +38,16 @@ def trigger_f(v):
                         target_value.append((width * (right_value[i] - left_value[i])) + left_value[i])
                 else:
                     target_value = left_value if random() > width else right_value
-                def set_sequence(voice):
-                    print("SET_SEQUENCE")
-                    voice.set(voice._pattern).repeat()   # allows a CrossPattern to persist in the sequence after the tween ends
-                voice.tween(param, None, target_value, vector['duration']).finish(set_sequence)
+                attribute = getattr(voice, param)
+                print("Adding tween ", type(attribute), attribute, voice)
+                attribute.tween(target_value, vector['duration'])
+                if param == 'pattern':
+                    def done():
+                        print("voice", voice)
+                        print('done')                        
+                        voice.set(voice.pattern).repeat()   ## why is voice sometimes a string?
+                    attribute.tween.endwith(done)
+                    # attribute.tween.endwith(lambda: voice.set(voice.pattern).repeat()) # allows a CrossPattern to persist in the sequence after the tween ends                    
     return f
 
 
@@ -46,7 +55,7 @@ def init(*voices):
     for i in range(1, 10):
         vectors[i] = {voice: {} for voice in voices}
         vectors[i].update({'width': 0, 'duration': 0})
-        osc_control.callback("%s_width" % i, width_f(i))
-        osc_control.callback("%s_fade" % i, fade_f(i))
-        osc_control.callback("%s_trigger" % i, trigger_f(i))
+        core.osc_control.callback("%s_width" % i, width_f(i))
+        core.osc_control.callback("%s_fade" % i, fade_f(i))
+        core.osc_control.callback("%s_trigger" % i, trigger_f(i))
 

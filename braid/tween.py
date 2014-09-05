@@ -9,10 +9,12 @@ class Tween(object):
 
     def __init__(self, attribute):
         self.attribute = attribute
-        self._running = False
+        self.running = False
 
     def __call__(self, target_value, duration, signal_f=linear):
-        self.start_value = self.attribute.value
+        print("made Tween on " % self.attribute)
+        from .pattern import Pattern # avoid circular
+        self.start_value = self.attribute.value if not isinstance(self.attribute, Pattern) else self.attribute
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration
@@ -21,24 +23,25 @@ class Tween(object):
         self.finished = False if self.duration > 0.0 else True
         self._repeat = False
         self._endwith_f = None
-        self._running = True
+        self.running = True
         return self
 
     def update(self):
-        if not self._running:
+        if not self.running:
             return
+        print('updating')            
         self.attribute.value = self.get_value()
         if self.finished:
-            self._running = False
+            self.running = False
             if type(self._repeat) is int:
                 self._repeat -= 1
             if self._repeat:
                 self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat).endwith(self._endwith_f) # flipped
             else:
                 if self._endwith_f is not None:
-                    if num_args(self._endwith_f) > 1:
+                    if num_args(self._endwith_f) > 1 and hasattr(self.attribute, 'voice'): # necessary for Pattern
                         self._endwith_f(self.attribute.voice, self)
-                    elif num_args(self._endwith_f) > 0:
+                    elif num_args(self._endwith_f) > 0 and hasattr(self.attribute, 'voice'):
                         self._endwith_f(self.attribute.voice)
                     else:
                         self._endwith_f()                                                   
@@ -102,6 +105,7 @@ class PatternTween(Tween):
         """ This only runs when a pattern is refreshed, not every step; 
             resolve steps for start and target, blend them, and return the result as a pattern
         """
+        from .pattern import blend # avoid circular        
         if position <= 0.0:
             return self.start_value
         if position >= 1.0:
@@ -139,5 +143,3 @@ def plot(bp_f, color="red"):
 
 def show_plots():
     Plotter.show_plots()
-
-
