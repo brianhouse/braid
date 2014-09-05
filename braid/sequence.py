@@ -1,5 +1,6 @@
 import collections
 from .pattern import Pattern
+from .util import num_args
 
 class Sequence(list):
 
@@ -35,21 +36,22 @@ class Sequence(list):
 
     def _shift(self, voice):
         while True:
+            if self._index == len(self):
+                self._index = 0
+                if type(self._repeat) is int:
+                    self._repeat -= 1
+                if not self._repeat:
+                    endwith_f = self._endwith_f
+                    voice.sequence.set([0])
+                    if endwith_f is not None:
+                        if num_args(endwith_f) > 0:
+                            endwith_f(voice)
+                        else:
+                            endwith_f()
             item = self[self._index]
             if isinstance(item, collections.Callable): # execute unlimited functions, but break on new pattern
                 item(voice)        
             self._index += 1
-            if self._index == len(self):
-                if type(self._repeat) is int:
-                    self._repeat -= 1
-                if not self._repeat:
-                    voice.sequence.set([0])
-                    if self._endwith_f is not None:
-                        if num_args(self._endwith_f) > 0:
-                            self._endwith_f(voice)
-                        else:
-                            self._endwith_f()
-                self._index = 0
             if isinstance(item, Pattern):
                 return item
 
