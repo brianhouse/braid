@@ -1,11 +1,11 @@
-from .signal import linear
+from .tween import ContinuousTween, DiscreteTween
 
 class Attribute(object):
 
     def __init__(self, voice, value):
         self.voice = voice
         self.value = value
-        self._tween = None
+        self.tween = ContinuousTween(self) if type(self.value) == int or type(self.value) == float else DiscreteTween(self)
 
     @property
     def value(self):
@@ -18,16 +18,3 @@ class Attribute(object):
     def set(self, value):
         self.value = value
         return self
-
-    @property
-    def tween(self):
-        return self._tween
-
-    @tween.setter
-    def tween(self, target_value, duration, signal_f=linear):
-        if type(self.value) == int or type(self.value) == float:
-            self._tween = ContinuousTween(self, target_value, duration, signal_f)
-        else:
-            self._tween = DiscreteTween(self, target_value, duration, signal_f)
-        return self._tween
-

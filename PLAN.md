@@ -115,3 +115,10 @@ then absolute callbacks with driver
 sequencing --
 
 write everything as functions, then use endwith to invoke
+
+////
+
+future
+
+instead of log output, have a curses output showing the parameters of each voice
+~sick~

@@ -1,12 +1,18 @@
+import collections
 from .signal import linear
+from .core import driver
+from .util import num_args
 
 class Tween(object):
 
     ### utility to calculate t from cycles?
 
-    def __init__(self, attribute, target_value, duration, signal_f):
+    def __init__(self, attribute):
         self.attribute = attribute
-        self.start_value = attribute.value
+        self._running = False
+
+    def __call__(self, target_value, duration, signal_f=linear):
+        self.start_value = self.attribute.value
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration
@@ -15,22 +21,27 @@ class Tween(object):
         self.finished = False if self.duration > 0.0 else True
         self._repeat = False
         self._endwith_f = None
+        self._running = True
         return self
 
     def update(self):
+        if not self._running:
+            return
         self.attribute.value = self.get_value()
         if self.finished:
+            self._running = False
             if type(self._repeat) is int:
                 self._repeat -= 1
-                self.attribute.tween(start_value, self.duration, self.signal_f) # flipped
-            if not self._repeat:
+            if self._repeat:
+                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat).endwith(self._endwith_f) # flipped
+            else:
                 if self._endwith_f is not None:
-                    if num_args(tween._endwith_f) > 1:
-                        tween._endwith_f(self.attribute.voice, self)
-                    elif num_args(tween._endwith_f) > 0:
-                        tween._endwith_f(self.attribute.voice)
+                    if num_args(self._endwith_f) > 1:
+                        self._endwith_f(self.attribute.voice, self)
+                    elif num_args(self._endwith_f) > 0:
+                        self._endwith_f(self.attribute.voice)
                     else:
-                        tween._endwith_f()                                                   
+                        self._endwith_f()                                                   
 
     def repeat(self, n=True):
         self._repeat = n
@@ -54,7 +65,7 @@ class Tween(object):
         return self.signal_f(self.position)
 
     def get_value(self):            
-        return self.calc_value(self.transition_position)
+        return self.calc_value(self.signal_position)
 
     def calc_value(self, position):
         return None

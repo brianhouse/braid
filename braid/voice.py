@@ -51,7 +51,7 @@ class Voice(object):
         """Run each tick and update the state of the Voice and all its attributes"""
 
         # update tweens in all attributes
-        for attribute in (attribute for attribute in dir(self) if isinstance(attribute, Attribute)):
+        for attribute in (getattr(self, attribute) for attribute in dir(self) if isinstance(getattr(self, attribute), Attribute)):
             attribute.tween.update()
 
         # calculate step

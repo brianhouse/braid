@@ -1,4 +1,5 @@
 from .notation import *
+from .signal import *
 from .pattern import *
 from .tween import *
 from .voice import *
