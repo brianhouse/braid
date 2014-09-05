@@ -3,7 +3,7 @@ from .attribute import Attribute
 from .sequence import Sequence
 from .core import driver, midi_out
 from .notation import *
-from .pattern import Pattern
+from .pattern import Pattern, PatternAttribute
 from .util import num_args
 
 class Voice(object):
@@ -21,8 +21,9 @@ class Voice(object):
         self.rate = Attribute(self, 1.0)
         self.velocity = Attribute(self, 1.0)
 
-        self.pattern = None
-        self.sequence = Sequence([0])
+        self._pattern = Pattern()
+        self._pattern_attribute = PatternAttribute(self, self._pattern)
+        self.sequence = Sequence().set(self._pattern)
 
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
@@ -52,20 +53,22 @@ class Voice(object):
 
         # update tweens in all attributes
         for attribute in (getattr(self, attribute) for attribute in dir(self) if isinstance(getattr(self, attribute), Attribute)):
+            if isinstance(attribute, PatternAttribute):
+                continue
             attribute.tween.update()
 
         # calculate step
         self._cycles += delta_t * self.rate.value * driver.rate
         p = (self._cycles + self.phase.value) % 1.0        
         i = int(p * len(self._steps))
-        if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge):    # contingency for whole notes
+        if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                if self.pattern is not None and self.pattern.tween is not None and self.pattern.tween.running: # tweening patterns override sequence until tween is complete                
-                    self.pattern.tween.update()
+                if self._pattern_attribute.tween.running: # tween happens only on an edge; tweening patterns override sequence until tween is complete                
+                    self._pattern_attribute.tween.update()
                 else:
-                    self.pattern = self.sequence._shift(self)
-                self._steps = self.pattern.resolve()
+                    self._pattern = self.sequence._shift(self)
+                self._steps = self._pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
         self._last_edge = int(self._cycles)
@@ -125,3 +128,10 @@ class Voice(object):
     def set(self, sequence):
         """Convenience method, synonym for voice.sequence.set"""
         return self.sequence.set(sequence)
+
+    @property
+    def pattern(self):
+        """Access the active pattern wrapped in tweening and control functionality"""
+        """Prevent direct setting of pattern"""
+        self._pattern_attribute.set(self._pattern) # make sure we've got the latest
+        return self._pattern_attribute

@@ -13,8 +13,7 @@ class Tween(object):
 
     def __call__(self, target_value, duration, signal_f=linear):
         print("made Tween on %s" % self.attribute)
-        from .pattern import Pattern # avoid circular
-        self.start_value = self.attribute.value if not isinstance(self.attribute, Pattern) else self.attribute
+        self.start_value = self.attribute.value
         self.target_value = target_value
         self.start_t = driver.t
         self.duration = duration
@@ -39,9 +38,9 @@ class Tween(object):
                 self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat).endwith(self._endwith_f) # flipped
             else:
                 if self._endwith_f is not None:
-                    if num_args(self._endwith_f) > 1 and hasattr(self.attribute, 'voice'): # necessary for Pattern
+                    if num_args(self._endwith_f) > 1:
                         self._endwith_f(self.attribute.voice, self)
-                    elif num_args(self._endwith_f) > 0 and hasattr(self.attribute, 'voice'):
+                    elif num_args(self._endwith_f) > 0:
                         self._endwith_f(self.attribute.voice)
                     else:
                         self._endwith_f()                                                   

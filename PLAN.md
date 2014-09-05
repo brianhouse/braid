@@ -131,3 +131,36 @@ config isnt being used for anything
 if I can get rid of the controller folder to -- then we are flat lean and beautiful.
 
 but maybe config can be used for setting up synth and controller mappings. that would be hot.
+
+
+///
+
+are we in trouble with tween attached to pattern but no voice attached?
+if two voices use the same pattern, theyll tween together
+sequence is also not really shareable, it has indexes, etc
+
+actually, it's totally fine, unless you try to set it directly.
+v2.set(v1.sequence) # no problem
+v2.sequence.set(v1.sequence) # no problem
+v2.sequence = v1.sequence # problem
+
+...and actually that is a problem for all attributes. so just dont do that by convention.
+
+the problem is 
+v2.set(v1.pattern)
+
+if v1.pattern is tweening.
+
+tweens on patterns.
+
+v2.velocity.set(v1.velocity)
+
+brilliant. now allowed.
+//
+
+basically, attribute set strips out the attribute references
+direct setting is bad in general
+
+I made pattern attribute why? so that Pattern doesnt have to be an attribute. because it is really the value type, not equivalent the attribute object -- it will get replaced when tweening, etc, which would have killed the voice and tween references.
+
+

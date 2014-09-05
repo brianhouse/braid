@@ -1,5 +1,4 @@
 from .tween import ContinuousTween, DiscreteTween
-from . import controller
 
 class Attribute(object):
 
@@ -17,8 +16,11 @@ class Attribute(object):
         self._value = value
 
     def set(self, value):
+        if isinstance(value, Attribute):
+            value = value.value
         self.value = value
         return self
 
     def control(self, vector_number, left_value, right_value):
+        from . import controller
         controller.register(vector_number, self.voice, self, left_value, right_value)

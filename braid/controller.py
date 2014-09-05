@@ -1,6 +1,6 @@
 from .core import midi_in
 from .util import log
-from .pattern import Pattern
+from .pattern import PatternAttribute
 
 MAX_DURATION = 40   # in cycles
 
@@ -41,7 +41,7 @@ def trigger_f(vn):
                 if type(left_value) == int or type(left_value) == float:
                     target_value = (left_value * (1.0 - vector.width)) + (right_value * vector.width)
                     print("target_value", target_value)
-                elif isintance(Pattern, attribute):
+                elif isinstance(PatternAttribute, attribute):
                     target_value = CrossPattern(left_value, right_value, vector.width)
                 else:
                     target_value = left_value if random() > vector.width else right_value                    

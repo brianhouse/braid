@@ -1,5 +1,6 @@
 from random import random
 from .tween import PatternTween
+from .attribute import Attribute
 
 class Pattern(list):
 
@@ -9,7 +10,6 @@ class Pattern(list):
     
     def __init__(self, value=[0]):
         list.__init__(self, value)
-        self.tween = PatternTween(self)
 
     def resolve(self):
         """Choose a path through the Markov chain"""
@@ -63,6 +63,9 @@ class Pattern(list):
             divs = lcm(divs, step)
         return divs
 
+    def __repr__(self):
+        return "P%s" % list.__repr__(self)
+
 
 class CrossPattern(Pattern):
 
@@ -81,8 +84,30 @@ class CrossPattern(Pattern):
         return result
         
 
+class PatternAttribute(Attribute):
+    """Wrapper for a Pattern to link it to a voice and make it behave like an Attribute"""
+
+    def __init__(self, voice, pattern):
+        self.voice = voice
+        self._value = pattern
+        self.tween = PatternTween(self)
+
+    def control(self, vector_number, left_value, right_value):
+        controller.register(vector_number, self.voice, self, left_value, right_value)        
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+        self.voice._pattern = self._value
+
+
 def blend(pattern_1, pattern_2, balance=0.5):
     """Probabalistically blend two Patterns"""
+    print("blend: ", pattern_1, type(pattern_1), pattern_2, type(pattern_2))
     p1_steps = pattern_1.resolve()
     p2_steps = pattern_2.resolve()        
     pattern = [None] * lcm(len(p1_steps), len(p2_steps))

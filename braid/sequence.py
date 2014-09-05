@@ -1,11 +1,11 @@
 import collections
-from .pattern import Pattern
+from .pattern import Pattern, PatternAttribute
 from .util import num_args
 
 class Sequence(list):
 
-    def __init__(self, *args):
-        self.set(args)
+    def __init__(self):
+        pass
 
     def __setitem__(self, item):
         list.__setitem__(self, self._check(item))
@@ -27,11 +27,11 @@ class Sequence(list):
     def extend(self):
         raise NotImplementedError
 
-    def _check(self, item):
-        if type(item) == list or type(item) == tuple:
-            item = Pattern(item)
-        elif not isinstance(item, Pattern):
-            assert isinstance(item, collections.Callable)
+    def _check(self, item):     
+        if isinstance(item, PatternAttribute):
+            item = item.value # shed voice and tween references
+        if not isinstance(item, Pattern) and not isinstance(item, collections.Callable):
+            item = Pattern(item)   
         return item
 
     def _shift(self, voice):
