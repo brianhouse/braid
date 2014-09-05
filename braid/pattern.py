@@ -9,7 +9,7 @@ class Pattern(list):
     
     def __init__(self, value=[0]):
         list.__init__(self, value)
-        self._tween = None
+        self.tween = PatternTween(self)
 
     def resolve(self):
         """Choose a path through the Markov chain"""
@@ -63,15 +63,6 @@ class Pattern(list):
             divs = lcm(divs, step)
         return divs
 
-    @property
-    def tween(self):
-        return self._tween
-
-    @tween.setter
-    def tween(self, target_pattern, duration, signal_f=linear):
-        self._tween = PatternTween(self, target_pattern, duration, signal_f)
-        return self._tween
-
 
 class CrossPattern(Pattern):
 
@@ -79,6 +70,7 @@ class CrossPattern(Pattern):
         self.pattern_1 = pattern_1 if isinstance(pattern_1, Pattern) else Pattern(pattern_1)
         self.pattern_2 = pattern_2 if isinstance(pattern_2, Pattern) else Pattern(pattern_2)
         self.balance = balance
+        self.tween = PatternTween(self)
         self.resolve()
 
     def resolve(self):
