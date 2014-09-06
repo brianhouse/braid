@@ -32,13 +32,53 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"frgb" : 0.0,
+					"id" : "obj-23",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 135.0, 45.0, 150.0, 20.0 ],
+					"text" : "midi through"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 75.0, 45.0, 49.0, 20.0 ],
+					"text" : "midiout"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-8",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"patching_rect" : [ 75.0, 15.0, 42.0, 20.0 ],
+					"text" : "midiin"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"frgb" : 0.0,
 					"id" : "obj-3",
 					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 765.0, 135.0, 150.0, 47.0 ],
-					"presentation_rect" : [ 767.0, 142.0, 0.0, 0.0 ],
 					"text" : "actually not restricted to 1-127, apparently. for floats, just dividing by 100."
 				}
 
@@ -67,7 +107,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 690.0, 330.0, 180.0, 18.0 ],
-					"text" : "4 10 200 0.6 200"
+					"text" : "4 0 0 0. 0"
 				}
 
 			}
@@ -151,7 +191,7 @@
 					"numoutlets" : 5,
 					"outlettype" : [ "", "", "", "", "" ],
 					"patching_rect" : [ 600.0, 382.0, 78.0, 20.0 ],
-					"text" : "route 1 2 3 4"
+					"text" : "route 3 4 5 6"
 				}
 
 			}
@@ -614,7 +654,7 @@
 					"numoutlets" : 5,
 					"outlettype" : [ "", "", "", "", "" ],
 					"patching_rect" : [ 404.0, 382.0, 78.0, 20.0 ],
-					"text" : "route 1 2 3 4"
+					"text" : "route 3 4 5 6"
 				}
 
 			}
@@ -1186,6 +1226,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-8", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-17", 3 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -1216,7 +1265,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "serotonin_voice.maxpat",
-				"bootpath" : "/Users/house/Projects/braid/braid/synth/serotonin",
+				"bootpath" : "/Users/house/Projects/braid/synth/serotonin",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
@@ -1224,7 +1273,7 @@
 , 			{
 				"name" : "gizmo_loadme.maxpat",
 				"bootpath" : "/Applications/Max 6.1/Cycling '74/msp-help",
-				"patcherrelativepath" : "../../../../../../../Applications/Max 6.1/Cycling '74/msp-help",
+				"patcherrelativepath" : "../../../../../../Applications/Max 6.1/Cycling '74/msp-help",
 				"type" : "JSON",
 				"implicit" : 1
 			}

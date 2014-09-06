@@ -38,7 +38,10 @@ class Tween(object):
             if type(self._repeat) is int:
                 self._repeat -= 1
             if self._repeat:
-                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat).endwith(self._endwith_f) # flipped
+                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat) # flipped
+                ### didnt repeat again
+                if self._endwith_f is not None:
+                    self.attribute.tween.endwith(self._endwith_f)
             else:
                 if isinstance(self, PatternTween): # pattern targets need to persist after tween
                     self.attribute.voice.set(self.target_value)
