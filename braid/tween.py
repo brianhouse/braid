@@ -2,6 +2,7 @@ import collections
 from .signal import linear
 from .core import driver
 from .util import num_args
+from .pattern import Pattern, blend
 
 class Tween(object):
 
@@ -15,6 +16,8 @@ class Tween(object):
         print("made Tween on %s" % self.attribute)
         self.start_value = self.attribute.value
         self.target_value = target_value
+        if isinstance(self, PatternTween) and not isinstance(self.target_value, Pattern):
+            self.target_value = Pattern(self.target_value)
         self.start_t = driver.t
         self.duration = duration
         self.signal_f = signal_f

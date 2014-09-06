@@ -1,6 +1,6 @@
 from random import random
-from .tween import PatternTween
-from .attribute import Attribute
+# from .attribute import Attribute
+from braid import *
 
 class Pattern(list):
 
@@ -70,6 +70,7 @@ class Pattern(list):
 class CrossPattern(Pattern):
 
     def __init__(self, pattern_1, pattern_2, balance=0.5):
+        from .tween import PatternTween
         self.pattern_1 = pattern_1 if isinstance(pattern_1, Pattern) else Pattern(pattern_1)
         self.pattern_2 = pattern_2 if isinstance(pattern_2, Pattern) else Pattern(pattern_2)
         self.balance = balance
@@ -84,7 +85,7 @@ class CrossPattern(Pattern):
         return result
         
 
-class PatternAttribute(Attribute):
+class PatternAttribute(attribute.Attribute):
     """Wrapper for a Pattern to link it to a voice and make it behave like an Attribute"""
 
     def __init__(self, voice, pattern):
