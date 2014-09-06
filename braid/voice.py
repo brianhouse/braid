@@ -1,9 +1,9 @@
 import collections
 from .attribute import Attribute
+from .pattern import Pattern, PatternAttribute
 from .sequence import Sequence
 from .core import driver, midi_out
 from .notation import *
-from .pattern import Pattern, PatternAttribute
 from .util import num_args
 
 class Voice(object):

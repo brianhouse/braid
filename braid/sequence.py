@@ -1,6 +1,5 @@
 import collections
 from .pattern import Pattern, PatternAttribute
-from .util import num_args
 
 class Sequence(list):
 

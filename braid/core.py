@@ -178,3 +178,6 @@ def tempo(value):
     value /= 60.0
     value /= 4.0
     driver.rate = value
+
+def play():
+    driver.play()

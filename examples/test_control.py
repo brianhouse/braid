@@ -18,5 +18,5 @@ v1.pattern.tween(pattern_2, 5.0).endwith(lambda: print("done"))
 # v1.pattern.control(1, pattern_1, pattern_2)
 
 
-driver.play()
+play()
 
