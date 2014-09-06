@@ -71,6 +71,7 @@ class Voice(object):
                 else:
                     print('shifting sequence')
                     self._pattern = self.sequence._shift(self)
+                    print(self._pattern)
                 self._steps = self._pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
@@ -104,8 +105,7 @@ class Voice(object):
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity.value
             if not self.mute.value:
-                midi_out.send_note(self.channel.value, self._previous_pitch, 0)
-                midi_out.send_note(self.channel.value, pitch, int(velocity * 127))
+                self.note(pitch, velocity)
             self._previous_pitch = pitch
         if step != 0:        
             self._previous_step = step            
@@ -115,6 +115,11 @@ class Voice(object):
         def p():
             self.play(step, velocity)
         driver.callback(t, p)               ###
+
+    def note(self, pitch, velocity):
+        """Override for custom MIDI behavior"""
+        midi_out.send_note(self.channel.value, self._previous_pitch, 0)
+        midi_out.send_note(self.channel.value, pitch, int(velocity * 127))
 
     def hold(self):
         """Override to add behavior to held notes, otherwise nothing"""
