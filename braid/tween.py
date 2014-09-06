@@ -40,6 +40,8 @@ class Tween(object):
             if self._repeat:
                 self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat).endwith(self._endwith_f) # flipped
             else:
+                if isinstance(self, PatternTween): # pattern targets need to persist after tween
+                    self.attribute.voice.set(self.target_value)
                 if self._endwith_f is not None:
                     if num_args(self._endwith_f) > 1:
                         self._endwith_f(self.attribute.voice, self)

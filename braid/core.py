@@ -181,3 +181,6 @@ def tempo(value):
 
 def play():
     driver.play()
+
+def stop():
+    driver.stop()    

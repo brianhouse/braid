@@ -47,12 +47,12 @@ def trigger_f(vn):
                     target_value = left_value if random() > vector.width else right_value                    
                 print("Adding tween ", type(attribute), attribute, voice)
                 attribute.tween(target_value, vector.duration)
-                if isinstance(attribute, Pattern):
-                    def done():
-                        print("voice", voice)
-                        print('done')                        
-                        voice.set(voice.pattern).repeat()
-                    attribute.tween.endwith(done)
+                # if isinstance(attribute, Pattern):
+                #     def done():
+                #         print("voice", voice)
+                #         print('done')                        
+                #         voice.set(voice.pattern).repeat()
+                #     attribute.tween.endwith(done)
                     # attribute.tween.endwith(lambda: voice.set(voice.pattern).repeat()) # allows a CrossPattern to persist in the sequence after the tween ends                    
     return f
 

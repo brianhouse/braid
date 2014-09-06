@@ -67,6 +67,7 @@ class Voice(object):
                 if self._pattern_attribute.tween.running: # tween happens only on an edge; tweening patterns override sequence until tween is complete                
                     self._pattern_attribute.tween.update()
                 else:
+                    print('shifting sequence')
                     self._pattern = self.sequence._shift(self)
                 self._steps = self._pattern.resolve()
             step = self._steps[self._index]
@@ -125,9 +126,9 @@ class Voice(object):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
 
-    def set(self, sequence):
+    def set(self, *sequence):
         """Convenience method, synonym for voice.sequence.set"""
-        return self.sequence.set(sequence)
+        return self.sequence.set(*sequence)
 
     @property
     def pattern(self):

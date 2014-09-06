@@ -1,5 +1,6 @@
 import collections
 from .pattern import Pattern, PatternAttribute
+from .util import num_args
 
 class Sequence(list):
 
@@ -10,8 +11,9 @@ class Sequence(list):
         list.__setitem__(self, self._check(item))
 
     def set(self, *args):
+        print('setting sequence %s' % args)
         self._index = 0
-        self._repeat = False
+        self._repeat = True
         self._endwith_f = None
         args = [self._check(item) for item in args]
         list.__init__(self, args)   
@@ -56,6 +58,13 @@ class Sequence(list):
 
     def repeat(self, n=True):
         self._repeat = n
+        return self
+
+    def doafter(self, n):
+        ### actually, this should be able to take a list of things
+        ### should endwith take a list? or should they replace each other? should repeat be cumulative?
+        ### I think only doafter, because they can be fundamentally different
+        self._doafter = n
         return self
 
     def endwith(self, f):
