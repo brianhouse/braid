@@ -41,19 +41,12 @@ def trigger_f(vn):
                 if type(left_value) == int or type(left_value) == float:
                     target_value = (left_value * (1.0 - vector.width)) + (right_value * vector.width)
                     print("target_value", target_value)
-                elif isinstance(braid.pattern.PatternAttribute, attribute):
-                    target_value = CrossPattern(left_value, right_value, vector.width)
+                elif isinstance(attribute, braid.pattern.PatternAttribute):
+                    target_value = braid.pattern.CrossPattern(left_value, right_value, vector.width)
                 else:
                     target_value = left_value if random() > vector.width else right_value                    
                 print("Adding tween ", type(attribute), attribute, voice)
                 attribute.tween(target_value, vector.duration)
-                # if isinstance(attribute, Pattern):
-                #     def done():
-                #         print("voice", voice)
-                #         print('done')                        
-                #         voice.set(voice.pattern).repeat()
-                #     attribute.tween.endwith(done)
-                    # attribute.tween.endwith(lambda: voice.set(voice.pattern).repeat()) # allows a CrossPattern to persist in the sequence after the tween ends                    
     return f
 
 
