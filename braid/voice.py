@@ -42,6 +42,8 @@ class Voice(object):
 
         # set passed defaults
         for param, value in params.items():
+            if param == 'controls':
+                continue
             if hasattr(self, param):
                 setattr(self, param, Attribute(self, value))
             else:
@@ -77,9 +79,9 @@ class Voice(object):
         # check if MIDI attributes have changed, and send if so
         if not self.mute.value:
             for control in self.controls:
-                value = int(getattr(self, control))
+                value = int(getattr(self, control).value)
                 if control not in self.control_values or value != self.control_values[control]:
-                    midi_out.send_control(self.channel, self.controls[control], value)
+                    midi_out.send_control(self.channel.value, self.controls[control], value)
                     self.control_values[control] = value
 
 

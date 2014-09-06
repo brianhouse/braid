@@ -4,3 +4,4 @@ syntax: glob
 __pycache__
 dev
 *.pyc
+config.yaml

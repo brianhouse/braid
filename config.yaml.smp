@@ -1,0 +1,29 @@
+anode_controls:
+    attack: 54
+    decay: 53
+    cutoff: 52
+    width: 51
+    detune: 50
+    lfo_rate: 49
+    lfo_depth: 48
+    glide: 55
+    vcf: 56
+    sustain: 64
+    octave: 65
+    sweep: 127
+    lfo_dest: 67
+
+anode_defaults:    
+    attack: 30
+    decay: 75
+    cutoff: 64
+    width: 45
+    detune: 64
+    lfo_rate: 55
+    lfo_depth: 90
+    glide: 0
+    vcf: 64
+    sustain: 0
+    octave: 0
+    sweep: 127
+    lfo_dest: 127

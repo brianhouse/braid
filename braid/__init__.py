@@ -7,3 +7,4 @@ from .attribute import *
 from .controller import *
 from .sequence import *
 from .voice import *
+from .util import config
