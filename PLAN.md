@@ -164,3 +164,33 @@ direct setting is bad in general
 I made pattern attribute why? so that Pattern doesnt have to be an attribute. because it is really the value type, not equivalent the attribute object -- it will get replaced when tweening, etc, which would have killed the voice and tween references.
 
 
+///
+
+
+having tween repeatable and not necessarily reversible, and also tied to pattern cycles instead of time, is key.
+because then you could define a function as the contour of a measure, for push and pull. 
+
+////
+
+ok, so the issue is that setting a sequence, procedurally, does not set the pattern. so it tweens on the wrong thing.
+
+if we set and then shift right away... actually I think that's fine.
+potentially, if a sequence is set and then shifted mid-cycle, the first repetition would be cut off. but I think that's kind of what we want
+
+ok, but that means sequence has to have voice attached. actually, that's fine, it can happen at the constructor.
+
+//
+
+the problem is bigger. it's that you cant set a pattern and then immediately tween it if that pattern isnt active yet.
+
+doesn't have to do with the driver running or not.
+it's like a force set that is needed.
+
+or rather, it's shifting twice on set.
+
+so it's either everything works fine when voice gets around to setting the next pattern, but cant tween.
+or set the pattern immediately when using set, but if that happens on an edge, it's a double click.
+
+right. embedded shifts in set are a bad idea.
+
+hack for now -- is to always enclose tweens in a repeat or something)

@@ -2,7 +2,7 @@
 
 import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
-from .util import log
+from .util import log, num_args
 
 class Driver(threading.Thread):
 
@@ -15,10 +15,11 @@ class Driver(threading.Thread):
         self.rate = 1.0
         self.previous_t = 0.0
         self.callbacks = []
-        self.running = True
+        self.running = False
 
     def play(self, skip=0, blocking=True):     ### this cant be threadsafe. but allows braid to integrate.
         self.skip = skip
+        self.running = True
         self.start()
         if blocking:
             try:
@@ -158,7 +159,11 @@ class MidiIn(threading.Thread):
             except queue.Empty:
                 return
             if control in self.callbacks:
-                self.callbacks[control](value)
+                if num_args(self.callbacks[control]) > 0:
+                    self.callbacks[control](value)
+                else:
+                    self.callbacks[control]()
+                
 
     def callback(self, control, f):
         """For a given control message, call a function"""

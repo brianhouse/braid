@@ -209,6 +209,8 @@ MIN = Scale([0, 2, 3, 5, 7, 8, 11])
 
 BLU = Scale([0, 3, 5, 6, 7, 10])
 
+MMI = Scale([0, 2, 4, 5, 6, 9, 11])
+
 # PEN = Scale([])
 
 # chromatic

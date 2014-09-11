@@ -21,10 +21,6 @@ class Voice(object):
         self.rate = Attribute(self, 1.0)
         self.velocity = Attribute(self, 1.0)
 
-        self._pattern = Pattern()
-        self._pattern_attribute = PatternAttribute(self, self._pattern)
-        self.sequence = Sequence().set(self._pattern)
-
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
         self.controls = {} if 'controls' not in params else params['controls'] 
@@ -49,6 +45,10 @@ class Voice(object):
             else:
                 raise AttributeError("Cannot set property %s in constructor" % param)    
 
+        self._pattern = Pattern()
+        self._pattern_attribute = PatternAttribute(self, self._pattern)
+        self.sequence = Sequence(self).set(self._pattern)                
+
 
     def update(self, delta_t):
         """Run each tick and update the state of the Voice and all its attributes"""
@@ -65,13 +65,15 @@ class Voice(object):
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
-            if self._index == 0:
+            if self._index == 0:                
                 if self._pattern_attribute.tween.running: # tween happens only on an edge; tweening patterns override sequence until tween is complete                
                     self._pattern_attribute.tween.update()
                 else:
-                    print('shifting sequence')
+                    if not self.mute.value:
+                        print('shifting sequence')
                     self._pattern = self.sequence._shift(self)
-                    print(self._pattern)
+                    if not self.mute.value:
+                        print(self._pattern)
                 self._steps = self._pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
@@ -143,3 +145,8 @@ class Voice(object):
         """Prevent direct setting of pattern"""
         self._pattern_attribute.set(self._pattern) # make sure we've got the latest
         return self._pattern_attribute
+
+    def lock(self, voice):
+        assert(isinstance(voice, Voice))
+        self._cycles = voice._cycles
+        self.phase.set(voice.phase)

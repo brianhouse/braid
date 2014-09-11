@@ -26,23 +26,26 @@ class Tween(object):
         self._repeat = False
         self._endwith_f = None
         self.running = True
+        print("finished making")
         return self
 
     def update(self):
         if not self.running:
             return
-        # print('updating')            
         self.attribute.value = self.get_value()
         if self.finished:
+            print("tween finished")
             self.running = False
             if type(self._repeat) is int:
                 self._repeat -= 1
             if self._repeat:
-                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(self._repeat) # flipped
-                ### didnt repeat again
-                if self._endwith_f is not None:
-                    self.attribute.tween.endwith(self._endwith_f)
+                repeat = self._repeat # careful, self values go away
+                endwith_f = self._endwith_f
+                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(repeat) # flipped
+                if endwith_f is not None:
+                    self.attribute.tween.endwith(endwith_f)
             else:
+                print("TWEEN ENDING %s" % self._endwith_f)
                 if isinstance(self, PatternTween): # pattern targets need to persist after tween
                     self.attribute.voice.set(self.target_value)
                 if self._endwith_f is not None:
@@ -54,7 +57,7 @@ class Tween(object):
                         self._endwith_f()                                                   
 
     def repeat(self, n=True):
-        self._repeat = n
+        self._repeat = n        
         return self
 
     def endwith(self, f):
@@ -79,6 +82,9 @@ class Tween(object):
 
     def calc_value(self, position):
         return None
+
+    def cancel(self):
+        self.running = False
 
     
 class ContinuousTween(Tween):
