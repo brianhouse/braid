@@ -24,6 +24,9 @@ guit2.rate.set(0.125)
 anode.set([1, 0, Z, (2, 0, 0.25)])
 
 """ checklist:
+ports!
+all the way up, preamps, overdrive
+reverb is resonable
 distortion is down on the reverb channel (and all channels)
 go easy on drive
 make sure guit distortions always match precisely
@@ -134,12 +137,14 @@ def loop_back():
 
 ## cycle through whole thing 2 or 3 times
 
-## then shift the ebow
+## then shift the ebow (first!)
 ## fade down beats (rate down?)
 ## full distortion, full reverb high, use return channel to compensate bass
 ## have an unravel tween
 ## eventually pull down everything, low end filter
 
+
+## PROBLEM: sounds out of phase. may be the pattern. the high notes sound like on the one
 
 def unravel():
     print("UNRAVEL")
