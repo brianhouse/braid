@@ -33,6 +33,8 @@ make sure guit distortions always match precisely
 aux master at 9:00, stereo return at 12:00
 return channel all unity, up a bit level
 
+be physical.
+
 """
 
 def set_controls():
@@ -45,6 +47,8 @@ def set_controls():
     midi_in.callback(39, melody3)       # this is melody tween
     midi_in.callback(40, melody4)
     midi_in.callback(41, unravel)
+
+## control the bass. save it.    
 
 def beat_intro_1():
     print("BEAT INTRO 1")
@@ -102,8 +106,8 @@ def lockem():
 def melody_tween():
     print("MELODY TWEEN")
     guit2.phase.set(1/16)
-    guit1.pattern.tween([2, 6, 2, 6]*2, 30.0)
-    guit2.pattern.tween([4, 5, 4, 5]*2, 60.0)
+    guit1.pattern.tween([6, 2, 6, 2]*2, 30.0)
+    guit2.pattern.tween([5, 4, 5, 4]*2, 60.0)
 
 # def melody1():
 #     print("MELODY 1")
@@ -116,26 +120,26 @@ def melody2():
     guit1.rate.set(1.0)
     guit2.rate.set(1.0)
     guit2.phase.set(1/16)
-    guit1.pattern.tween([1, 6, 1, 6]*2, 20.0)
-    guit2.pattern.tween([4, 5, 4, 5]*2, 20.0)
+    guit1.pattern.tween([6, 1, 6, 1]*2, 20.0)
+    guit2.pattern.tween([5, 4, 5, 4]*2, 20.0)
 
 def melody3():
     print("MELODY 3")    
     guit2.phase.set(1/16)
-    guit1.pattern.tween([1, 6, 1, 6]*2, 20.0)
-    guit2.pattern.tween([3, 5, 4, 5]*2, 20.0)
+    guit1.pattern.tween([6, 1, 6, 1]*2, 20.0)
+    guit2.pattern.tween([5, 4, 5, 3]*2, 20.0)
 
 def melody4():
     print("MELODY 4")    
     guit2.phase.set(1/16)
-    guit1.pattern.tween([-7, 5, -7, 5]*2, 10.0)
-    guit2.pattern.tween([2, 4, 2, 4]*2, 10.0).endwith(loop_back)
+    guit1.pattern.tween([5, -7, 5, -7]*2, 10.0)
+    guit2.pattern.tween([4, 2, 4, 2]*2, 10.0).endwith(loop_back)
 
 def loop_back():
     print("LOOP BACK PREP")
     driver.callback(30.0, melody_tween) # dont like this way of doing it
 
-## cycle through whole thing 2 or 3 times
+## cycle through whole thing 2 or 3 times -- use second string the second time
 
 ## then shift the ebow (first!)
 ## fade down beats (rate down?)
@@ -154,7 +158,14 @@ def unravel():
 def unspool():
     print("UNSPOOL")
     guit1.rate.tween(1.5, 10.0).repeat()
-    guit2.rate.tween(1.5, 8.0).repeat()
+    guit2.rate.tween(1.5, 8.0).repeat()#5).endwith(slowit)
+
+def slowit():
+    print("SLOIT")
+    guit1.rate.tween(0.2, 15.0).repeat()
+    guit2.rate.tween(0.2, 12.0).repeat()
+
+## end with ebow rattle
 
 set_controls()
 beat_intro_1()
