@@ -146,6 +146,9 @@ class Voice(object):
         self._pattern_attribute.set(self._pattern) # make sure we've got the latest
         return self._pattern_attribute
 
+    def add(self, name, default=0.0):
+        setattr(self, name, Attribute(self, default))
+
     def lock(self, voice):
         assert(isinstance(voice, Voice))
         self._cycles = voice._cycles
