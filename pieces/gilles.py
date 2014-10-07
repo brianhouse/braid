@@ -8,12 +8,20 @@ from extensions.volca import Volca
 tempo(132)
 
 anode = Voice(1, controls=config['anode_controls'], **config['anode_defaults'])    
+guit1 = Voice(3, controls=config['serotonin'], attack=10, decay=10, sustain=200, release=20)
+guit2 = Voice(4, controls=config['serotonin'], attack=10, decay=10, sustain=200, release=20)
 volca1 = Volca()
 volca2 = Volca()
 volca3 = Volca()
 
+anode.add("progger", 0)
+seq = [1, 4, -6, -7]
+def prog():
+    n = seq[anode.progger.value % len(seq)]
+    anode.progger.value += 1
+    return n
 
-anode.set([1, 0, Z, (2, 0, 0.25)])
+anode.set([prog, 0, Z, (2, 0, 0.25)])
 
 
 volca1.set([[1, 8, 8, 8], [(8, 0), (8, 0), 8, 2], [8, 8, (8, 0), 8], ([8, (8, 0), 8, 8], [8, 8, 8])])
@@ -37,9 +45,15 @@ floorbeat = [[1, 6], [1, (6, 5)], [1, 6], [1, 6]]
 # volca3.pattern.tween(floorbeat, 30.0)
 
 volca3.add("cohesion", 1.0)
-volca3.cohesion.tween(0.0, 30.0)
+volca3.cohesion.tween(0.0, 60.0)
     
 volca3.set([(floorbeat, [(fill_1, (fill_2, fill_3), 0.33)], lambda: volca3.cohesion.value)])
+
+
+guit1.set([1, 1, 0, 1]*2)
+guit2.set([0, 4, 4, 0]*2)
+# guit2.set([0, 5, 0, 5, 0, 5, 0, 5]*2)
+
 
 play()
 
