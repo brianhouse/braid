@@ -64,8 +64,11 @@ play()
 
 ## could the percent of one pattern chosen over another be hooked up to a tween?
 
+# just volume fade up the floorbeat
+
 
 ## the rate of a pattern determined by a dynamic signal
 ## right now, it could be determined by a signal tween that lasts the duration of the piece
 ## so that _is_ something different. an indefinite tween.
 ## or rather, just allowing all Attributes to hold functions. ####
+## so everytime .value is called, it should call the function
