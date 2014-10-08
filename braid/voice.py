@@ -35,6 +35,7 @@ class Voice(object):
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
+        self._locks = []
 
         # set passed defaults
         for param, value in params.items():
@@ -65,15 +66,15 @@ class Voice(object):
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
-            if self._index == 0:                
+            if self._index == 0:                      
+                for lock in self._locks: # perform all locking 
+                    print(lock)
+                    lock()        
+                self._locks = []  
                 if self._pattern_attribute.tween.running: # tween happens only on an edge; tweening patterns override sequence until tween is complete                
                     self._pattern_attribute.tween.update()
                 else:
-                    if not self.mute.value:
-                        print('shifting sequence')
                     self._pattern = self.sequence._shift(self)
-                    if not self.mute.value:
-                        print(self._pattern)
                 self._steps = self._pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
@@ -149,7 +150,11 @@ class Voice(object):
     def add(self, name, default=0.0):
         setattr(self, name, Attribute(self, default))
 
-    def lock(self, voice):
+    def lock(self, voice, phase=0.0):
+        """On the next cycle, sync locked voices"""
         assert(isinstance(voice, Voice))
-        self._cycles = voice._cycles
-        self.phase.set(voice.phase)
+        def lock_f():
+            voice.phase.set(self.phase.value + phase)
+            voice._cycles = self._cycles
+            voice._index = 0            
+        self._locks.append(lock_f)
