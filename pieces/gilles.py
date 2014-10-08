@@ -117,26 +117,20 @@ def melody_tween():
     guit2.phase.set(1/16)
     guit1.pattern.tween([6, 2, 6, 2]*2, 30.0)
     guit2.pattern.tween([5, 4, 5, 4]*2, 60.0)
-    guit1.seq.set(0.0)
-    guit1.seq.tween(1.0, 100.0).endwith(melody2)
 
 def melody2():
     print("MELODY 2")
     guit1.rate.set(1.0)
     guit2.rate.set(1.0)
     guit2.phase.set(1/16)
-    guit1.pattern.tween([6, 1, 6, 1]*2, 20.0)
-    guit2.pattern.tween([5, 4, 5, 4]*2, 20.0)
-    guit1.seq.set(0.0)
-    guit1.seq.tween(1.0, 60.0).endwith(melody3)    
+    guit1.pattern.tween([6, 1, 6, 1]*2, 10.0)
+    guit2.pattern.tween([5, 4, 5, 4]*2, 10.0)
 
 def melody3():
     print("MELODY 3")    
     guit2.phase.set(1/16)
-    guit1.pattern.tween([6, 1, 6, 1]*2, 20.0)
-    guit2.pattern.tween([5, 4, 5, 3]*2, 20.0)
-    guit1.seq.set(0.0)
-    guit1.seq.tween(1.0, 60.0).endwith(melody4)        
+    guit1.pattern.tween([6, 1, 6, 1]*2, 10.0)
+    guit2.pattern.tween([5, 4, 5, 3]*2, 10.0)
 
 def melody4():
     print("MELODY 4")    
@@ -163,7 +157,7 @@ def melody_tween_again():
     print("MELODY TWEEN")
     guit2.phase.set(1/16)
     guit1.pattern.tween([6, 2, 6, 2]*2, 10.0)
-    guit2.pattern.tween([5, 4, 5, 4]*2, 30.0)
+    guit2.pattern.tween([5, 4, 5, 4]*2, 10.0)
 
 ## cycle through whole thing 2 or 3 times -- use second string the second time
 
