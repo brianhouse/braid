@@ -100,7 +100,7 @@ class Voice(object):
         else:
             if step == P:
                 step = self._previous_step
-            if self.chord is None:
+            if self.chord.value is None:
                 pitch = step
             else:
                 root, scale = self.chord.value
