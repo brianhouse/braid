@@ -146,7 +146,6 @@ class MidiIn(threading.Thread):
         def receive_control(event, data=None):
             message, deltatime = event
             nop, control, value = message
-            print(control, value)
             self.queue.put((control, value / 127.0))
         self.midi.set_callback(receive_control)
         while True:
