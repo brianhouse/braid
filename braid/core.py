@@ -28,12 +28,15 @@ class Driver(threading.Thread):
             except KeyboardInterrupt:
                 pass
 
+    def time_f(self):
+        return time.time() - self.start_t
+
     def run(self):
-        start_t = time.time() - self.skip
+        self.start_t = time.time() - self.skip
         last_cue = -1
         try:
             while self.running:
-                self.t = time.time() - start_t
+                self.t = self.time_f()
                 if int(self.t) // 15 != last_cue:
                     last_cue = int(self.t) // 15
                     log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        

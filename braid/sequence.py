@@ -11,8 +11,6 @@ class Sequence(list):
         list.__setitem__(self, self._check(item))
 
     def set(self, *args):
-        if not self.voice.mute.value:
-            print('setting sequence %s' % (args,))
         self._index = 0
         self._repeat = True
         self._endwith_f = None
@@ -56,8 +54,6 @@ class Sequence(list):
             if isinstance(item, collections.Callable): # execute unlimited functions, but break on new pattern
                 item(voice)        
             self._index += 1
-            if self.voice.mute.value is not True:
-                print(item)
             if isinstance(item, Pattern):
                 return item
 
