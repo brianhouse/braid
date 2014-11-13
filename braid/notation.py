@@ -1,4 +1,4 @@
-from random import randint, choice, random
+from random import randint, choice, random, shuffle
 
 class Scale(list):
 
