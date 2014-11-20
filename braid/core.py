@@ -4,6 +4,8 @@ import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from .util import log, num_args
 
+log_midi = True
+
 class Driver(threading.Thread):
 
     def __init__(self):
@@ -111,12 +113,14 @@ class MidiOut(threading.Thread):
                 control, value = control
                 if type(value) == bool:
                     value = 127 if value else 0
-                log.info("MIDI ctrl %s %s %s" % (channel, control, value))                    
+                if log_midi:
+                    log.info("MIDI ctrl %s %s %s" % (channel, control, value))                    
                 channel -= 1
                 self.midi.send_message([CONTROLLER_CHANGE | (channel & 0xF), control, value])                
             if note is not None:
                 pitch, velocity = note
-                log.info("MIDI note %s %s %s" % (channel, pitch, velocity))
+                if log_midi:
+                    log.info("MIDI note %s %s %s" % (channel, pitch, velocity))
                 channel -= 1
                 if velocity:            
                     self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
