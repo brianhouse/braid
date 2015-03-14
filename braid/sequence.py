@@ -65,6 +65,7 @@ class Sequence(list):
         ### actually, this should be able to take a list of things
         ### should endwith take a list? or should they replace each other? should repeat be cumulative?
         ### I think only doafter, because they can be fundamentally different
+        #### what is this supposd to do again?
         self._doafter = n
         return self
 

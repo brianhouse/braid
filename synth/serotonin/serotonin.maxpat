@@ -37,8 +37,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 416.5, 150.0, 102.0, 18.0 ],
-					"presentation_rect" : [ 439.5, 50.0, 0.0, 0.0 ],
-					"text" : "3 0.984252 220"
+					"text" : "4 0.984252 349"
 				}
 
 			}
@@ -133,7 +132,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 690.0, 330.0, 180.0, 18.0 ],
-					"text" : "1 250 200 2. 200"
+					"text" : "4 250 200 2. 200"
 				}
 
 			}

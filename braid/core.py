@@ -63,7 +63,7 @@ class Driver(threading.Thread):
         log.info("/////////////// END %d:%f ///////////////" % (self.t // 60.0, self.t % 60.0)) 
         time.sleep(0.1) # for osc to finish        
 
-    def callback(self, duration, f):
+    def on_t(self, duration, f):
         """After a given duration, call a function"""
         t = self.t + duration
         self.callbacks.append((t, f))        

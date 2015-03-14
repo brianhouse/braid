@@ -117,7 +117,7 @@ class Voice(object):
         """Play a step outside of the update cycle"""
         def p():
             self.play(step, velocity)
-        driver.callback(t, p)               ###
+        driver.on_t(t, p)
 
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""

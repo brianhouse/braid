@@ -22,7 +22,6 @@ Voice(Attribute)
 
 Tween
 
-    cycle()
     endwith()
 
     update()        # needs to return the equiv of get_value()
@@ -194,3 +193,26 @@ or set the pattern immediately when using set, but if that happens on an edge, i
 right. embedded shifts in set are a bad idea.
 
 hack for now -- is to always enclose tweens in a repeat or something)
+
+//
+
+
+- why was doafter necessary?
+- v1.set([1, 3, 5, 7], [2, 4, 2]).repeat(4).endwith(lambda v: v.set([1])).repeat() <- kind of wants to repeat the whole sequence?
+
+
+doafter is kind of for fills 
+afterevery(n, f)
+
+but is that redundant with sequence?
+
+have to ask, does sequence suck? it's for writing complex compositions.
+there's a lot of todos, here
+
+is this syntax unreal?
+
+the chain syntax is just a way to avoid multiple statements.
+
+/
+
+complex compositions like accumulative rhythms, which was important when I was doing through-compositions
