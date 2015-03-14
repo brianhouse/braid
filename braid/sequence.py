@@ -61,14 +61,6 @@ class Sequence(list):
         self._repeat = n
         return self
 
-    def doafter(self, n):
-        ### actually, this should be able to take a list of things
-        ### should endwith take a list? or should they replace each other? should repeat be cumulative?
-        ### I think only doafter, because they can be fundamentally different
-        #### what is this supposd to do again?
-        self._doafter = n
-        return self
-
     def endwith(self, f):
         assert isinstance(f, collections.Callable)
         self._endwith_f = f

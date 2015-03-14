@@ -216,3 +216,12 @@ the chain syntax is just a way to avoid multiple statements.
 /
 
 complex compositions like accumulative rhythms, which was important when I was doing through-compositions
+
+
+///
+
+ok, so fuck it. we're getting rid of sequence.
+
+sequence then becomes a special object that automatically updates via endwith
+
+nop
