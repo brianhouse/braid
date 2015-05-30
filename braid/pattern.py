@@ -99,18 +99,25 @@ class PatternAttribute(braid.attribute.Attribute):
         self._value = pattern
         self.tween = braid.tween.PatternTween(self)
 
-    @property
-    def value(self):
-        return self._value
+    def set(self, value):
+        if isinstance(value, braid.attribute.Attribute):
+            value = value.value
+        if not isinstance(value, Pattern):
+            value = Pattern(value)
+        self.value = value
+        return self
 
-    @value.setter
-    def value(self, value):
-        self._value = value
-        self.voice._pattern = self._value
+    def resolve(self):
+        return self._value.resolve()
 
-    def control(self, vector_number, left_value, right_value):
-        controller.register(vector_number, self.voice, self, left_value, right_value)        
-        
+    def repeat(self, n=True):
+        # self._repeat = n        
+        return self
+
+    def endwith(self, f):
+        # assert isinstance(f, collections.Callable)
+        # self._endwith_f = f
+        return self
 
 
 def blend(pattern_1, pattern_2, balance=0.5):

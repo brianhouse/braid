@@ -69,7 +69,7 @@ class Voice(object):
                 self._locks = []  
                 if self.pattern.tween.running: # pattern tweens only happen on an edge
                     self.pattern.tween.update()
-                self.pattern = self.pattern.shift()
+                # self.pattern = self.pattern.shift() ### need repeats, or whatever
                 self._steps = self.pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
@@ -130,13 +130,6 @@ class Voice(object):
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
-
-    @property
-    def pattern(self):
-        """Access the active pattern wrapped in tweening and control functionality"""
-        """Prevent direct setting of pattern"""
-        self._pattern_attribute.set(self._pattern) # make sure we've got the latest
-        return self._pattern_attribute
 
     def add(self, name, default=0.0):
         setattr(self, name, Attribute(self, default))
