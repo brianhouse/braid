@@ -113,13 +113,15 @@ class PatternAttribute(braid.attribute.Attribute):
     def resolve(self):
         return self._value.resolve()
 
-    def shift(self):            
+    def shift(self):        
+        print("pattern.shift")    
         if self._repeat:
             self._repeat -= 1
-            if self._repeat == 0:
+            if self._repeat == 0:                
                 if self._endwith_f is not None:
+                    print("pattern.endwith_f")    
                     if num_args(self._endwith_f) > 1:
-                        self._endwith_f(self.attribute.voice, self)
+                        self._endwith_f(self.voice, self)
                     elif num_args(self._endwith_f) > 0:
                         self._endwith_f(self.voice)
                     else:
@@ -128,7 +130,7 @@ class PatternAttribute(braid.attribute.Attribute):
 
 
     def repeat(self, n=True):
-        self._repeat = n        
+        self._repeat = n + 1    
         return self
 
     def endwith(self, f):

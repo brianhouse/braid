@@ -96,7 +96,7 @@ class MidiOut(threading.Thread):
             log.info("MIDI OUT opening %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
-            log.info("Opening virtual output (\"Braid\")...")
+            log.info("MIDI OUT opening virtual output (\"Braid\")...")
             self.midi.open_virtual_port("Braid")   
         self.start()   
 
@@ -183,6 +183,7 @@ atexit.register(exit_handler)
 driver = Driver()
 midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
+time.sleep(1)
 
 def tempo(value):
     """Convert to a multiplier of 1hz cycles"""

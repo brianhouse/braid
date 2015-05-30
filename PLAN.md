@@ -225,3 +225,23 @@ ok, so fuck it. we're getting rid of sequence.
 sequence then becomes a special object that automatically updates via endwith
 
 nop
+
+///////
+
+chain sequence is essentially parameter passing, but it allows a specified order, which doesnt actually matter.
+
+we're really just talking about repeat and endwith on pattern. should make them constructor attributes.
+
+this would only actually be useful with signals, chaining outputs. which we're not doing.
+
+it also allows adding a repeat or an endwith to a pattern after the fact. so keep it, just add the constructor syntax.
+
+
+what takes functions? tweens. tweens use the dot syntax kind of usefully.
+
+how do you tell a tween to use a derived signal?
+
+
+
+
+
