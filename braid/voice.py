@@ -69,7 +69,7 @@ class Voice(object):
                 self._locks = []  
                 if self.pattern.tween.running: # pattern tweens only happen on an edge
                     self.pattern.tween.update()
-                # self.pattern = self.pattern.shift() ### need repeats, or whatever
+                self.pattern.shift()
                 self._steps = self.pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
@@ -130,6 +130,10 @@ class Voice(object):
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
+
+    def set(self, value):
+        """Shortcut for setting pattern"""
+        return self.pattern.set(value)
 
     def add(self, name, default=0.0):
         setattr(self, name, Attribute(self, default))

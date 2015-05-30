@@ -1,6 +1,7 @@
 import braid.tween, braid.attribute, collections
 from braid import controller
 from random import random
+from .util import num_args
 
 class Pattern(list):
 
@@ -97,6 +98,8 @@ class PatternAttribute(braid.attribute.Attribute):
     def __init__(self, voice, pattern):
         self.voice = voice
         self._value = pattern
+        self._repeat = False
+        self._endwith_f = None
         self.tween = braid.tween.PatternTween(self)
 
     def set(self, value):
@@ -110,13 +113,27 @@ class PatternAttribute(braid.attribute.Attribute):
     def resolve(self):
         return self._value.resolve()
 
+    def shift(self):            
+        if self._repeat:
+            self._repeat -= 1
+            if self._repeat == 0:
+                if self._endwith_f is not None:
+                    if num_args(self._endwith_f) > 1:
+                        self._endwith_f(self.attribute.voice, self)
+                    elif num_args(self._endwith_f) > 0:
+                        self._endwith_f(self.voice)
+                    else:
+                        self._endwith_f()                                                   
+
+
+
     def repeat(self, n=True):
-        # self._repeat = n        
+        self._repeat = n        
         return self
 
     def endwith(self, f):
-        # assert isinstance(f, collections.Callable)
-        # self._endwith_f = f
+        assert isinstance(f, collections.Callable)
+        self._endwith_f = f
         return self
 
 
