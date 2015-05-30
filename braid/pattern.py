@@ -99,9 +99,6 @@ class PatternAttribute(braid.attribute.Attribute):
         self._value = pattern
         self.tween = braid.tween.PatternTween(self)
 
-    def control(self, vector_number, left_value, right_value):
-        controller.register(vector_number, self.voice, self, left_value, right_value)        
-
     @property
     def value(self):
         return self._value
@@ -110,6 +107,10 @@ class PatternAttribute(braid.attribute.Attribute):
     def value(self, value):
         self._value = value
         self.voice._pattern = self._value
+
+    def control(self, vector_number, left_value, right_value):
+        controller.register(vector_number, self.voice, self, left_value, right_value)        
+        
 
 
 def blend(pattern_1, pattern_2, balance=0.5):

@@ -1,7 +1,6 @@
 import collections
 from .attribute import Attribute
 from .pattern import Pattern, PatternAttribute
-from .sequence import Sequence
 from .core import driver, midi_out
 from .notation import *
 from .util import num_args
@@ -18,6 +17,7 @@ class Voice(object):
         self.chord = Attribute(self, (C, MAJ))
         self.mute = Attribute(self, False)
         self.phase = Attribute(self, 0.0)
+        self.pattern = PatternAttribute(self, Pattern())
         self.rate = Attribute(self, 1.0)
         self.velocity = Attribute(self, 1.0)
 
@@ -46,10 +46,6 @@ class Voice(object):
             else:
                 raise AttributeError("Cannot set property %s in constructor" % param)    
 
-        self._pattern = Pattern()
-        self._pattern_attribute = PatternAttribute(self, self._pattern)
-        self.sequence = Sequence(self).set(self._pattern)                
-
 
     def update(self, delta_t):
         """Run each tick and update the state of the Voice and all its attributes"""
@@ -71,11 +67,10 @@ class Voice(object):
                     print(lock)
                     lock()        
                 self._locks = []  
-                if self._pattern_attribute.tween.running: # tween happens only on an edge; tweening patterns override sequence until tween is complete                
-                    self._pattern_attribute.tween.update()
-                else:
-                    self._pattern = self.sequence._shift(self)
-                self._steps = self._pattern.resolve()
+                if self.pattern.tween.running: # pattern tweens only happen on an edge
+                    self.pattern.tween.update()
+                self.pattern = self.pattern.shift()
+                self._steps = self.pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
         self._last_edge = int(self._cycles)
@@ -135,10 +130,6 @@ class Voice(object):
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
-
-    def set(self, *sequence):
-        """Convenience method, synonym for voice.sequence.set"""
-        return self.sequence.set(*sequence)
 
     @property
     def pattern(self):

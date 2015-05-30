@@ -13,7 +13,7 @@ class Attribute(object):
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value): # even though this violates our interface, we need it for tweening
         self._value = value
 
     def set(self, value):

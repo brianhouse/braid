@@ -1,5 +1,8 @@
 braid
 
+Voice
+
+    all the things
 
 Attribute
 
@@ -7,36 +10,33 @@ Attribute
 
     set()   -- returns self
     tween()
+    control()
 
-
-Voice(Attribute)
+attributes
 
     chord(Attribute)
     mute(Attribute)
     phase(Attribute)
     rate(Attribute)
-    Sequence(list)    
     velocity(Attribute)
 
 
-
-Tween
-
-    endwith()
-
-    update()        # needs to return the equiv of get_value()
-
-
-
-Sequence(list)
-
-    list Pattern(Attribute)
+Pattern(Attribute)
 
     repeat()
     endwith()
 
 
-Pattern(Attribute)
+Tween
+
+    update()
+
+    endwith()
+
+
+
+
+
 
 
 Voices have rate, core has tempo.
