@@ -72,7 +72,12 @@ class Tween(object):
 
     @property
     def position(self): # can reference this to see where we are in the tween
-        position = (driver.t - self.start_t) / self.duration if self.duration > 0 else 1.0
+        if self.duration <= 0:
+            position = 1.0
+        elif type(self.duration) is int: # if ints, then we are using cycles and must convert
+            position = (driver.t - self.start_t) / (self.duration * (self.attribute.voice.rate.value / driver.rate))
+        else:
+            position = (driver.t - self.start_t) / self.duration
         if position >= 1.0:
             position = 1.0
             self.finished = True

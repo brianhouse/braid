@@ -1,11 +1,9 @@
-- think about discrete rates, a la hathwrought. it syncs.
 - need @decorators for note wrappers
 - how to connect directly to AU DLS Synth
 - plotter in signal, not tween? or tweens as signal?
 - why was doafter necessary?
 
 ## changes
-- tweens timed via cycles or t is an issue (floats or ints)
 - driver.on_t
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
