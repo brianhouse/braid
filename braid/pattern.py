@@ -117,7 +117,8 @@ class PatternAttribute(braid.attribute.Attribute):
         print("pattern.shift")    
         if self._repeat:
             self._repeat -= 1
-            if self._repeat == 0:                
+            print("pattern.repeat %s" % self._repeat)
+            if self._repeat == 0:  
                 if self._endwith_f is not None:
                     print("pattern.endwith_f")    
                     if num_args(self._endwith_f) > 1:

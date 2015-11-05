@@ -1,3 +1,4 @@
+- think about discrete rates, a la hathwrought. it syncs.
 - need @decorators for note wrappers
 - how to connect directly to AU DLS Synth
 - plotter in signal, not tween? or tweens as signal?
@@ -6,7 +7,6 @@
 ## changes
 - tweens timed via cycles or t is an issue (floats or ints)
 - driver.on_t
-- note that sharing sequences among voices will result in bad shit v2.set(v1.sequence) -- need copy function
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
 - lilypond should take a template filename, and fill in the score data, and auto-run lilypond

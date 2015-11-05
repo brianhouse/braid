@@ -131,9 +131,14 @@ class Voice(object):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
 
-    def set(self, value):
+    def set(self, value, repeat=None, endwith=None):
         """Shortcut for setting pattern"""
-        return self.pattern.set(value)
+        pattern = self.pattern.set(value)
+        if repeat is not None:
+            pattern.repeat(repeat)
+        if endwith is not None:
+            pattern.endwith(endwith)
+        return pattern
 
     def add(self, name, default=0.0):
         setattr(self, name, Attribute(self, default))

@@ -1,5 +1,6 @@
 import collections
 import braid.pattern
+from random import random
 from .signal import linear
 from .core import driver
 from .util import num_args
@@ -12,8 +13,8 @@ class Tween(object):
         self.attribute = attribute
         self.running = False
 
-    def __call__(self, target_value, duration, signal_f=linear):
-        print("made Tween on %s" % self.attribute)
+    def __call__(self, target_value, duration, signal_f=linear, repeat=None, endwith=None):
+        print("Making Tween on %s..." % self.attribute)
         self.start_value = self.attribute.value
         self.target_value = target_value
         if isinstance(self, PatternTween) and not isinstance(self.target_value, braid.pattern.Pattern):
@@ -24,9 +25,13 @@ class Tween(object):
         assert callable(self.signal_f)
         self.finished = False if self.duration > 0.0 else True
         self._repeat = False
+        if repeat is not None:
+            self.repeat(repeat)
         self._endwith_f = None
+        if endwith is not None:
+            self.endwith(endwith)
         self.running = True
-        print("finished making")
+        print("--> done")
         return self
 
     def update(self):
