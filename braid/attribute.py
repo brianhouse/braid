@@ -8,6 +8,9 @@ class Attribute(object):
         self.value = value
         self.tween = ContinuousTween(self) if type(self.value) == int or type(self.value) == float else DiscreteTween(self)
 
+    def __call__(self):
+        return self.value
+
     @property
     def value(self):
         return self._value

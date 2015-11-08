@@ -11,7 +11,7 @@ class Tween(object):
         self.attribute = attribute
         self.running = False
 
-    def __call__(self, target_value, duration, signal_f=linear, repeat=None, endwith=None):
+    def __call__(self, target_value, duration, signal_f=linear, repeat=None, endwith=None, flip=True):
         print("Making Tween on %s..." % self.attribute)
         self.start_value = self.attribute.value
         self.target_value = target_value
@@ -28,6 +28,7 @@ class Tween(object):
         self._endwith_f = None
         if endwith is not None:
             self.endwith(endwith)
+        self.flip = flip
         self.running = True
         print("--> done")
         return self
@@ -44,7 +45,11 @@ class Tween(object):
             if self._repeat:
                 repeat = self._repeat # careful, self values go away
                 endwith_f = self._endwith_f
-                self.attribute.tween(self.start_value, self.duration, self.signal_f).repeat(repeat) # flipped
+                if self.flip:
+                    self.attribute.tween(self.start_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
+                else:
+                    self.attribute.set(self.start_value)
+                    self.attribute.tween(self.target_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
                 if endwith_f is not None:
                     self.attribute.tween.endwith(endwith_f)
             else:
