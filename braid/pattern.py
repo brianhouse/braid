@@ -120,13 +120,15 @@ class PatternAttribute(braid.attribute.Attribute):
             print("pattern.repeat %s" % self._repeat)
             if self._repeat == 0:  
                 if self._endwith_f is not None:
+                    f = self._endwith_f
+                    self._endwith_f = None
                     print("pattern.endwith_f")    
-                    if num_args(self._endwith_f) > 1:
-                        self._endwith_f(self.voice, self)
-                    elif num_args(self._endwith_f) > 0:
-                        self._endwith_f(self.voice)
+                    if num_args(f) > 1:
+                        f(self.voice, self)
+                    elif num_args(f) > 0:
+                        f(self.voice)
                     else:
-                        self._endwith_f()                                                   
+                        f()
 
 
 
@@ -144,7 +146,7 @@ def blend(pattern_1, pattern_2, balance=0.5):
     """Probabalistically blend two Patterns"""
     ### a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
     ### plug the balance into ease_in, ease_out?
-    print("blend: ", pattern_1, type(pattern_1), pattern_2, type(pattern_2))
+    print("blend: ", pattern_1, pattern_2)
     p1_steps = pattern_1.resolve()
     p2_steps = pattern_2.resolve()        
     pattern = [None] * lcm(len(p1_steps), len(p2_steps))

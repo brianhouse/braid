@@ -1,10 +1,10 @@
+- endwith -- after each cycle? or after all repeats? aftereach, afterall?
+
 - need @decorators for note wrappers
 - how to connect directly to AU DLS Synth
 - plotter in signal, not tween? or tweens as signal?
-- why was doafter necessary?
 
 ## changes
-- driver.on_t
 - how do accidentals work in pattern? and they are awkward in lilypond output
 - phase locking between voices
 - lilypond should take a template filename, and fill in the score data, and auto-run lilypond
