@@ -27,3 +27,4 @@ class Attribute(object):
 
     def control(self, vector_number, left_value, right_value):
         controller.register(vector_number, self.voice, self, left_value, right_value)
+        

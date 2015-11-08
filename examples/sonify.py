@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from braid import *
-from extensions.volca import Volca
 
 # degrees per year from 1987 to 2012
 bachelors = 32710.00, 33004.00, 34386.00, 35957.00, 38084.00, 43982.00, 45252.00, 46518.00, 46327.00, 46698.00, 47566.00, 49591.00, 51739.00, 55970.00, 48132.00, 51848.00, 56667.00, 74127.00, 78004.00, 80368.00, 82457.00, 85116.00, 86760.00, 87155.00, 89318.00, 91222.00
@@ -31,7 +30,7 @@ def h(v):
 
 bv = Voice(1)
 bv.steps = 6                    # regular python attribute
-bv.ref = Attribute(bv, 0.0)     # new tweenable braid param
+bv.add('ref')                   # new tweenable braid param
 bv.chord.set((C2, FIT))         # existing braid param
 bv.ref.tween(1.0, 4, bachelors_f, repeat=True, flip=False)    # create a reference tween
 bv.set([h, (h, [h, h]), h, 0, h, (h, [h, h]), 0, h])
@@ -39,43 +38,23 @@ bv.set([h, (h, [h, h]), h, 0, h, (h, [h, h]), 0, h])
 mv = Voice(2)
 mv.steps = 18
 mv.chord.set((C4, FIT2))
-mv.ref = Attribute(mv, 0.0)
+mv.add('ref')
 mv.ref.tween(1.0, 8, masters_f, repeat=True, flip=False)
 mv.set([(h, [h, h]), h, 0, h, (h, [h, h]), 0, h, h])
 
 dv = Voice(3)
 dv.steps = 10
 dv.chord.set((C4, FIT2))
-dv.ref = Attribute(mv, 0.0)
+dv.add('ref')
 dv.ref.tween(1.0, 16, doctors_f, repeat=True, flip=False)
 dv.set([h, h, (h, [h, h]), h, 0, h, (h, [h, h]), 0])
 
-kick = Swerve(4)
-kick.synth = 'cycle'
-kick.attack = 20
-kick.decay = 100
-kick.chord = C2, MAJ
-kick.velocity = 1.15    
-
-# snare = Swerve(5)
-# snare.pan = 0.4
-# snare.synth = 'noise'
-# snare.attack = 1
-# snare.decay = 80
-# snare.chord = C6, MAJ
-# snare.velocity = 0.80
-
-# hat = Swerve(6)
-# hat.pan = 0.6
-# hat.synth = 'rect'
-# hat.attack = 0
-# hat.decay = 1
-# hat.chord = C6, MAJ
-# hat.velocity = 0.9
-
-# kick.pattern = 1, 1, 1, 1
-# snare.pattern = 0, [1, 0, 0, (0, 1, 0.7)], 0, [1, 0, 0, (0, 1, 0.7)]
-# hat.pattern = [(0, [1, 1]), [1, 1], (0, [1, 1]), [1, 1]] * 2
+# kick = Drums()
+# snare = Drums()
+# hat = Drums()
+# kick.set([1, 1, 1, 1])
+# snare.set([0, [2, 0, 0, (0, 2, 0.7)], 0, [2, 0, 0, (0, 2, 0.7)]])
+# hat.set([(0, [5, 5]), [5, 5], (0, [5, 5]), [5, 5]] * 2)
 
 
 # mv.mute()
