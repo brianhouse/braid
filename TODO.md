@@ -1,5 +1,3 @@
-- endwith -- after each cycle? or after all repeats? aftereach, afterall?
-
 - need @decorators for note wrappers
 - how to connect directly to AU DLS Synth
 - plotter in signal, not tween? or tweens as signal?
