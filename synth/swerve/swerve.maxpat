@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 6,
 			"minor" : 1,
-			"revision" : 7,
+			"revision" : 9,
 			"architecture" : "x86"
 		}
 ,
@@ -28,6 +28,20 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"frgb" : 0.0,
+					"id" : "obj-24",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 315.0, 30.0, 150.0, 20.0 ],
+					"text" : "currently unsupported"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -1256,14 +1270,14 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "cynth.maxpat",
-				"bootpath" : "/Users/house/Projects/braid/braid/synth/swerve",
+				"bootpath" : "/Users/house/Projects/braid/synth/swerve",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "pan4.maxpat",
-				"bootpath" : "/Users/house/Projects/braid/braid/synth/swerve",
+				"bootpath" : "/Users/house/Projects/braid/synth/swerve",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
