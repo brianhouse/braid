@@ -49,49 +49,49 @@ dv.add('ref')
 dv.ref.tween(1.0, 16, doctors_f, repeat=True, flip=False)
 dv.set([h, h, (h, [h, h]), h, 0, h, (h, [h, h]), 0])
 
-# kick = Drums()
-# snare = Drums()
-# hat = Drums()
-# kick.set([1, 1, 1, 1])
-# snare.set([0, [2, 0, 0, (0, 2, 0.7)], 0, [2, 0, 0, (0, 2, 0.7)]])
-# hat.set([(0, [5, 5]), [5, 5], (0, [5, 5]), [5, 5]] * 2)
+kick = Drums()
+snare = Drums()
+hat = Drums()
+kick.set([1, 1, 1, 1])
+snare.set([0, [2, 0, 0, (0, 2, 0.7)], 0, [2, 0, 0, (0, 2, 0.7)]])
+hat.set([(0, [5, 5]), [5, 5], (0, [5, 5]), [5, 5]] * 2)
 
 
-# mv.mute()
-# kick.mute()
-# snare.mute()
-# hat.mute()
+mv.mute.set(True)
+kick.mute.set(True)
+snare.mute.set(True)
+hat.mute.set(True)
 
-# kick.callback(0, hat.unmute)
-# kick.callback(0, bv.unmute)
-# bv.velocity = 0.0
-# def fade_bass():
-#     bv.tween('velocity', 0.0, 1.0, 8.0, power)
-# kick.callback(1, fade_bass)
-# kick.callback(8, kick.unmute)
-# kick.callback(15, snare.unmute)
+on_t(0, lambda: hat.mute.set(False))
+on_t(0, lambda: bv.mute.set(False))
+bv.velocity.set(0.0)
+def fade_bass():
+    bv.velocity.tween(1.0, 8.0)
+on_t(1, fade_bass)
+on_t(8, lambda: kick.mute.set(False))
+on_t(15, lambda: snare.mute.set(False))
 
-# kick.callback(32, mv.unmute)
-# ##
-# def fade_bass_down():
-#     bv.tween('velocity', 1.0, 0.0, 8.0)
-# kick.callback(48, fade_bass_down)
-# kick.callback(48, snare.mute)
-# kick.callback(48, hat.mute)
+on_t(32, lambda: mv.mute.set(False))
+##
+def fade_bass_down():
+    bv.velocity.tween(0.0, 8.0)
+on_t(48, fade_bass_down)
+on_t(48, lambda: snare.mute.set(True))
+on_t(48, lambda: hat.mute.set(True))
 
-# dv.velocity = 0.0
-# def fade_dv():
-#     dv.tween('velocity', 0.0, 1.0, 8.0, power)
-# kick.callback(50, fade_dv)
+dv.velocity.set(0.0)
+def fade_dv():
+    dv.velocity.tween(1.0, 8.0)
+on_t(50, fade_dv)
 
-# kick.callback(68, hat.unmute)
+on_t(68, lambda: hat.mute.set(False))
 
-# def bv_loud():
-#     bv.velocity = 1.0
-# kick.callback(74, bv_loud)    
-# kick.callback(74, bv.unmute)
-# kick.callback(74, snare.unmute)
-# kick.callback(74, dv.unmute)
+def bv_loud():
+    bv.velocity.set(1.0)
+on_t(74, bv_loud)    
+on_t(74, lambda: bv.mute.set(False))
+on_t(74, lambda: snare.mute.set(False))
+on_t(74, lambda: dv.mute.set(False))
 
 
 play()

@@ -196,3 +196,5 @@ def play():
 
 def stop():
     driver.stop()    
+
+on_t = driver.on_t
