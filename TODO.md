@@ -1,5 +1,5 @@
 #### plan
-- move to gilles. very close to 1.0.
+
 
 #### minor (feature adds, wont break)
 - prevent arbitrary params from being set?
