@@ -1,5 +1,6 @@
 #### plan
-
+- routing for serotonin to take live and also rect/cycle/noise
+- make a serotonin drum machine
 
 #### minor (feature adds, wont break)
 - prevent arbitrary params from being set?
