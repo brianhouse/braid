@@ -2,12 +2,24 @@
 
 from braid import *
 
-v1 = Voice(3, controls=config['serotonin']) 
-v2 = Voice(4, controls=config['serotonin']) 
-v3 = Voice(5, controls=config['serotonin']) 
-v4 = Voice(6, controls=config['serotonin']) 
-v5 = Voice(7, controls=config['serotonin']) 
-v6 = Voice(8, controls=config['serotonin']) 
+v1 = Voice(3, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+v2 = Voice(4, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+v3 = Voice(5, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+v4 = Voice(6, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+v5 = Voice(7, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+v6 = Voice(8, controls=config['serotonin'], attack=1, decay=10, sustain=0, release=0) 
+
+def set_controls():
+    midi_in.callback(33, superlock)
+    #
+    midi_in.callback(34, test)
+    midi_in.callback(35, intro)
+    # midi_in.callback(36, beat_lockup)
+    # midi_in.callback(37, melody_tween)
+    # midi_in.callback(38, melody2)
+    # midi_in.callback(39, melody3)
+    # midi_in.callback(40, melody4)
+    # midi_in.callback(41, unravel)
 
 
 def k(v):
@@ -38,34 +50,6 @@ def h(a):
 
 tempo(90)
 
-def test():
-    v2.add('ref', 1.0)
-    v1.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
-    v1.chord((None))
-    v1.set([C1, C5, C1])#, repeat=4, endwith=lambda: (v1.set([C1, C5, C1]), start_v2(), start_v3))  ## see, this is an issue
-    pat_2 = [[h(0.8), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)],[h(1.0), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)]]*2
-    v2.set(pat_2)
-test()
-
-def intro():
-    print("INTRO")
-    v1.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
-    v1.chord((None))
-    v1.set([C1, C5, C1])#, repeat=4, endwith=lambda: (v1.set([C1, C5, C1]), start_v2(), start_v3))  ## see, this is an issue
-    v1.rate(0.48)
-    driver.on_t(20.0, lambda: introsync())
-# intro()
-    
-def introsync():
-    print("INTROSYNC")
-    v1.rate.tween(1.0, 10)
-    v2.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
-    v2.add('ref')    
-    pat_2 = [[h(0.8), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)],[h(1.0), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)]]*2
-    v2.set(pat_2)
-    v2.rate.tween(0.8, 5, repeat=4, endwith=lambda: superlock())
-    v2.ref.tween(1.0, 16, endwith=lambda: stab())
-
 def superlock():
     print("SUPERLOCK")
     v2.lock(v1)
@@ -74,6 +58,23 @@ def superlock():
     v5.lock(v1)
     v6.lock(v1)
 
+def test():
+    print("TEST")
+    v2.add('ref', 1.0)
+    v1.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
+    v1.chord((None))
+    v1.set([C1, C5, C1])#, repeat=4, endwith=lambda: (v1.set([C1, C5, C1]), start_v2(), start_v3))  ## see, this is an issue
+    pat_2 = [[h(0.8), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)],[h(1.0), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)]]*2
+    v2.set(pat_2)
+
+def intro():
+    print("INTRO")
+    v1.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
+    v1.chord((None))
+    v1.set([C1, C5, C1])
+    v1.rate(0.48)
+    v1.rate.tween(1.0, 5, ease_in, endwith=lambda: superlock())
+    
 def stab():
     print("STAB")
     v5.attack(5)
@@ -90,8 +91,17 @@ def stab():
     v6.set([Z, 0, 0, 0, -7, 0])
     v6.rate(.125)
     v6.phase(0.025)
-# stab()
+stab()
 
+def introsync():
+    print("INTROSYNC (auto)")
+    
+    v2.attack(1), v1.decay(1), v1.sustain(0), v1.release(0)
+    v2.add('ref')    
+    pat_2 = [[h(0.8), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)],[h(1.0), h(0.7), h(0.7), h(0.7), h(0.7), h(0.7)]]*2
+    v2.set(pat_2)
+    v2.rate.tween(0.8, 5, repeat=4, endwith=lambda: superlock())
+    v2.ref.tween(1.0, 16, endwith=lambda: stab())
 
 def endstabbers():
     print("ENDSTAB")
@@ -121,7 +131,7 @@ def endstabbers():
     # v6.phase(0.025)
 
 
-endstabbers()
+# endstabbers()
 
 def arpjams():
     v3.attack(20), v3.decay(50), v3.sustain(20), v3.release(0)
@@ -154,7 +164,7 @@ def jammers():
     v4.chord((D3, DOR))
     v4.set([0, 4, 0, 4, 0, 4]*2)
 # arpjams()
-jammers()
+# jammers()
 
 
 """
@@ -179,5 +189,5 @@ ok, the bass is going to have to shift
 # v6.phase(0.3)
 # v6.set([2, -6])
 
-
+set_controls()
 play()

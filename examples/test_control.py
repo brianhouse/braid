@@ -14,3 +14,21 @@ v1.pattern.control(1, pattern_1, pattern_2)
 
 play()
 
+
+
+"""
+
+Also, this works:
+
+def set_controls():
+    midi_in.callback(33, beat_intro_2)
+    midi_in.callback(34, beat_intro_3)
+    midi_in.callback(35, unison_separate)
+    midi_in.callback(36, beat_lockup)
+    midi_in.callback(37, melody_tween)
+    midi_in.callback(38, melody2)
+    midi_in.callback(39, melody3)
+    midi_in.callback(40, melody4)
+    midi_in.callback(41, unravel)
+
+"""

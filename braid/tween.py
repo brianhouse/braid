@@ -12,7 +12,7 @@ class Tween(object):
         self.running = False
 
     def __call__(self, target_value, duration, signal_f=linear, repeat=None, endwith=None, flip=True):
-        print("Making Tween on %s..." % self.attribute)
+        print("Making Tween on %s... (r%s)" % (self.attribute, repeat))
         self.start_value = self.attribute.value
         self.target_value = target_value
         if isinstance(self, PatternTween) and not isinstance(self.target_value, braid.pattern.Pattern):
@@ -43,6 +43,7 @@ class Tween(object):
             if type(self._repeat) is int:
                 self._repeat -= 1
             if self._repeat:
+                print("repeating tween...")
                 repeat = self._repeat # careful, self values go away
                 endwith_f = self._endwith_f
                 if self.flip:
