@@ -55,6 +55,7 @@ class Voice(object):
             if isinstance(attribute, PatternAttribute):
                 continue
             attribute.tween.update()
+        self.update_control()            
 
         # calculate step
         self._cycles += delta_t * self.rate.value * driver.rate
