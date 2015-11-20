@@ -101,11 +101,9 @@ class MidiOut(threading.Thread):
         self.start()   
 
     def send_control(self, channel, control, value):
-        print('control entered queue')
         self.queue.put((channel, (control, value), None))
 
     def send_note(self, channel, pitch, velocity):
-        print('note entered queue')
         self.queue.put((channel, None, (pitch, velocity)))
 
     def run(self):

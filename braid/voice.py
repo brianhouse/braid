@@ -3,7 +3,7 @@ from .attribute import Attribute
 from .pattern import Pattern, PatternAttribute
 from .core import driver, midi_out
 from .notation import *
-from .util import num_args
+from .util import log, num_args
 
 class Voice(object):
 
@@ -73,7 +73,6 @@ class Voice(object):
                 self._steps = self.pattern.resolve()
             step = self._steps[self._index]
             self.play(step)
-            print('')
         self._last_edge = int(self._cycles)
 
 
@@ -87,18 +86,18 @@ class Voice(object):
                 if control not in self.control_values or value != self.control_values[control]:
                     midi_out.send_control(self.channel.value, self.controls[control], value)
                     self.control_values[control] = value
-                    print('cntl sent', control)
+                    log.info("%d: %s %s" % (self.channel.value, control, value))
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""
         if isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
-            self.update_control()
         if step == Z:
             self.rest()
         elif step == 0 or step is None:
             self.hold()
         else:
+            self.update_control()
             if step == P:
                 step = self._previous_step
             if self.chord.value is None:
@@ -122,7 +121,6 @@ class Voice(object):
 
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""
-        print('note called')
         midi_out.send_note(self.channel.value, self._previous_pitch, 0)
         midi_out.send_note(self.channel.value, pitch, int(velocity * 127))
 
