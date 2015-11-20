@@ -332,6 +332,7 @@
 					"fontsize" : 12.0,
 					"id" : "obj-10",
 					"maxclass" : "number",
+					"minimum" : 1,
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
