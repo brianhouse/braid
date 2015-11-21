@@ -151,6 +151,7 @@ class Voice(object):
 
     def lock(self, voice, phase=0.0):
         """On the next cycle, sync locked voices"""
+        """A voice locks another voice, it's aggressive!"""
         assert(isinstance(voice, Voice))
         def lock_f():
             voice.phase.set(self.phase.value + phase)
