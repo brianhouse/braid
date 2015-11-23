@@ -3,6 +3,7 @@
 - make a serotonin drum machine
 
 #### minor (feature adds, wont break)
+- need longer ADSR
 - prevent arbitrary params from being set?
 - can eliminate .set() ? 
 - need @decorators for note wrappers

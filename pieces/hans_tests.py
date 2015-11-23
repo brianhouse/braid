@@ -14,7 +14,7 @@ def set_controls():
     #
     midi_in.callback(34, shifter)
     midi_in.callback(35, dshifter)
-    # midi_in.callback(36, tapper)
+    midi_in.callback(36, jamspinch)
     # midi_in.callback(37, melody_tween)
     # midi_in.callback(38, melody2)
     # midi_in.callback(39, melody3)
@@ -81,22 +81,22 @@ def intro():
     v1.rate(0.48)
     v1.rate.tween(1.0, 20, ease_in)#, endwith=lambda: superlock())    
     
-def stab():
-    print("STAB")
-    v5.attack(5)
-    v5.release(255)
-    v5.sustain(100)
-    v5.chord((D2, DOR))
-    v5.set([1, 0, 0, 0, Z, Z])
-    v5.rate(.125)
+# def stab():
+#     print("STAB")
+#     v5.attack(5)
+#     v5.release(255)
+#     v5.sustain(100)
+#     v5.chord((D2, DOR))
+#     v5.set([1, 0, 0, 0, Z, Z])
+#     v5.rate(.125)
 
-    v6.attack(5)
-    v6.sustain(100)
-    v6.release(255)
-    v6.chord((D2, DOR))
-    v6.set([Z, 0, 0, 0, -6, 0])
-    v6.rate(.125)
-    v6.phase(0.025)
+#     v6.attack(5)
+#     v6.sustain(100)
+#     v6.release(255)
+#     v6.chord((D2, DOR))
+#     v6.set([Z, 0, 0, 0, -6, 0])
+#     v6.rate(.125)
+#     v6.phase(0.025)
 
 def tapper():
     print("TAPPER")
@@ -109,6 +109,15 @@ def tapper():
     # v2.ref.tween(1.0, 16, endwith=lambda: stab())
 
 
+def prestab():
+    print("PRESTAB")    
+    v5.attack(255)
+    v5.decay(255)
+    v5.sustain(60)
+    v5.release(0)
+    v5.chord((G1, DOR))
+    v5.set([(1, 0), 0])    
+
 def endstabbers():
     print("ENDSTAB")
     v5.attack(20)
@@ -118,12 +127,14 @@ def endstabbers():
     v5.chord((G1, DOR))
     v5.set([1, 1, 1]*2)
 
-    v6.attack(20)
-    v6.decay(255)
-    v6.sustain(40)
-    v6.release(0)
-    v6.chord((G1, DOR))
-    v6.set([1, 1, 1]*2)
+
+
+    # v6.attack(20)
+    # v6.decay(255)
+    # v6.sustain(40)
+    # v6.release(0)
+    # v6.chord((G1, DOR))
+    # v6.set([1, 1, 1]*2)
 
 
     # v5.rate(.125)
@@ -155,7 +166,7 @@ v3.add('ref', 0.0)
 
 def arpjams():
     v3.attack(5), v3.decay(50), v3.sustain(100), v3.release(100)
-    v3.chord((D3, DOR))
+    v3.chord((D3, DOR))         # to F is nice
     # v3.set([1, 1, 1, 1]*2)    
     # v3.set([1, 5, -4, 1, 5, -4, 1, 5, -4, 1, 5, -4]*2)
     # v3.set([2, -5, 4, 2, -5, -5, 4, 2, -5, 2, 4, -5]*2)
@@ -199,8 +210,14 @@ def dshifter():
     v3.attack.tween(1, 60.0)
     v4.attack.tween(1, 60.0, endwith=lambda: superlock())
 
-
-
+def tester():
+    print("TESTER")
+    v3.sustain(20)
+    v4.sustain(20)
+    v3.ref(1)
+    v3.attack(1)
+    v4.attack(1)
+    superlock()
 
 def jammers():
     v3.attack(1), v3.decay(50), v3.sustain(20), v3.release(0)
@@ -215,14 +232,78 @@ def jammers():
 # jammers()
 
 
+def flyer():
+    v6.attack(5)
+    v6.decay(5)
+    v6.sustain(40)
+    v6.release(100)
+    v6.chord((C6, DOR))
+    v6.rate(0.75)
+    # v6.set([4, 0])
+    se = [          [1, 1, 1]*12, 
+                    [4, 4, 4]*10,
+                    [-6, -6, -6]*11,
+                    [2, 2, 2]*9,
+                    [-6, -6, -6]*8,
+                    [-5, -5, -5]*13,
+                    [Z, Z]*10,
+                    ]
 
-intro()
+    madseq = [  se[0], se[1], se[6], 
+                se[0], se[1], se[2], se[6], 
+                se[0], se[1], se[2], se[3], se[4], se[6],
+                se[2], se[3], se[4], se[5], se[6]
+                ]
+
+    v6.set([4, 2, (1, -7)]*12)    
+    v6.add('asi')
+    def assign():
+        print('asi', v6.asi())
+        if int(v6.asi()) == len(modseq):
+            jamspinch()
+            return
+        v6.set(madseq[int(v6.asi())], repeat=1, endwith=lambda: assign())
+        v6.asi((v6.asi()+1))        
+    assign()
+
+
+def jamspinch():
+    length = 16
+    v3.attack.tween(1, length)
+    v3.sustain.tween(0, length)
+    v3.decay.tween(1, length)
+    v3.release.tween(1, length)
+    v4.attack.tween(1, length)
+    v4.sustain.tween(0, length)
+    v4.decay.tween(1, length)
+    v4.release.tween(1, length)
+
+    def u(n):
+        def f(v):
+            v.velocity(1)
+            return n
+        return f
+    v3.pattern.tween([u(1), u(1), u(1), u(1), u(1), u(1), u(1), u(1)]*2, length, endwith=lambda: v3.chord.tween((C4, DOR), 4, endwith=lambda: v3.chord.tween((C6, DOR), 4, endwith=lambda: v3.pattern.tween([0, 0], 12))))    
+    v4.pattern.tween([u(4), u(4), u(4), u(4), u(4), u(4), ]*2, length, endwith=lambda: v4.chord.tween((C4, DOR), 4, endwith=lambda: v4.chord.tween((C6, DOR), 4, endwith=lambda: v4.pattern.tween([0, 0], 12))))    
+
+
+# intro()
 tapper()
 arpjams()
+tester()
 endstabbers()
+# prestab()
+# flyer()
 
 
-# test()
+
+
+
+
+    
+
+
+# test2()
 
 
 
@@ -233,29 +314,34 @@ play()
 
 """
 
+remember to use lo eq on mids
+remember to have the fork _off_ when freezing
+
+
 get a tone on ebow, pull it off.
 start. let that be.
 play with putting on low ebow and pulling up mids -- delicate lower for the fork
 tweens.
 
 low comes in after shifter, but sustained
-after the lock, it's starts to tween to faster
+then dshifter
+after the lock, low starts to pump faster (trigger)
 then there is a hard fork switch
 
-pull to distortion
+
 midloeq comes up
+pull to distortion
 
 ebow plays
 
 fork goes high and backs off a bit
 
+fork comes down, turns up
 
+melody plays
 
-
-
-remember to use lo eq on mids
-remember to have the fork _off_ when freezing
-
+melody dies
+lows die
 
 """
 
