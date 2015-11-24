@@ -4,7 +4,7 @@ import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from .util import log, num_args
 
-log_midi = True
+log_midi = False
 
 class Driver(threading.Thread):
 
@@ -47,8 +47,13 @@ class Driver(threading.Thread):
                 if not self.running:
                     break
                 delta_t = self.t - self.previous_t
+                # print(int(delta_t * 1000))    # this results in 10-13ms grain
                 for voice in self.voices:
+                    c = time.time()
                     voice.update(delta_t)
+                    rc = int((time.time() - c) * 1000)
+                    if rc > 1:
+                        log.warning(">>> processor overload %dms update <<<" % rc)
                 self.previous_t = self.t     
                 time.sleep(self.grain)
         except KeyboardInterrupt:

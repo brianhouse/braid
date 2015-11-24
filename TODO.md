@@ -4,6 +4,7 @@
 
 #### minor (feature adds, wont break)
 - need longer ADSR
+- macro per-note changes
 - prevent arbitrary params from being set?
 - can eliminate .set() ? 
 - need @decorators for note wrappers
