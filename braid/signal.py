@@ -116,8 +116,23 @@ class Plotter():
     def show_plots(cls):
         cls.instance.master.update()
 
-def plot(bp_f, color="red"):
-    Plotter.plot(bp_f, color)
+def plot(signal, color="red"):
+    Plotter.plot(signal, color)
 
 def show_plots():
     Plotter.show_plots()
+
+
+if __name__ == "__main__":
+    signal = signal_from_breakpoints(   [0, 0],
+                                        [2, 1, linear], 
+                                        [6, 2, ease_out], 
+                                        [7, 0],
+                                        [12, 3, ease_in], 
+                                        [14, 2, ease_out], 
+                                        [15, 0, ease_in_out]
+                                        )
+    plot(signal)
+    show_plots()
+    while True:
+        time.sleep(1)
