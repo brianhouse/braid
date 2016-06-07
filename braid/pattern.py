@@ -142,7 +142,7 @@ class PatternAttribute(braid.attribute.Attribute):
         return self
 
 
-def blend(pattern_1, pattern_2, balance=0.5):
+def blend(pattern_1, pattern_2, balance=0.5, fade=True):
     """Probabalistically blend two Patterns"""
     ### a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
     ### plug the balance into ease_in, ease_out?
@@ -159,8 +159,11 @@ def blend(pattern_1, pattern_2, balance=0.5):
             else:
                 pattern[i] = p2_steps[int(i / p2_div)]
         elif i % p1_div == 0:     
-            if random() > balance:               
-                pattern[i] = p1_steps[int(i / p1_div)]
+            if fade:
+                pass
+            else:
+                if random() > balance:               
+                    pattern[i] = p1_steps[int(i / p1_div)]
         elif i % p2_div == 0:
             if random() <= balance:
                 pattern[i] = p2_steps[int(i / p2_div)]

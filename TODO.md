@@ -17,3 +17,18 @@
 - lock is backwards
 - tweenable signals (hence signals as objects)
 - integrate lilypond
+
+
+
+##### thoughts
+
+accents are important and not adequately dealt with
+1, 0, 1, 1
+could be a library wrapper
+a(1), 0, 1, 1
+with optional v
+a(1, .2)
+nah, no option.
+
+but there is no note velocity reset. implement a one-shot velocity?
+

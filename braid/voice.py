@@ -20,6 +20,7 @@ class Voice(object):
         self.pattern = PatternAttribute(self, Pattern())
         self.rate = Attribute(self, 1.0)
         self.velocity = Attribute(self, 1.0)
+        self.note_velocity = Attribute(self, 1.0)   ## allows for pattern tweening by velocity
 
         # arbitrary attributes linked to MIDI controls
         # 'control' is a dict in the form {'attack': 54, 'decay': 53, 'cutoff': 52, ...}
@@ -107,7 +108,7 @@ class Voice(object):
                 root, scale = self.chord.value
                 pitch = root + scale[step]
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
-            velocity *= self.velocity.value
+            velocity *= self.velocity.value * self.note_velocity.value
             if not self.mute.value:
                 self.note(pitch, velocity)
             self._previous_pitch = pitch
