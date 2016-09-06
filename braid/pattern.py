@@ -1,6 +1,6 @@
 import collections
 from random import choice, random
-from .util import num_args
+from .util import num_args, log
 
 
 class Pattern(list):
@@ -61,7 +61,7 @@ def blend(pattern_1, pattern_2, balance=0.5, fade=True):
     """Probabalistically blend two Patterns"""
     ## a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
     ## plug the balance into ease_in, ease_out?
-    print("Blend: ", pattern_1, pattern_2)
+    # log.debug("Blend: %s %s" % (pattern_1, pattern_2))
     p1_steps = pattern_1.resolve()
     p2_steps = pattern_2.resolve()        
     pattern = [None] * lcm(len(p1_steps), len(p2_steps))

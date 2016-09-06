@@ -1,14 +1,12 @@
 import collections, math
 from random import random
 from .signal import linear
-from .pattern import Pattern
+from .pattern import Pattern, blend
 
 class Tween(object):
 
     def __init__(self, target_value, cycles, signal_f=linear):
         self.target_value = target_value
-        if isinstance(self, PatternTween) and not isinstance(self.target_value, Pattern):
-            self.target_value = Pattern(self.target_value)        
         self.cycles = cycles
         self.signal_f = signal_f
         self.finished = False
@@ -39,41 +37,34 @@ class Tween(object):
         return position        
 
     
-class ContinuousTween(Tween):
+class ScalarTween(Tween):
 
     def calc_value(self, position):        
         value = (position * (self.target_value - self.start_value)) + self.start_value
         return value
 
         
-class TupleTween(Tween):
+class ChordTween(Tween):
 
     def calc_value(self, position):
-        values = []
-        for i in range(len(self.target_value)):
-            values.append((position * (self.target_value[i] - self.start_value[i])) + self.start_value[i])
-        return values
+        if random() > position:        
+            return self.start_value
+        else:
+            return self.target_value
 
 
 class PatternTween(Tween):    
 
     def calc_value(self, position):
-        """ This only runs when a pattern is refreshed, not every step; 
-            resolve steps for start and target, blend them, and return the result as a pattern
-        """
-        from .pattern import blend # avoid circular        
-        if position <= 0.0:
-            return self.start_value
-        if position >= 1.0:
-            return self.target_value # need this to preserve markov tween destinations
-        pattern = blend(self.start_value, self.target_value, position)
-        return pattern
+        return blend(self.start_value, self.target_value, position)
 
 
 def tween(value, cycles):
     if type(value) == float:
-        return ContinuousTween(value, cycles)
+        return ScalarTween(value, cycles)
     if type(value) == tuple:
-        return TupleTween(value, cycles)
+        return ChordTween(value, cycles)
+    if type(value) == list:
+        value = Pattern(value)
     if type(value) == Pattern:
         return PatternTween(value, cycles)

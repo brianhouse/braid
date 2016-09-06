@@ -110,10 +110,10 @@ class Thread(object):
 
     @pattern.setter
     def pattern(self, pattern):
-        if type(pattern) != Pattern:
-            pattern = Pattern(pattern)
         if isinstance(pattern, Tween):
             pattern.start(self, self._pattern)
+        if type(pattern) == list:
+            pattern = Pattern(pattern)
         self._pattern = pattern
 
     @property
