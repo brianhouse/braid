@@ -65,10 +65,9 @@ BAM. (not sure how sync actually works, but hey).
 
 
 PLAN: 
-ignore sync for now and adapt tween to the current model. including pattern blend, I think.
-then get the controller up.
 then get sync going.
 then get adsr in there somehow.
+then get the controller up.
 then make some fucking music already.
 
 

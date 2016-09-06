@@ -8,11 +8,20 @@ kick.pattern = [1, 0, 0, 1, 0, 0, 1, 0]
 kick.rate = tween(0.5, 8)
 
 
-tone = Thread(1)
-tone.pattern = [1, 0, 0, 1, 0, 0, 1, 0]
-tone.start()
-tone.pattern = tween([1, 2, 3, 1, 2, 3, 1, -7], 8, ease_in)
+tone1 = Thread(1)
+tone1.pattern = [1, 0, 0, 1, 0, 0, 1, 0]
+tone1.pattern = [1, 1, 1, 1]
+tone1.rate = 1.0
+tone1.start()
 
+
+tone2 = Thread(2)
+tone2.pattern = [0, 2, 0, 0, 2, 0, 2, 0]
+tone2.pattern = [2, 2, 2, 2]
+tone2.rate = 0.25
+tone2.start()
+# tone2.sync = tone1
+# tone2.rate = 0.5
+tone2.sync = tween(tone1, 8, ease_out)
 
 driver.start()
-

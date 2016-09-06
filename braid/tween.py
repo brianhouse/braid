@@ -3,6 +3,7 @@ from random import random
 from .signal import linear
 from .pattern import Pattern, blend
 
+
 class Tween(object):
 
     def __init__(self, target_value, cycles, signal_f=linear):
@@ -28,6 +29,8 @@ class Tween(object):
 
     @property
     def position(self): # can reference this to see where we are in the tween
+        if self.cycles == 0.0:
+            return 1.0
         position = (self.thread._cycles - self.start_cycle) / self.cycles
         if position <= 0.0:
             position = 0.0
@@ -59,12 +62,17 @@ class PatternTween(Tween):
         return blend(self.start_value, self.target_value, position)
 
 
+class SyncTween(Tween):
+    pass
+
 def tween(value, cycles, signal_f=linear):
     if type(value) == float:
-        return ScalarTween(value, cycles)
+        return ScalarTween(value, cycles, signal_f)
     if type(value) == tuple:
-        return ChordTween(value, cycles)
+        return ChordTween(value, cycles, signal_f)
     if type(value) == list:
         value = Pattern(value)
     if type(value) == Pattern:
-        return PatternTween(value, cycles)
+        return PatternTween(value, cycles, signal_f)
+    if isinstance(value, object):
+        return SyncTween(value, cycles, signal_f)

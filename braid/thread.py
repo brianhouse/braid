@@ -1,9 +1,9 @@
 import collections
 from .core import driver
 from .util import log, num_args, midi_out
+from .signal import linear
 from .notation import *
 from .tween import *
-from .pattern import Pattern
 
 
 class Thread(object):
@@ -13,12 +13,6 @@ class Thread(object):
     def __init__(self, channel):
         Thread.threads.append(self)        
         
-        # settable/tweenable attributes
-        self.rate = 1.0
-        self.pattern = [0]
-        self.chord = C, MAJ
-        self.velocity = 1.0        
-
         # private reference variables
         self._channel = channel
         self._running = False
@@ -30,18 +24,27 @@ class Thread(object):
         self._previous_step = 1
         self._syncee = None
 
+        # settable/tweenable attributes
+        self.rate = 1.0
+        self.pattern = [0]
+        self.chord = C, MAJ
+        self.velocity = 1.0                
+
 
     def update(self, delta_t):        
         """Run each tick and update the state of the Thread"""
         if not self._running:
             return
         self.update_control()
+        if self._syncee is not None:
+            self._rate.target_value = self._syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
         p = self._cycles % 1.0        
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
+                print(self._channel, self._cycles)
                 if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
                     pattern = self.pattern.value()
                 else:
@@ -124,6 +127,8 @@ class Thread(object):
 
     @rate.setter
     def rate(self, rate):
+        if self._syncee is not None:
+            return
         if isinstance(rate, Tween):
             rate.start(self, self._rate)                
         self._rate = rate
@@ -152,14 +157,29 @@ class Thread(object):
             chord.start(self, self._chord)        
         self._chord = chord
 
+    @property
+    def sync(self):
+        return self._syncee
+
+    @sync.setter
+    def sync(self, thread):
+        if thread is None:
+            self._syncee = None
+            return
+        if isinstance(thread, Tween):
+            tw = thread
+            thread = tw.target_value
+            cycles, signal_f = tw.cycles, tw.signal_f
+        else:
+            cycles, signal_f = 0, linear
+        self.rate = tween(thread.rate, cycles, signal_f)  # create new tween on rate
+        self._syncee = thread
+
     def start(self):
         self._running = True
 
     def stop(self):
         self._running = False
-
-    def sync(self, thread):
-        self._syncee = thread
 
 
 class Drums(Thread):
