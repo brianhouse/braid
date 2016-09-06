@@ -70,5 +70,3 @@ then get adsr in there somehow.
 then get the controller up.
 then make some fucking music already.
 
-
-

@@ -10,6 +10,10 @@ class Scale(list):
         super(Scale, self).__init__(*args)
 
     def __getitem__(self, degree):
+        grace = False
+        if type(degree) == float:
+            degree = int(degree)
+            grace = True
         if not ((type(degree) == int or degree == R) and degree != 0):
             raise ScaleError(degree)
         octave_shift = 0
@@ -25,6 +29,8 @@ class Scale(list):
         degree = ((degree - 1) % len(self)) + 1
         semitone = super(Scale, self).__getitem__(degree - 1)
         semitone += octave_shift
+        if grace:
+            return float(semitone)
         return semitone
 
     def rotate(self, steps):

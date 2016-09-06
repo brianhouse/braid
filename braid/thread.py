@@ -68,7 +68,9 @@ class Thread(object):
     #                 log.info("%d: %s %s" % (self.channel.value, control, value))
 
     def play(self, step, velocity=None):
-        """Interpret a step value to play a note"""
+        """Interpret a step value to play a note"""        
+        v = 0.75 if type(step) == float else 1.0 # floats signify gracenotes
+        step = int(step)
         if isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
         if step == Z:
@@ -83,6 +85,7 @@ class Thread(object):
                 pitch = root + scale[step]
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity
+            velocity *= v
             self.note(pitch, velocity)
             self._previous_pitch = pitch
         if step != 0:        
