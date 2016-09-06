@@ -59,7 +59,7 @@ class PatternTween(Tween):
         return blend(self.start_value, self.target_value, position)
 
 
-def tween(value, cycles):
+def tween(value, cycles, signal_f=linear):
     if type(value) == float:
         return ScalarTween(value, cycles)
     if type(value) == tuple:
