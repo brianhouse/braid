@@ -16,6 +16,7 @@ class Voice(object):
         self.channel = Attribute(self, channel)
         self.chord = Attribute(self, (C, MAJ))
         self.mute = Attribute(self, False)
+        self.sustain = Attribute(self, False)
         self.phase = Attribute(self, 0.0)
         self.pattern = PatternAttribute(self, Pattern())
         self.rate = Attribute(self, 1.0)
@@ -123,7 +124,8 @@ class Voice(object):
 
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""
-        midi_out.send_note(self.channel.value, self._previous_pitch, 0)
+        if not self.sustain() and pitch != self._previous_pitch:
+            midi_out.send_note(self.channel.value, self._previous_pitch, 0)
         midi_out.send_note(self.channel.value, pitch, int(velocity * 127))
 
     def hold(self):

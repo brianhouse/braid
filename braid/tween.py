@@ -49,6 +49,7 @@ class Tween(object):
                 if self.flip:
                     self.attribute.tween(self.start_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
                 else:
+                    print(self.start_value, self.target_value)
                     self.attribute.set(self.start_value)
                     self.attribute.tween(self.target_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
                 if endwith_f is not None:
@@ -108,7 +109,7 @@ class ContinuousTween(Tween):
         return value
 
         
-class TupleTween(Tween):
+class ChordTween(Tween):
 
     def calc_value(self, position):
         values = []
