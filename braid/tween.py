@@ -1,105 +1,42 @@
-import collections
-import braid.pattern
+import collections, math
 from random import random
 from .signal import linear
-from .core import driver
-from .util import num_args
+from .pattern import Pattern
 
 class Tween(object):
 
-    def __init__(self, attribute):
-        self.attribute = attribute
-        self.running = False
-
-    def __call__(self, target_value, duration, signal_f=linear, repeat=None, endwith=None, flip=True):
-        print("Making Tween on %s... (r%s)" % (self.attribute, repeat))
-        self.start_value = self.attribute.value
+    def __init__(self, target_value, cycles, signal_f=linear):
         self.target_value = target_value
-        if isinstance(self, PatternTween) and not isinstance(self.target_value, braid.pattern.Pattern):
-            self.target_value = braid.pattern.Pattern(self.target_value)
-        self.start_t = driver.t
-        self.duration = duration
+        if isinstance(self, PatternTween) and not isinstance(self.target_value, Pattern):
+            self.target_value = Pattern(self.target_value)        
+        self.cycles = cycles
         self.signal_f = signal_f
-        assert callable(self.signal_f)
-        self.finished = False if self.duration > 0.0 else True
-        self._repeat = False
-        if repeat is not None:
-            self.repeat(repeat)
-        self._endwith_f = None
-        if endwith is not None:
-            self.endwith(endwith)
-        self.flip = flip
-        self.running = True
-        print("--> done")
-        return self
+        self.finished = False
 
-    def update(self):
-        if not self.running:
-            return
-        self.attribute.value = self.get_value()
+    def start(self, thread, start_value):
+        self.thread = thread
+        self.start_value = start_value
+        self.start_cycle = float(math.ceil(self.thread._cycles)) # threads always start on next cycle
+
+    @property
+    def value(self):            
         if self.finished:
-            print("tween finished")
-            self.running = False
-            if type(self._repeat) is int:
-                self._repeat -= 1
-            if self._repeat:
-                print("repeating tween...")
-                repeat = self._repeat # careful, self values go away
-                endwith_f = self._endwith_f
-                if self.flip:
-                    self.attribute.tween(self.start_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
-                else:
-                    print(self.start_value, self.target_value)
-                    self.attribute.set(self.start_value)
-                    self.attribute.tween(self.target_value, self.duration, self.signal_f, flip=self.flip).repeat(repeat)
-                if endwith_f is not None:
-                    self.attribute.tween.endwith(endwith_f)
-            else:
-                print("TWEEN ENDING %s" % self._endwith_f)
-                if isinstance(self, PatternTween): # pattern targets need to persist after tween
-                    self.attribute.voice.set(self.target_value)
-                if self._endwith_f is not None:
-                    if num_args(self._endwith_f) > 1:
-                        self._endwith_f(self.attribute.voice, self)
-                    elif num_args(self._endwith_f) > 0:
-                        self._endwith_f(self.attribute.voice)
-                    else:
-                        self._endwith_f()                                                   
+            return self.target_value
+        return self.calc_value(self.signal_position)
 
-    def repeat(self, n=True):
-        self._repeat = n        
-        return self
-
-    def endwith(self, f):
-        assert isinstance(f, collections.Callable)
-        self._endwith_f = f
-        return self
+    @property
+    def signal_position(self): # can reference this to see where we are on the signal function
+        return self.signal_f(self.position)        
 
     @property
     def position(self): # can reference this to see where we are in the tween
-        if self.duration <= 0:
-            position = 1.0
-        elif type(self.duration) is int: # if ints, then we are using cycles and must convert
-            position = (driver.t - self.start_t) / (self.duration * (self.attribute.voice.rate.value / driver.rate))
-        else:
-            position = (driver.t - self.start_t) / self.duration
+        position = (self.thread._cycles - self.start_cycle) / self.cycles
+        if position <= 0.0:
+            position = 0.0
         if position >= 1.0:
             position = 1.0
             self.finished = True
         return position        
-
-    @property
-    def signal_position(self): # can reference this to see where we are on the signal function
-        return self.signal_f(self.position)
-
-    def get_value(self):            
-        return self.calc_value(self.signal_position)
-
-    def calc_value(self, position):
-        return None
-
-    def cancel(self):
-        self.running = False
 
     
 class ContinuousTween(Tween):
@@ -109,22 +46,13 @@ class ContinuousTween(Tween):
         return value
 
         
-class ChordTween(Tween):
+class TupleTween(Tween):
 
     def calc_value(self, position):
         values = []
         for i in range(len(self.target_value)):
             values.append((position * (self.target_value[i] - self.start_value[i])) + self.start_value[i])
         return values
-
-
-class DiscreteTween(Tween):
-
-    def calc_value(self, position):    
-        if random() > position:
-            return self.start_value
-        else:
-            return self.target_value    
 
 
 class PatternTween(Tween):    
@@ -140,3 +68,12 @@ class PatternTween(Tween):
             return self.target_value # need this to preserve markov tween destinations
         pattern = blend(self.start_value, self.target_value, position)
         return pattern
+
+
+def tween(value, cycles):
+    if type(value) == float:
+        return ContinuousTween(value, cycles)
+    if type(value) == tuple:
+        return TupleTween(value, cycles)
+    if type(value) == Pattern:
+        return PatternTween(value, cycles)

@@ -1,7 +1,7 @@
-import braid.tween, braid.attribute, collections
-from braid import controller
-from random import random
+import collections
+from random import choice, random
 from .util import num_args
+
 
 class Pattern(list):
 
@@ -21,31 +21,13 @@ class Pattern(list):
         steps = []
         for step in pattern:
             if type(step) == tuple:
-                step = self._pick(step)
+                step = choice(step)
                 if type(step) == tuple or type(step) == list:
                     step = self._subresolve(step)
             elif type(step) == list:
                 step = self._subresolve(step)
             steps.append(step)        
         return steps
-
-    def _pick(self, step):
-        """Choose between options for a given step"""
-        assert len(step) == 2 or len(step) == 3
-        if len(step) == 3:
-            prob = step[2]() if isinstance(step[2], collections.Callable) else step[2]
-            step = step[0], step[1], prob
-        if len(step) == 2:
-            if isinstance(step[1], collections.Callable):
-                prob = step[1]()
-                step = step[0], [0, 0], prob
-            elif type(step[1]) == float : # (1, 0.5) is a 50% chance of playing a 1, otherwise 0
-                prob = step[1]
-                step = step[0], [0, 0], prob                
-            else:
-                step = step[0], step[1], 0.5 # (1, 2) is a 50% chance of playing a 1 vs a 2
-        step = step[0] if step[2] > random() else step[1]    # (1, 2, 0.5) is full form          ## expand this to accommodate any number of options?
-        return step
 
     def _unroll(self, pattern, divs=None, r=None):    
         """Unroll a compacted form to a pattern with lcm steps"""
@@ -75,78 +57,11 @@ class Pattern(list):
         return "P%s" % list.__repr__(self)
 
 
-class CrossPattern(Pattern):
-
-    def __init__(self, pattern_1, pattern_2, balance=0.5):
-        self.pattern_1 = pattern_1 if isinstance(pattern_1, Pattern) else Pattern(pattern_1)
-        self.pattern_2 = pattern_2 if isinstance(pattern_2, Pattern) else Pattern(pattern_2)
-        self.balance = balance
-        self.tween = braid.tween.PatternTween(self)
-        self.resolve()
-
-    def resolve(self):
-        """Choose a path through the Markov chain"""
-        pattern = blend(self.pattern_1, self.pattern_2, self.balance)
-        result = self._unroll(self._subresolve(pattern))
-        list.__init__(self, result)
-        return result
-        
-
-class PatternAttribute(braid.attribute.Attribute):
-    """Wrapper for a Pattern to link it to a voice and make it behave like an Attribute"""
-
-    def __init__(self, voice, pattern):
-        self.voice = voice
-        self._value = pattern
-        self._repeat = False
-        self._endwith_f = None
-        self.tween = braid.tween.PatternTween(self)
-
-    def set(self, value):
-        if isinstance(value, braid.attribute.Attribute):
-            value = value.value
-        if not isinstance(value, Pattern):
-            value = Pattern(value)
-        self.value = value
-        return self
-
-    def resolve(self):
-        return self._value.resolve()
-
-    def shift(self):        
-        print("pattern.shift")    
-        if self._repeat:
-            self._repeat -= 1
-            print("pattern.repeat %s" % self._repeat)
-            if self._repeat == 0:  
-                if self._endwith_f is not None:
-                    f = self._endwith_f
-                    self._endwith_f = None
-                    print("pattern.endwith_f")    
-                    if num_args(f) > 1:
-                        f(self.voice, self)
-                    elif num_args(f) > 0:
-                        f(self.voice)
-                    else:
-                        f()
-
-
-
-    def repeat(self, n=True):
-        self._repeat = n + 1    
-        return self
-
-    def endwith(self, f):
-        assert isinstance(f, collections.Callable)
-        self._endwith_f = f
-        return self
-
-
 def blend(pattern_1, pattern_2, balance=0.5, fade=True):
     """Probabalistically blend two Patterns"""
-    ### a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
-    ### plug the balance into ease_in, ease_out?
-    print("blend: ", pattern_1, pattern_2)
+    ## a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
+    ## plug the balance into ease_in, ease_out?
+    print("Blend: ", pattern_1, pattern_2)
     p1_steps = pattern_1.resolve()
     p2_steps = pattern_2.resolve()        
     pattern = [None] * lcm(len(p1_steps), len(p2_steps))
@@ -176,8 +91,3 @@ def lcm(a, b):
     while tmp != 0:
         gcd, tmp = tmp, gcd % tmp
     return a * b // gcd            
-                            
-
-
-
-

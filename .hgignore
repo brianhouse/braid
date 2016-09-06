@@ -1,7 +1,0 @@
-syntax: glob
-
-.DS_Store
-__pycache__
-dev
-*.pyc
-config.yaml
