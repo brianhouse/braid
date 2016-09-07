@@ -9,7 +9,6 @@ controller: just like before, functions that define presets, and take a transiti
 /
 
 PLAN: 
-euclidean
 then get adsr in there somehow.
 then get the controller up.
 then make some fucking music already.
