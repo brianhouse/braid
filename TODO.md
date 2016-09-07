@@ -9,10 +9,13 @@ controller: just like before, functions that define presets, and take a transiti
 /
 
 PLAN: 
-microrhythms
+euclidean
 then get adsr in there somehow.
 then get the controller up.
 then make some fucking music already.
+
+microrhythms: it's easing, but with multiple bumps in a cycle
+that should just be a wavetable->function
 
 /
 
@@ -28,30 +31,3 @@ LIVECODING:
 
 DOCS:
 blend, euclidean
-
-/
-
-
-BUGS:
-
-
-if the rates are the same, I'd expect the phase to jump to unison right away
-however, it jumps to something weird, and then jumps again
-
-question 1:
-- in realtime, why doesnt it just jump to being immediately on?
-
-question 2:
-- try tweening the phase change?
-
-
-/
-
-on the static normal test, you can hear it make the correction in the beginning, which is what it should be doing.
-
-on the offset test, it makes the correction at the end, which is wack
-
-on the realtime test, it makes two corrections somehow
-
-
-cycles remaining becomes just rate * time

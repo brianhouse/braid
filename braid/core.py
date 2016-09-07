@@ -42,7 +42,7 @@ class Driver(threading.Thread):
                             print(">>> processor overload %dms update <<<" % rc)
                 except KeyboardInterrupt:
                     self.stop()
-                except Exception as e:
+                except Exception as e:                
                     print("Error: %s" % e)
             elif hasattr(__main__, '__file__'):
                 break

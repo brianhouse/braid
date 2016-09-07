@@ -4,7 +4,7 @@ import time
 from braid import *
 from braid.util import midi 
 
-midi.log_midi = False
+midi.log_midi = True
 
 # # test tweening
 # tone1 = Thread(1)
@@ -29,19 +29,34 @@ midi.log_midi = False
 # tone1.start()
 
 
-kick = Thread(1)
-kick.pattern = [1, 2, 3, 4]
-kick.chord = C2, MAJ
-kick._cycles = 0
-kick.start()
-# kick.velocity = 0.0
+# # test microrhythms
+# tone1 = Drums()
+# tone1.pattern = [[1, 0, 5, 0], [1, 0, 5, 0], [2, 0, 5, 0], [6, 0, 5, 0]]
+# tone1.pattern = [1, 1, 0, 1]
+# tone1.start()
 
-snare = Thread(1)
-snare.pattern = [1, 2, 3, 4]
-snare._cycles = 3.27
-snare.start()
-# snare.velocity = 0.0
+# tone2 = Drums()
+# tone2.pattern = [0, 0, 2, 0]
+# tone2.micro = ease_test
+# tone2.start()
 
-snare.sync = tween(kick, 4)
+
+tone1 = Thread(20)
+tone1.pattern = euc(8, 5)
+print(tone1.pattern)
+tone1.start()
+
+# tone2 = Thread(42)
+# tone2.pattern = euc(7, 4, 4)
+# print(tone2.pattern)
+# # tone2.start()
+
+# tone4 = Thread(43)
+# tone4.chord = C2, DOR
+# tone4.pattern = euc(5, 3, 2)
+# print(tone4.pattern)
+# tone4.rate = 0.25
+# # tone4.start()
+
 
 start()

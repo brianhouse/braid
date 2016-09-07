@@ -62,6 +62,10 @@ def blend(pattern_1, pattern_2, balance=0.5, fade=True):
     ## a linear blend kind of makes the middle feel empty -- can we have some kind of cross curve?
     ## plug the balance into ease_in, ease_out?
     # log.debug("Blend: %s %s" % (pattern_1, pattern_2))
+    if type(pattern_1) is not Pattern:
+        pattern_1 = Pattern(pattern_1)
+    if type(pattern_2) is not Pattern:
+        pattern_2 = Pattern(pattern_2)
     p1_steps = pattern_1.resolve()
     p2_steps = pattern_2.resolve()        
     pattern = [None] * lcm(len(p1_steps), len(p2_steps))

@@ -32,6 +32,7 @@ class Thread(object):
         self.grace = 0.75        
         self.rate = 1.0
         self.phase = 0.0
+        self.micro = None
         
         self.name = Thread.threads.index(self) if name is None else name
         print("Created thread \"%s\" on channel %d" % (self.name, self._channel))
@@ -48,7 +49,8 @@ class Thread(object):
         if self.sync is not None:
             self._phase.target_value = self.sync.get_phase()
         p = (self._cycles + self.phase) % 1.0  
-        # modify with microrhythm signal      
+        if self.micro is not None:
+            p = self.micro(p)
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
@@ -78,7 +80,7 @@ class Thread(object):
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
         v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
-        step = int(step)
+        step = int(step) if type(step) == float else step
         if isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
         if step == Z:
@@ -196,6 +198,18 @@ class Thread(object):
         if isinstance(phase, Tween):
             phase.start(self, self.phase)                
         self._phase = phase
+
+    @property
+    def micro(self):
+        if isinstance(self._micro, Tween):
+            return self._micro.value        
+        return self._micro
+
+    @micro.setter
+    def micro(self, micro):
+        if isinstance(micro, Tween):
+            raise NotImplementedError("Sorry")
+        self._micro = micro
 
     @property
     def sync(self):
