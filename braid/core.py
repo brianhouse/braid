@@ -27,8 +27,8 @@ class Driver(threading.Thread):
     def run(self):
         self.start_t = time.time()
         while True:
-            if self.running:                
-                self.t = time.time() - self.start_t
+            self.t = time.time() - self.start_t
+            if self.running:                                
                 try:
                     # midi_in.perform_callbacks()
                     if not self.running:
@@ -44,10 +44,11 @@ class Driver(threading.Thread):
                     self.stop()
                 except Exception as e:
                     print("Error: %s" % e)
-                self.previous_t = self.t     
-                time.sleep(self.grain)                    
             elif hasattr(__main__, '__file__'):
                 break
+            self.previous_t = self.t     
+            time.sleep(self.grain)                    
+
 
     def stop(self):
         if not self.running:
@@ -56,7 +57,7 @@ class Driver(threading.Thread):
         for thread in self.threads:
             thread.end()
         time.sleep(0.1) # for midi to finish        
-        print("--------------X")
+        print("\n------------->X")
 
 
 driver = Driver()

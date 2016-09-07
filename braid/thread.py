@@ -24,7 +24,6 @@ class Thread(object):
         self._previous_pitch = 60
         self._previous_step = 1
         self._sync = None
-        self._sync_phase = 0.0
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -47,8 +46,8 @@ class Thread(object):
             self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
         if self.sync is not None:
-            self._sync_phase = self.sync.get_phase()
-        p = (self._cycles + self.phase + self._sync_phase) % 1.0  
+            self._phase.target_value = self.sync.get_phase()
+        p = (self._cycles + self.phase) % 1.0  
         # modify with microrhythm signal      
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
@@ -191,6 +190,9 @@ class Thread(object):
 
     @phase.setter
     def phase(self, phase):
+        if self.sync is not None:
+            print("Can't set phase: sync'ed to %s" % self.phase.syncee.name)
+            return        
         if isinstance(phase, Tween):
             phase.start(self, self.phase)                
         self._phase = phase
@@ -213,8 +215,12 @@ class Thread(object):
             cycles = container.cycles # ignoring signal_f for sync'ing
         self._sync = Sync(self, syncee, cycles)
         start_rate = self.rate
-        self._rate = tween(syncee.rate, cycles)   # create tween for rate
+        self._rate = tween(syncee.rate, cycles)   # create new tween
         self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
+        start_phase = self.phase                  # same for phase
+        self._phase = tween(syncee.phase, cycles)
+        self._phase.start(syncee, start_phase)
+        
 
     def start(self):
         self._running = True
