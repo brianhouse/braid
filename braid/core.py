@@ -56,6 +56,7 @@ class Driver(threading.Thread):
         for thread in self.threads:
             thread.end()
         time.sleep(0.1) # for midi to finish        
+        print("--------------X")
 
 
 driver = Driver()

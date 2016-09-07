@@ -2,7 +2,6 @@
 
 import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
-from . import log
 from . import num_args
 
 log_midi = False
@@ -18,17 +17,17 @@ class MidiOut(threading.Thread):
         self.midi = rtmidi.MidiOut()            
         available_ports = self.midi.get_ports()
         if len(available_ports):
-            log.info("MIDI outputs available: %s" % available_ports)
+            print("MIDI outputs available: %s" % available_ports)
         else:
-            log.info("No MIDI outputs available")
+            print("No MIDI outputs available")
         if available_ports:
             if self.port >= len(available_ports):
-                log.info("Port index %s not available" % self.port)
+                print("Port index %s not available" % self.port)
                 exit()
-            log.info("MIDI OUT opening %s" % available_ports[self.port])
+            print("MIDI OUT: %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
-            log.info("MIDI OUT opening virtual output (\"Python\")...")
+            print("MIDI OUT opening virtual output (\"Python\")...")
             self.midi.open_virtual_port("Python")           
         self.start()   
 
@@ -46,13 +45,13 @@ class MidiOut(threading.Thread):
                 if type(value) == bool:
                     value = 127 if value else 0
                 if log_midi:
-                    log.info("MIDI ctrl %s %s %s" % (channel, control, value))                    
+                    print("MIDI ctrl %s %s %s" % (channel, control, value))                    
                 channel -= 1
                 self.midi.send_message([CONTROLLER_CHANGE | (channel & 0xF), control, value])                
             if note is not None:
                 pitch, velocity = note
                 if log_midi:
-                    log.info("MIDI note %s %s %s" % (channel, pitch, velocity))
+                    print("MIDI note %s %s %s" % (channel, pitch, velocity))
                 channel -= 1
                 if velocity:            
                     self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
@@ -74,12 +73,12 @@ class MidiIn(threading.Thread):
         available_ports = self.midi.get_ports()
         if len(available_ports):
             if self.port >= len(available_ports):
-                log.info("Port index %s not available" % self.port)
+                print("Port index %s not available" % self.port)
                 exit()
-            log.info("MIDI IN  opening %s" % available_ports[self.port])
+            print("MIDI IN:  %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
-            log.info("No MIDI inputs available")
+            print("No MIDI inputs available")
             return
         self.start()           
         

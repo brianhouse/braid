@@ -18,7 +18,8 @@ then make some fucking music already.
 
 LIVECODING:
 - logs -> print
-- need more error handling, assertion, etc
+- assertion on variable types
+- no duplicate thread names
 
 - need to be able to start a thread aligned with another
 
@@ -32,8 +33,6 @@ blend, euclidean
 
 BUGS:
 
-direct sync not working
 
-sync is a little weird if the rate is already the same -- just jumps phase (why?)
-
-
+if the rates are the same, I'd expect the phase to jump to unison right away
+however, it jumps to something weird, and then jumps again

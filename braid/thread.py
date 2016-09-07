@@ -13,7 +13,7 @@ class Thread(object):
 
     def __init__(self, channel, name=None):
         Thread.threads.append(self)        
-        
+
         # private reference variables
         self._channel = channel
         self._running = False
@@ -33,7 +33,7 @@ class Thread(object):
         self.grace = 0.75        
         self.rate = 1.0
         self.phase = 0.0
-
+        
         self.name = Thread.threads.index(self) if name is None else name
         print("Created thread \"%s\" on channel %d" % (self.name, self._channel))
 
@@ -177,7 +177,7 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if self.sync is not None:
-            log.warning("Can't set rate: sync'ed to %s" % self.sync.syncee.name)
+            print("Can't set rate: sync'ed to %s" % self.sync.syncee.name)
             return
         if isinstance(rate, Tween):
             rate.start(self, self.rate)
@@ -204,12 +204,13 @@ class Thread(object):
         if thread is None:
             self._sync = None
             return
-        if not isinstance(thread, Tween):   # here, we want it to track the syncee immediately
-            self.rate = tween(thread.rate, 0)
-            return        
-        container = thread  # in this case, the passed Tween is just a container to pass variables
-        syncee = container.target_value
-        cycles, signal_f = container.cycles, container.signal_f # ignoring signal_f for sync'ing
+        if not isinstance(thread, Tween): # here, we want it to track the syncee immediately
+            syncee = thread
+            cycles = 0
+        else: 
+            container = thread  # in this case, the passed Tween is just a container to pass variables
+            syncee = container.target_value
+            cycles = container.cycles # ignoring signal_f for sync'ing
         self._sync = Sync(self, syncee, cycles)
         start_rate = self.rate
         self._rate = tween(syncee.rate, cycles)   # create tween for rate
