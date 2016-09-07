@@ -76,3 +76,8 @@ def tween(value, cycles, signal_f=linear):
         return PatternTween(value, cycles, signal_f)
     if isinstance(value, object):
         return SyncTween(value, cycles, signal_f)
+
+    # adsr is a tuple
+    # ... and it needs to work like adsr on the max side -- note-offs. 
+    # so attack, decay, and release are specified how? presets. no -- cant tween.
+    # nonlinear scale, maybe. or let midi go.
