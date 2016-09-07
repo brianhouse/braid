@@ -66,6 +66,7 @@ BAM. (not sure how sync actually works, but hey).
 
 PLAN: 
 microrhythms
+adjustable grace level
 then get adsr in there somehow.
 then get the controller up.
 then make some fucking music already.

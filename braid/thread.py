@@ -29,8 +29,9 @@ class Thread(object):
         self.pattern = [0]
         self.chord = C, MAJ
         self.velocity = 1.0            
+        self.grace = 0.75        
         self.rate = 1.0
-        self.phase = 0.0    
+        self.phase = 0.0
 
 
     def update(self, delta_t):        
@@ -72,7 +73,7 @@ class Thread(object):
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
-        v = 0.75 if type(step) == float else 1.0 # floats signify gracenotes
+        v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
         step = int(step)
         if isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
@@ -148,6 +149,18 @@ class Thread(object):
         if isinstance(velocity, Tween):
             velocity.start(self, self.velocity)
         self._velocity = velocity
+
+    @property
+    def grace(self):
+        if isinstance(self._grace, Tween):
+            return self._grace.value
+        return self._grace
+
+    @grace.setter
+    def grace(self, grace):
+        if isinstance(grace, Tween):
+            grace.start(self, self.grace)
+        self._grace = grace
 
     @property
     def rate(self):
