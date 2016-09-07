@@ -65,7 +65,7 @@ BAM. (not sure how sync actually works, but hey).
 
 
 PLAN: 
-then get sync going.
+microrhythms
 then get adsr in there somehow.
 then get the controller up.
 then make some fucking music already.

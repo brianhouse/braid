@@ -3,7 +3,7 @@
 from braid import *
 from braid.util import midi 
 
-midi.log_midi = False
+midi.log_midi = True
 
 kick = Drums()
 kick.pattern = [1, 0, 0, 1, 0, 0, 1, 0]

@@ -41,15 +41,12 @@ class Thread(object):
         if self.sync is not None:
             self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
-        if self.sync is not None:        
-            self._phase = self.sync.get_phase()
-            print(self.phase)
-        p = (self._cycles + self.phase) % 1.0        
+        sync_phase = self.sync.get_phase() if self.sync is not None else 0
+        p = (self._cycles + self.phase + sync_phase) % 1.0        
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
-                print(self._channel, self._cycles, self._cycles + self.phase, self.phase)
                 if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
                     pattern = self.pattern.value()
                 else:
@@ -174,8 +171,6 @@ class Thread(object):
 
     @phase.setter
     def phase(self, phase):
-        if self.sync is not None:
-            return        
         if isinstance(phase, Tween):
             phase.start(self, self._phase)                
         self._phase = phase
@@ -192,19 +187,14 @@ class Thread(object):
         if not isinstance(thread, Tween):   # here, we want it to track the syncee immediately
             self.rate = tween(thread.rate, 0)
             self.phase = tween(thread.phase, 0)            
-            return
-        # in this case, the passed Tween is just a container to pass variables
-        print("making a sync")
-        container = thread
+            return        
+        container = thread  # in this case, the passed Tween is just a container to pass variables
         syncee = container.target_value
-        cycles, signal_f = container.cycles, container.signal_f
+        cycles, signal_f = container.cycles, container.signal_f # ignoring signal_f for sync'ing
         self._sync = Sync(self, syncee, cycles)
-        print("--> made sync object")        
         start_rate = self._rate
         self._rate = tween(syncee.rate, cycles)  # create tween for rate
-        print("--> made rate tween")
         self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
-        print("--> sync thread", self._rate.thread)
 
     def start(self):
         self._running = True
