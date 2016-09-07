@@ -65,8 +65,9 @@ class PatternTween(Tween):
 class SyncTween(Tween):
     pass
 
+
 def tween(value, cycles, signal_f=linear):
-    if type(value) == float:
+    if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f)
     if type(value) == tuple:
         return ChordTween(value, cycles, signal_f)

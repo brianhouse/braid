@@ -42,7 +42,8 @@ class Thread(object):
             self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
         sync_phase = self.sync.get_phase() if self.sync is not None else 0
-        p = (self._cycles + self.phase + sync_phase) % 1.0        
+        p = (self._cycles + self.phase + sync_phase) % 1.0  
+        # modify with microrhythm signal      
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
@@ -119,7 +120,7 @@ class Thread(object):
     @pattern.setter
     def pattern(self, pattern):
         if isinstance(pattern, Tween):
-            pattern.start(self, self._pattern)
+            pattern.start(self, self.pattern)
         if type(pattern) == list:
             pattern = Pattern(pattern)
         self._pattern = pattern
@@ -133,7 +134,7 @@ class Thread(object):
     @chord.setter
     def chord(self, chord):
         if isinstance(chord, Tween):
-            chord.start(self, self._chord)        
+            chord.start(self, self.chord)
         self._chord = chord
 
     @property
@@ -145,7 +146,7 @@ class Thread(object):
     @velocity.setter
     def velocity(self, velocity):
         if isinstance(velocity, Tween):
-            velocity.start(self, self._velocity)
+            velocity.start(self, self.velocity)
         self._velocity = velocity
 
     @property
@@ -159,8 +160,7 @@ class Thread(object):
         if self.sync is not None:
             return
         if isinstance(rate, Tween):
-            start_value = self._rate.value if isinstance(self._rate, Tween) else self._rate ## fix with this
-            rate.start(self, self._rate)                ## if _rate is a tween, this breaks
+            rate.start(self, self.rate)
         self._rate = rate
 
     @property
@@ -172,7 +172,7 @@ class Thread(object):
     @phase.setter
     def phase(self, phase):
         if isinstance(phase, Tween):
-            phase.start(self, self._phase)                
+            phase.start(self, self.phase)                
         self._phase = phase
 
     @property
@@ -193,7 +193,7 @@ class Thread(object):
         cycles, signal_f = container.cycles, container.signal_f # ignoring signal_f for sync'ing
         self._sync = Sync(self, syncee, cycles)
         start_rate = self._rate
-        self._rate = tween(syncee.rate, cycles)  # create tween for rate
+        self._rate = tween(syncee.rate, cycles)   # create tween for rate
         self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
 
     def start(self):
