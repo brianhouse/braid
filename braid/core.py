@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, time, threading, queue
+import sys, time, threading, queue, __main__
 from .util import log
 
 class Driver(threading.Thread):
@@ -16,37 +16,38 @@ class Driver(threading.Thread):
         self.running = False
 
     def start(self):
-        self.running = True
         super(Driver, self).start()
-        try:
-            while self.running:
-                time.sleep(0.1)
-        except KeyboardInterrupt:
-            driver.stop()
+        if hasattr(__main__, '__file__'):   # allow livecoding
+            try:
+                while self.running:
+                    time.sleep(0.1)
+            except KeyboardInterrupt:
+                driver.stop()
 
     def run(self):
         self.start_t = time.time()
-        last_cue = -1
-        try:
-            while self.running:
+        while True:
+            if self.running:                
                 self.t = time.time() - self.start_t
-                if int(self.t) // 15 != last_cue:
-                    last_cue = int(self.t) // 15
-                    log.info("/////////////// [%s] %d:%f ///////////////" % (last_cue, self.t // 60.0, self.t % 60.0))                        
-                # midi_in.perform_callbacks()
-                if not self.running:
-                    break
-                delta_t = self.t - self.previous_t
-                for thread in self.threads:
-                    c = time.time()
-                    thread.update(delta_t)
-                    rc = int((time.time() - c) * 1000)
-                    if rc > 1:
-                        log.warning(">>> processor overload %dms update <<<" % rc)
+                try:
+                    # midi_in.perform_callbacks()
+                    if not self.running:
+                        break
+                    delta_t = self.t - self.previous_t
+                    for thread in self.threads:
+                        c = time.time()
+                        thread.update(delta_t)
+                        rc = int((time.time() - c) * 1000)
+                        if rc > 1:
+                            print(">>> processor overload %dms update <<<" % rc)
+                except KeyboardInterrupt:
+                    self.stop()
+                except Exception as e:
+                    print("Error: %s" % e)
                 self.previous_t = self.t     
-                time.sleep(self.grain)
-        except KeyboardInterrupt:
-            pass
+                time.sleep(self.grain)                    
+            elif hasattr(__main__, '__file__'):
+                break
 
     def stop(self):
         if not self.running:
@@ -54,7 +55,6 @@ class Driver(threading.Thread):
         self.running = False
         for thread in self.threads:
             thread.end()
-        log.info("/////////////// END %d:%f ///////////////" % (self.t // 60.0, self.t % 60.0)) 
         time.sleep(0.1) # for midi to finish        
 
 
@@ -66,9 +66,11 @@ def tempo(value):
     value /= 4.0
     driver.rate = value
 
-def play():
-    driver.play()
-
+def start():
+    driver.running = True
+    if not driver.is_alive():
+        driver.start()
+    
 def stop():
-    driver.stop()    
+    driver.running = False
 

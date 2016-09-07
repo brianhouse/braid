@@ -5,7 +5,7 @@ from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from . import log
 from . import num_args
 
-log_midi = True
+log_midi = False
 
 class MidiOut(threading.Thread):
 

@@ -3,7 +3,7 @@
 from braid import *
 from braid.util import midi 
 
-midi.log_midi = True
+midi.log_midi = False
 
 # kick = Drums()
 # kick.pattern = [1, 0, 0, 1, 0, 0, 1, 0]
@@ -34,4 +34,4 @@ tone1.grace = tween(0.0, 8)
 tone1.start()
 
 
-driver.start()
+start()

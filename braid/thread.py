@@ -11,7 +11,7 @@ class Thread(object):
 
     threads = driver.threads
 
-    def __init__(self, channel):
+    def __init__(self, channel, name=None):
         Thread.threads.append(self)        
         
         # private reference variables
@@ -24,6 +24,7 @@ class Thread(object):
         self._previous_pitch = 60
         self._previous_step = 1
         self._sync = None
+        self._sync_phase = 0.0
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -32,6 +33,9 @@ class Thread(object):
         self.grace = 0.75        
         self.rate = 1.0
         self.phase = 0.0
+
+        self.name = Thread.threads.index(self) if name is None else name
+        print("Created thread \"%s\" on channel %d" % (self.name, self._channel))
 
 
     def update(self, delta_t):        
@@ -42,8 +46,9 @@ class Thread(object):
         if self.sync is not None:
             self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
-        sync_phase = self.sync.get_phase() if self.sync is not None else 0
-        p = (self._cycles + self.phase + sync_phase) % 1.0  
+        if self.sync is not None:
+            self._sync_phase = self.sync.get_phase()
+        p = (self._cycles + self.phase + self._sync_phase) % 1.0  
         # modify with microrhythm signal      
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
@@ -158,6 +163,7 @@ class Thread(object):
 
     @grace.setter
     def grace(self, grace):
+        # assert float in range 0-1
         if isinstance(grace, Tween):
             grace.start(self, self.grace)
         self._grace = grace
@@ -171,6 +177,7 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if self.sync is not None:
+            log.warning("Can't set rate: sync'ed to %s" % self.sync.syncee.name)
             return
         if isinstance(rate, Tween):
             rate.start(self, self.rate)
@@ -199,13 +206,12 @@ class Thread(object):
             return
         if not isinstance(thread, Tween):   # here, we want it to track the syncee immediately
             self.rate = tween(thread.rate, 0)
-            self.phase = tween(thread.phase, 0)            
             return        
         container = thread  # in this case, the passed Tween is just a container to pass variables
         syncee = container.target_value
         cycles, signal_f = container.cycles, container.signal_f # ignoring signal_f for sync'ing
         self._sync = Sync(self, syncee, cycles)
-        start_rate = self._rate
+        start_rate = self.rate
         self._rate = tween(syncee.rate, cycles)   # create tween for rate
         self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
 
@@ -218,8 +224,8 @@ class Thread(object):
 
 class Drums(Thread):
 
-    def __init__(self):
-        super(Drums, self).__init__(10)
+    def __init__(self, name=None):
+        super(Drums, self).__init__(10, name)
         # 1 kick = 36 #
         # 2 snare = 38 # 2
         # 3 lotom = 43 # 7
