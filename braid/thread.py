@@ -4,6 +4,7 @@ from .util import log, num_args, midi_out
 from .signal import linear
 from .notation import *
 from .tween import *
+from .sync import *
 
 
 class Thread(object):
@@ -22,7 +23,7 @@ class Thread(object):
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
-        self._syncee = None
+        self._sync = None
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -37,10 +38,10 @@ class Thread(object):
         if not self._running:
             return
         self.update_control()
-        if self._syncee is not None:
-            self._rate.target_value = self._syncee.rate
-
+        if self.sync is not None:
+            self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
+        # self._phase.target_value = self.sync.get_phase()
         p = (self._cycles + self.phase) % 1.0        
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
@@ -156,10 +157,10 @@ class Thread(object):
 
     @rate.setter
     def rate(self, rate):
-        if self._syncee is not None:
+        if self.sync is not None:
             return
         if isinstance(rate, Tween):
-            rate.start(self, self._rate)                
+            rate.start(self, self._rate)                ## if _rate is a tween, this breaks
         self._rate = rate
 
     @property
@@ -170,27 +171,37 @@ class Thread(object):
 
     @phase.setter
     def phase(self, phase):
+        if self.sync is not None:
+            return        
         if isinstance(phase, Tween):
             phase.start(self, self._phase)                
         self._phase = phase
 
     @property
     def sync(self):
-        return self._syncee
+        return self._sync
 
     @sync.setter
     def sync(self, thread):
         if thread is None:
-            self._syncee = None
+            self._sync = None
             return
-        if isinstance(thread, Tween):
-            tw = thread
-            thread = tw.target_value
-            cycles, signal_f = tw.cycles, tw.signal_f
-        else:
-            cycles, signal_f = 0, linear
-        self.rate = tween(thread.rate, cycles, signal_f)
-        self._syncee = thread
+        if not isinstance(thread, Tween):   # here, we want it to track the syncee immediately
+            self.rate = tween(thread.rate, 0)
+            self.phase = tween(thread.phase, 0)            
+            return
+        # in this case, the passed Tween is just a container to pass variables
+        print("making a sync")
+        container = thread
+        syncee = container.target_value
+        cycles, signal_f = container.cycles, container.signal_f
+        self._sync = Sync(self, syncee, cycles)
+        print("--> made sync object")        
+        start_rate = self._rate
+        self._rate = tween(syncee.rate, cycles)  # create tween for rate
+        print("--> made rate tween")
+        self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
+        print("--> sync thread", self._rate.thread)
 
     def start(self):
         self._running = True
