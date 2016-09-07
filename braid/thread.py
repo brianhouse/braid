@@ -41,7 +41,9 @@ class Thread(object):
         if self.sync is not None:
             self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
-        # self._phase.target_value = self.sync.get_phase()
+        if self.sync is not None:        
+            self._phase = self.sync.get_phase()
+            print(self.phase)
         p = (self._cycles + self.phase) % 1.0        
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
@@ -160,6 +162,7 @@ class Thread(object):
         if self.sync is not None:
             return
         if isinstance(rate, Tween):
+            start_value = self._rate.value if isinstance(self._rate, Tween) else self._rate ## fix with this
             rate.start(self, self._rate)                ## if _rate is a tween, this breaks
         self._rate = rate
 

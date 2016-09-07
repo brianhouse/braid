@@ -8,9 +8,16 @@ class Sync(object):
         self.syncee_start_cycles = syncee._cycles
 
     def get_phase(self):
-        remaining_cycles = self.total_cycles - (self.syncee.cycles - self.syncee_start_cycles)
-        time = remaining_cycles / self.syncee.rate
-        acceleration = (self.syncee.rate - self.syncer.rate) / time
-        cycles = (self.rate * time) + (0.5 * (acceleration * (time * time)))
-        phase = cycles % 1.0
-        return phase * -1
+        cycles_remaining = self.total_cycles - (self.syncee._cycles - self.syncee_start_cycles)
+        if cycles_remaining <= 0:
+            phase_difference = (self.syncee._cycles % 1.0) - (self.syncer._cycles % 1.0)
+            print("D %f %f %f" % ((self.syncee._cycles % 1.0), (self.syncer._cycles % 1.0), (self.syncee._cycles % 1.0) - (self.syncer._cycles % 1.0)))
+            return phase_difference
+        time_remaining = cycles_remaining / self.syncee.rate
+        acceleration = (self.syncee.rate - self.syncer.rate) / time_remaining
+        cycles_at_completion = (self.syncer.rate * time_remaining) + (0.5 * (acceleration * (time_remaining * time_remaining)))
+        cycles_at_completion += self.syncer._cycles
+        phase_at_completion = cycles_at_completion % 1.0
+        phase_correction = phase_at_completion * -1
+        print("%fc, %ft, %f, %f, %f, %f" % (cycles_remaining, time_remaining, acceleration, cycles_at_completion, phase_at_completion, phase_correction))
+        return phase_correction
