@@ -14,6 +14,7 @@ class Driver(threading.Thread):
         self.rate = 1.0
         self.previous_t = 0.0
         self.running = False
+        self._cycles = 0.0
 
     def start(self):
         super(Driver, self).start()
@@ -30,10 +31,11 @@ class Driver(threading.Thread):
             self.t = time.time() - self.start_t
             if self.running:                                
                 try:
-                    # midi_in.perform_callbacks()
                     if not self.running:
                         break
+                    # midi_in.perform_callbacks()
                     delta_t = self.t - self.previous_t
+                    self._cycles += delta_t * self.rate
                     for thread in self.threads:
                         c = time.time()
                         thread.update(delta_t)

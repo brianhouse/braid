@@ -4,20 +4,20 @@ import time
 from braid import *
 from braid.util import midi 
 
-midi.log_midi = True
+midi.log_midi = False
 
-# # test tweening
-# tone1 = Thread(1)
-# tone1.pattern = [1, 2, 3, 4]
-# tone1.chord = C2, MAJ
-# tone1.rate = 1.0
-# tone1.start()
+# test tweening
+tone1 = Thread(1)
+tone1.pattern = [1, 2, 2, 2]
+tone1.chord = C2, MAJ
+tone1.rate = 1.0
+tone1.start()
 
-# tone2 = Thread(2)
-# tone2.pattern = [1, 2, 3, 4]
-# tone2.rate = 0.46827
-# tone2.start()
-# tone2.sync = tween(tone1, 8)
+tone2 = Thread(2)
+tone2.pattern = [1, 2, 2, 2]
+tone2.rate = 0.46827
+tone2.start()
+tone2.sync = tween(tone1, 8)
 
 
 
@@ -41,10 +41,10 @@ midi.log_midi = True
 # tone2.start()
 
 
-tone1 = Thread(20)
-tone1.pattern = euc(8, 5)
-print(tone1.pattern)
-tone1.start()
+# tone1 = Thread(20)
+# tone1.pattern = euc(8, 5)
+# print(tone1.pattern)
+# tone1.start()
 
 # tone2 = Thread(42)
 # tone2.pattern = euc(7, 4, 4)

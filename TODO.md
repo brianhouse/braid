@@ -30,3 +30,11 @@ LIVECODING:
 
 DOCS:
 blend, euclidean
+
+
+/
+
+driver cycles are in essence a constant grid. 
+any rate change lines up with the grid, and sticks with it if it's a whole number.
+
+thread.sync(thread) can be a one shot

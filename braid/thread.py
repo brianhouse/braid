@@ -24,6 +24,7 @@ class Thread(object):
         self._previous_pitch = 60
         self._previous_step = 1
         self._sync = None
+        self._phase_correction = 0.0
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -43,12 +44,12 @@ class Thread(object):
         if not self._running:
             return
         self.update_control()
-        if self.sync is not None:
-            self._rate.target_value = self.sync.syncee.rate
         self._cycles += delta_t * self.rate * driver.rate
         if self.sync is not None:
-            self._phase.target_value = self.sync.get_phase()
-        p = (self._cycles + self.phase) % 1.0  
+            pc = self.sync.get_phase()
+            if pc is not None:
+                self._phase_correction = pc
+        p = (self._cycles + self.phase + self._phase_correction) % 1.0  
         if self.micro is not None:
             p = self.micro(p)
         i = int(p * len(self._steps))
@@ -177,9 +178,6 @@ class Thread(object):
 
     @rate.setter
     def rate(self, rate):
-        if self.sync is not None:
-            print("Can't set rate: sync'ed to %s" % self.sync.syncee.name)
-            return
         if isinstance(rate, Tween):
             rate.start(self, self.rate)
         self._rate = rate
@@ -192,9 +190,6 @@ class Thread(object):
 
     @phase.setter
     def phase(self, phase):
-        if self.sync is not None:
-            print("Can't set phase: sync'ed to %s" % self.phase.syncee.name)
-            return        
         if isinstance(phase, Tween):
             phase.start(self, self.phase)                
         self._phase = phase
@@ -227,13 +222,10 @@ class Thread(object):
             container = thread  # in this case, the passed Tween is just a container to pass variables
             syncee = container.target_value
             cycles = container.cycles # ignoring signal_f for sync'ing
-        self._sync = Sync(self, syncee, cycles)
+        self._sync = Sync(self, cycles)
         start_rate = self.rate
-        self._rate = tween(syncee.rate, cycles)   # create new tween
-        self._rate.start(syncee, start_rate)      # ...but base it on the _syncee's_ cycles
-        start_phase = self.phase                  # same for phase
-        self._phase = tween(syncee.phase, cycles)
-        self._phase.start(syncee, start_phase)
+        self._rate = tween(driver.rate * FACTOR, cycles)    # create new tween
+        self._rate.start(driver, start_rate)                # ...but base it on the _drivers's_ cycles
         
 
     def start(self):
