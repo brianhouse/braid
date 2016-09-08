@@ -1,7 +1,7 @@
 import math
 from .core import driver
 
-FACTOR = .5
+FACTOR = 2.0
 
 class Sync(object):
 

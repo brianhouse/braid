@@ -16,6 +16,7 @@ class Tween(object):
         self.thread = thread
         self.start_value = start_value
         self.start_cycle = float(math.ceil(self.thread._cycles)) # threads always start on next cycle
+        return self ##
 
     @property
     def value(self):            

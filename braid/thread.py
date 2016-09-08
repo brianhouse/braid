@@ -48,7 +48,7 @@ class Thread(object):
         if self.sync is not None:
             pc = self.sync.get_phase()
             if pc is not None:
-                self._phase_correction = pc
+                self.__phase_correction.target_value = pc
         p = (self._cycles + self.phase + self._phase_correction) % 1.0  
         if self.micro is not None:
             p = self.micro(p)
@@ -195,6 +195,18 @@ class Thread(object):
         self._phase = phase
 
     @property
+    def _phase_correction(self):
+        if isinstance(self.__phase_correction, Tween):
+            return self.__phase_correction.value        
+        return self.__phase_correction
+
+    @_phase_correction.setter
+    def _phase_correction(self, phase_correction):
+        if isinstance(phase_correction, Tween):
+            phase_correction.start(self, self._phase_correction)                
+        self.__phase_correction = phase_correction
+
+    @property
     def micro(self):
         if isinstance(self._micro, Tween):
             return self._micro.value        
@@ -226,7 +238,9 @@ class Thread(object):
         start_rate = self.rate
         self._rate = tween(driver.rate * FACTOR, cycles)    # create new tween
         self._rate.start(driver, start_rate)                # ...but base it on the _drivers's_ cycles
-        
+        start_phase = self._phase_correction
+        self.__phase_correction = tween(0.0, cycles)         # make a tween for the subsequent phase correction
+        self.__phase_correction.start(driver, start_phase)
 
     def start(self):
         self._running = True
