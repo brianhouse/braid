@@ -23,8 +23,7 @@ class Thread(object):
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
-        self._sync = None
-        self._phase_correction = 0.0
+        self.__phase_correction = 0.0
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -45,11 +44,12 @@ class Thread(object):
             return
         self.update_control()
         self._cycles += delta_t * self.rate * driver.rate
-        if self.sync is not None:
-            pc = self.sync.get_phase()
+        if isinstance(self._rate, Tween):
+            pc = self._rate.get_phase()
             if pc is not None:
                 self.__phase_correction.target_value = pc
         p = (self._cycles + self.phase + self._phase_correction) % 1.0  
+        # p = (self._cycles + self.phase) % 1.0  
         if self.micro is not None:
             p = self.micro(p)
         i = int(p * len(self._steps))
@@ -179,7 +179,11 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if isinstance(rate, Tween):
+            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f) # downcast tween
             rate.start(self, self.rate)
+            phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
+            phase_correction.start(driver, self._phase_correction)
+            self.__phase_correction = phase_correction
         self._rate = rate
 
     @property
@@ -200,12 +204,6 @@ class Thread(object):
             return self.__phase_correction.value        
         return self.__phase_correction
 
-    @_phase_correction.setter
-    def _phase_correction(self, phase_correction):
-        if isinstance(phase_correction, Tween):
-            phase_correction.start(self, self._phase_correction)                
-        self.__phase_correction = phase_correction
-
     @property
     def micro(self):
         if isinstance(self._micro, Tween):
@@ -218,35 +216,12 @@ class Thread(object):
             raise NotImplementedError("Sorry")
         self._micro = micro
 
-    @property
-    def sync(self):
-        return self._sync
-
-    @sync.setter
-    def sync(self, thread):
-        if thread is None:
-            self._sync = None
-            return
-        if not isinstance(thread, Tween): # here, we want it to track the syncee immediately
-            syncee = thread
-            cycles = 0
-        else: 
-            container = thread  # in this case, the passed Tween is just a container to pass variables
-            syncee = container.target_value
-            cycles = container.cycles # ignoring signal_f for sync'ing
-        self._sync = Sync(self, cycles)
-        start_rate = self.rate
-        self._rate = tween(driver.rate * FACTOR, cycles)    # create new tween
-        self._rate.start(driver, start_rate)                # ...but base it on the _drivers's_ cycles
-        start_phase = self._phase_correction
-        self.__phase_correction = tween(0.0, cycles)         # make a tween for the subsequent phase correction
-        self.__phase_correction.start(driver, start_phase)
-
     def start(self):
         self._running = True
 
     def stop(self):
         self._running = False
+
 
 
 class Drums(Thread):

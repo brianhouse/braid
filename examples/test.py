@@ -17,8 +17,7 @@ tone2 = Thread(2)
 tone2.pattern = [1, 2, 2, 2]
 tone2.rate = 0.46827
 tone2.start()
-tone2.sync = tween(tone1, 8)
-
+tone2.rate = tween(2, 8)
 
 
 # # test gracenotes
