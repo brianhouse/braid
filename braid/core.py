@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys, time, threading, queue, __main__
-from .util import log
 
 class Driver(threading.Thread):
 

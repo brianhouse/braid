@@ -1,6 +1,6 @@
 import collections
 from random import choice, random
-from .util import num_args, log
+from .util import num_args
 
 
 class Pattern(list):

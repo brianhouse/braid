@@ -1,40 +1,26 @@
-making this an instrument, not a compositional tool (no sequencing controls)
+### BUGS
 
-so how are you going to control it?
 
-livecode.
+### FEATURES
 
-controller: just like before, functions that define presets, and take a transition time that goes to the tweens.
-
-/
-
-PLAN: 
-then get adsr in there somehow.
-then get the controller up.
-then make some fucking music already.
-
-microrhythms: it's easing, but with multiple bumps in a cycle
-that should just be a wavetable->function
-
-/
+- adsr
 
 LIVECODING:
 - logs -> print
 - assertion on variable types
 - no duplicate thread names
 - clear() function
-
 - need to be able to start a thread aligned with another
+    thread1.sync(thread2)
 
-/
+- controller
 
-DOCS:
-blend, euclidean
+- sequencing:
+thread.trigger(f, 4)    # thread version
+trigger(f, 4)           # driver version
+
+- microrhythms
 
 
-/
 
-driver cycles are in essence a constant grid. 
-any rate change lines up with the grid, and sticks with it if it's a whole number.
 
-thread.sync(thread) can be a one shot

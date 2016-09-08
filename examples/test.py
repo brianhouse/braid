@@ -10,14 +10,15 @@ midi.log_midi = False
 tone1 = Thread(1)
 tone1.pattern = [1, 2, 2, 2]
 tone1.chord = C2, MAJ
-tone1.rate = 1.0
+tone1.rate = 0.5
 tone1.start()
+tone1.rate = tween(1, 8)
 
 tone2 = Thread(2)
 tone2.pattern = [1, 2, 2, 2]
-tone2.rate = 0.46827
+tone2.rate = 2.0
 tone2.start()
-tone2.rate = tween(2, 8)
+tone2.rate = tween(1, 8)
 
 
 # # test gracenotes

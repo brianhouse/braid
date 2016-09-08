@@ -1,10 +1,9 @@
 import collections
 from .core import driver
-from .util import log, num_args, midi_out
+from .util import num_args, midi_out
 from .signal import linear
 from .notation import *
 from .tween import *
-from .sync import *
 
 
 class Thread(object):
@@ -49,7 +48,6 @@ class Thread(object):
             if pc is not None:
                 self.__phase_correction.target_value = pc
         p = (self._cycles + self.phase + self._phase_correction) % 1.0  
-        # p = (self._cycles + self.phase) % 1.0  
         if self.micro is not None:
             p = self.micro(p)
         i = int(p * len(self._steps))
