@@ -58,22 +58,25 @@ midi.log_midi = False
 # tone4.rate = 0.25
 # # tone4.start()
 
-control_numbers = {'magnus': 43}
-default_values = {'magnus': 43}
-Farts = create("Farts", control_numbers, default_values)
-print(Farts)
-print(dir(Farts))
-f = Farts(1)
-print(f.magnus)
-
-f.magnus = tween(120, 2)
-f.pattern = [1]
-
-f.start()
+# control_numbers = {'magnus': 43}
+# default_values = {'magnus': 43}
+# Farts = create("Farts", control_numbers, default_values)
+# print(Farts)
+# print(dir(Farts))
+# f = Farts(1)
+# print(f.magnus)
+# f.magnus = tween(120, 2)
+# f.pattern = [1]
+# f.start()
 
 # v = Thread(1, controls={'farts': 34})
 # print(v._farts)
 # print(v.farts)
 # print(v.grace)
+
+sero = Sero(1)
+sero.adsr = 1, 1, 0.8, 10
+sero.adsr = tween((10, 10, 10, 256), 8)
+sero.start()
 
 start()

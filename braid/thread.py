@@ -10,7 +10,7 @@ class Thread(object):
 
     threads = driver.threads
 
-    def __init__(self, channel, **params):
+    def __init__(self, channel):
         Thread.threads.append(self)        
 
         # private reference variables
@@ -161,7 +161,6 @@ class Thread(object):
 
     @grace.setter
     def grace(self, grace):
-        # assert float in range 0-1
         if isinstance(grace, Tween):
             grace.start(self, self.grace)
         self._grace = grace
@@ -220,29 +219,6 @@ class Thread(object):
 
 
 
-class Drums(Thread):
-
-    def __init__(self, name=None):
-        super(Drums, self).__init__(10, name)
-        # 1 kick = 36 #
-        # 2 snare = 38 # 2
-        # 3 lotom = 43 # 7
-        # 4 hitom = 50 # 14
-        # 5 clhat = 42 # 6
-        # 6 ophat = 46 # 10
-        # 7 clap = 39   # 3
-        # 8 claves = 75 # 39
-        # 9 agogo = 67 # 31
-        # 10 crash = 49  # 13
-        self.drums = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
-        self.chord = C2, self.drums
-
-    def note(self, pitch, velocity):
-        midi_out.send_control(self._channel, self.drums.index(pitch - 36) + 40, int(velocity * 127))
-        midi_out.send_note(self._channel, pitch, int(velocity * 127))
-
-
-
 def create(name, controls={}, defaults={}):
 
     properties = {'controls': controls}
@@ -266,12 +242,10 @@ def create(name, controls={}, defaults={}):
     return T
 
     """
-        control_numbers = {'magnus': 43}
-        default_values = {'magnus': 69}
-        Farts = create("Farts", control_numbers, **default_values)
-        print(Farts)
-        print(dir(Farts))
-        f = Farts(1)
-        print(f.magnus)
+        control_numbers = {'res': 43}
+        default_values = {'res': 69}
+        Synth = create("Synth", control_numbers, default_values)
+        synth = Synth(1)
+        print(synth.res)
 
     """
