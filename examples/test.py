@@ -3,7 +3,6 @@
 import time
 from braid import *
 from braid.util import midi 
-
 midi.log_midi = False
 
 # # test tweening
