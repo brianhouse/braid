@@ -10,7 +10,7 @@ class Thread(object):
 
     threads = driver.threads
 
-    def __init__(self, channel, name=None):
+    def __init__(self, channel, **params):
         Thread.threads.append(self)        
 
         # private reference variables
@@ -23,6 +23,7 @@ class Thread(object):
         self._previous_pitch = 60
         self._previous_step = 1
         self.__phase_correction = 0.0
+        self._control_values = {}        
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -32,9 +33,8 @@ class Thread(object):
         self.rate = 1.0
         self.phase = 0.0
         self.micro = None
-        
-        self.name = Thread.threads.index(self) if name is None else name
-        print("Created thread \"%s\" on channel %d" % (self.name, self._channel))
+
+        print("Created thread on channel %d" % self._channel)
 
 
     def update(self, delta_t):        
@@ -64,17 +64,15 @@ class Thread(object):
         self._last_edge = int(self._cycles)
 
     def update_control(self):
-        pass
-    #     # check if MIDI attributes have changed, and send if so
-    #     # this can potentially happen with any step, so check before plays
-    #     # it can also happen if a note is not played, so check otherwise too ##
-    #     if not self.mute:
-    #         for control in self.controls:
-    #             value = int(getattr(self, control).value)
-    #             if control not in self.control_values or value != self.control_values[control]:
-    #                 midi_out.send_control(self.channel.value, self.controls[control], value)
-    #                 self.control_values[control] = value
-    #                 log.info("%d: %s %s" % (self.channel.value, control, value))
+        # check if MIDI attributes have changed, and if so send
+        if not hasattr(self, "controls"):
+            return
+        for control in self.controls:
+            value = int(getattr(self, control))
+            if control not in self._control_values or value != self._control_values[control]:
+                midi_out.send_control(self._channel, self.controls[control], value)
+                self._control_values[control] = value
+                print("%d: %s %s" % (self._channel, control, value))
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
@@ -242,3 +240,38 @@ class Drums(Thread):
     def note(self, pitch, velocity):
         midi_out.send_control(self._channel, self.drums.index(pitch - 36) + 40, int(velocity * 127))
         midi_out.send_note(self._channel, pitch, int(velocity * 127))
+
+
+
+def create(name, controls={}, defaults={}):
+
+    properties = {'controls': controls}
+    for control in controls:
+        properties["_%s" % control] = defaults[control] if control in defaults else 0.0
+
+        def getter(self):
+            if isinstance(getattr(self, "_%s" % control), Tween):
+                return getattr(self, "_%s" % control).value
+            return getattr(self, "_%s" % control)
+
+        def setter(self, value):
+            if isinstance(value, Tween):
+                value.start(self, getattr(self, control))
+            setattr(self, "_%s" % control, value)
+
+        properties[control] = property(getter, setter)
+
+    T = type(name, (Thread,), properties)
+
+    return T
+
+    """
+        control_numbers = {'magnus': 43}
+        default_values = {'magnus': 69}
+        Farts = create("Farts", control_numbers, **default_values)
+        print(Farts)
+        print(dir(Farts))
+        f = Farts(1)
+        print(f.magnus)
+
+    """

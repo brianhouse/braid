@@ -6,19 +6,19 @@ from braid.util import midi
 
 midi.log_midi = False
 
-# test tweening
-tone1 = Thread(1)
-tone1.pattern = [1, 2, 2, 2]
-tone1.chord = C2, MAJ
-tone1.rate = 0.5
-tone1.start()
-tone1.rate = tween(1, 8)
+# # test tweening
+# tone1 = Thread(1)
+# tone1.pattern = [1, 2, 2, 2]
+# tone1.chord = C2, MAJ
+# tone1.rate = 0.5
+# tone1.start()
+# tone1.rate = tween(1, 8)
 
-tone2 = Thread(2)
-tone2.pattern = [1, 2, 2, 2]
-tone2.rate = 2.0
-tone2.start()
-tone2.rate = tween(1, 8)
+# tone2 = Thread(2)
+# tone2.pattern = [1, 2, 2, 2]
+# tone2.rate = 2.0
+# tone2.start()
+# tone2.rate = tween(1, 8)
 
 
 # # test gracenotes
@@ -58,5 +58,22 @@ tone2.rate = tween(1, 8)
 # tone4.rate = 0.25
 # # tone4.start()
 
+control_numbers = {'magnus': 43}
+default_values = {'magnus': 43}
+Farts = create("Farts", control_numbers, default_values)
+print(Farts)
+print(dir(Farts))
+f = Farts(1)
+print(f.magnus)
+
+f.magnus = tween(120, 2)
+f.pattern = [1]
+
+f.start()
+
+# v = Thread(1, controls={'farts': 34})
+# print(v._farts)
+# print(v.farts)
+# print(v.grace)
 
 start()

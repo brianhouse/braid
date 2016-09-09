@@ -3,6 +3,7 @@ from random import random
 from .signal import linear
 from .pattern import Pattern, blend
 from .core import driver
+from .notation import Scale
 
 
 class Tween(object):
@@ -48,13 +49,23 @@ class ScalarTween(Tween):
         return value
 
         
-class ChordTween(Tween):
+class DiscreteTween(Tween):
 
     def calc_value(self, position):
         if random() > position:        
             return self.start_value
         else:
             return self.target_value
+
+
+class TupleTween(Tween):
+
+    def calc_value(self, position):
+        values = []
+        for i in range(len(self.target_value)):
+            values.append((position * (self.target_value[i] - self.start_value[i])) + self.start_value[i])
+        print(values)
+        return tuple(values)
 
 
 class PatternTween(Tween):    
@@ -90,14 +101,11 @@ class RateTween(ScalarTween):
 def tween(value, cycles, signal_f=linear):
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f)
+    if type(value) == tuple and len(value) == 2 and type(value[1]) == Scale: # special case for chords
+        return DiscreteTween(value, cycles, signal_f)
     if type(value) == tuple:
-        return ChordTween(value, cycles, signal_f)
-    if type(value) == list:
+        return TupleTween(value, cycles, signal_f)
+    if type(value) == list: # careful, lists are always patterns
         value = Pattern(value)
     if type(value) == Pattern:
         return PatternTween(value, cycles, signal_f)
-
-    # adsr is a tuple
-    # ... and it needs to work like adsr on the max side -- note-offs. 
-    # so attack, decay, and release are specified how? presets. no -- cant tween.
-    # nonlinear scale, maybe. or let midi go.
