@@ -506,8 +506,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 135.0, 330.0, 199.0, 20.0 ],
-					"text" : "pfft~ gizmo_loadme 4096 4"
+					"patching_rect" : [ 135.0, 330.0, 155.0, 20.0 ],
+					"text" : "pfft~ gizmo_loadme 8192 4"
 				}
 
 			}

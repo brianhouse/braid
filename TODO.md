@@ -7,9 +7,13 @@
 
 - need to be able to start a thread aligned with another
     thread1.sync(thread2)
+    or better
+    thread1.start(thread2)  <-- grabs its cycles
 
 - sequencing:
 thread.trigger(f, 4)    # thread version
 trigger(f, 4)           # driver version
 
 - microrhythm functions
+
+- default tempo (after fixing above) probably shouldnt be 240

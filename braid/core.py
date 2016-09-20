@@ -76,4 +76,3 @@ def start():
     
 def stop():
     driver.running = False
-
