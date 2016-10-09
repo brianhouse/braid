@@ -23,7 +23,8 @@ class Thread(object):
         self._previous_pitch = 60
         self._previous_step = 1
         self.__phase_correction = 0.0
-        self._control_values = {}        
+        self._control_values = {}    
+        self._triggers = []    
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -41,7 +42,7 @@ class Thread(object):
         """Run each tick and update the state of the Thread"""
         if not self._running:
             return
-        self.update_control()
+        self.update_controls()
         self._cycles += delta_t * self.rate * driver.rate
         if isinstance(self._rate, Tween):
             pc = self._rate.get_phase()
@@ -54,6 +55,7 @@ class Thread(object):
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
+                self.update_triggers()
                 if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
                     pattern = self.pattern.value()
                 else:
@@ -63,8 +65,8 @@ class Thread(object):
             self.play(step)
         self._last_edge = int(self._cycles)
 
-    def update_control(self):
-        # check if MIDI attributes have changed, and if so send
+    def update_controls(self):
+        """check if MIDI attributes have changed, and if so send"""
         if not hasattr(self, "controls"):
             return
         for control in self.controls:
@@ -73,6 +75,14 @@ class Thread(object):
                 midi_out.send_control(self._channel, self.controls[control], value)
                 self._control_values[control] = value
                 print("%d: %s %s" % (self._channel, control, value))
+
+    def update_triggers(self):
+        """Check trigger functions a fire as necessary"""
+        for trigger in self._triggers:
+            trigger[1] -= 1
+            if trigger[1] == 0:
+                trigger[0]()
+        self._triggers = [trigger for trigger in self._triggers if trigger[1] > 0]
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
@@ -216,6 +226,9 @@ class Thread(object):
 
     def stop(self):
         self._running = False
+
+    def trigger(self, f, cycles):
+        self._triggers.append([f, cycles])
 
 
 

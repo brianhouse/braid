@@ -1,6 +1,7 @@
 from .thread import Thread
 from .tween import *
 from .notation import *
+from .lib import midi_out
 
 class Drums(Thread):
 

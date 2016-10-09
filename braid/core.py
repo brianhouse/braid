@@ -12,12 +12,14 @@ class Driver(threading.Thread):
         self.t = 0.0
         self.rate = 1.0
         self.previous_t = 0.0
+        self.previous_cycles = 0
         self.running = False
         self._cycles = 0.0
+        self.triggers = []
 
     def start(self):
         super(Driver, self).start()
-        if hasattr(__main__, '__file__'):   # allow livecoding
+        if hasattr(__main__, "__file__"):   # allow livecoding
             try:
                 while self.running:
                     time.sleep(0.1)
@@ -35,6 +37,9 @@ class Driver(threading.Thread):
                     # midi_in.perform_callbacks()
                     delta_t = self.t - self.previous_t
                     self._cycles += delta_t * self.rate
+                    if int(self._cycles) != self.previous_cycles:
+                        self.update_triggers()
+                        self.previous_cycles = int(self._cycles)
                     for thread in self.threads:
                         c = time.time()
                         thread.update(delta_t)
@@ -50,6 +55,16 @@ class Driver(threading.Thread):
             self.previous_t = self.t     
             time.sleep(self.grain)                    
 
+    def trigger(self, f, cycles):
+        self.triggers.append([f, cycles])
+
+    def update_triggers(self):
+        """Check trigger functions a fire as necessary"""
+        for trigger in self.triggers:
+            trigger[1] -= 1
+            if trigger[1] == 0:
+                trigger[0]()
+        self.triggers = [trigger for trigger in self.triggers if trigger[1] > 0]
 
     def stop(self):
         if not self.running:
@@ -76,3 +91,5 @@ def start():
     
 def stop():
     driver.running = False
+
+trigger = driver.trigger

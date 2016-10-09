@@ -2,19 +2,20 @@
 
 import time
 from braid import *
-from braid.lib import midi 
-midi.log_midi = False
 
-# # test tweening
-# tone1 = Thread(1)
-# tone1.pattern = [1, 2, 2, 2]
+log_midi(True)
+
+# test tweening
+tone1 = Thread(1)
+tone1.pattern = [2, 2, 2, 2]
 # tone1.chord = C2, MAJ
 # tone1.rate = 0.5
-# tone1.start()
-# tone1.rate = tween(1, 8)
+tone1.start()
+# tone1.rate = tween(1, 4)
+trigger(lambda: print('done'), 4)
 
 # tone2 = Thread(2)
-# tone2.pattern = [1, 2, 2, 2]
+# tone2.pattern = [1, 1, 1, 1]
 # tone2.rate = 2.0
 # tone2.start()
 # tone2.rate = tween(1, 8)
@@ -73,9 +74,9 @@ midi.log_midi = False
 # print(v.farts)
 # print(v.grace)
 
-sero = Sero(1)
-sero.adsr = 1, 1, 0.8, 10
-sero.adsr = tween((10, 10, 10, 256), 8)
-sero.start()
+# sero = Sero(1)
+# sero.adsr = 1, 1, 0.8, 10
+# sero.adsr = tween((10, 10, 10, 256), 8)
+# sero.start()
 
 start()
