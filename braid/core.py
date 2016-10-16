@@ -95,3 +95,5 @@ def stop():
     driver.running = False
 
 trigger = driver.trigger
+tempo(115)
+

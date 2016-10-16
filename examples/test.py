@@ -5,7 +5,7 @@ from braid import *
 
 log_midi(True)
 
-print(tempo(120))
+print(tempo(134))
 
 # test tweening
 tone1 = Thread(1)

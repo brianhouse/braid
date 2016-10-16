@@ -76,8 +76,8 @@ class RateTween(ScalarTween):
         if driver_cycles_remaining <= 0:
             return None
         time_remaining = driver_cycles_remaining / driver.rate
-        acceleration = ((driver.rate * self.target_value) - self.syncer.rate) / time_remaining
-        syncer_cycles_remaining = (self.syncer.rate * time_remaining) + (0.5 * (acceleration * (time_remaining * time_remaining)))            
+        acceleration = ((self.target_value * driver.rate) - (self.syncer.rate * driver.rate)) / time_remaining
+        syncer_cycles_remaining = (self.syncer.rate * driver.rate * time_remaining) + (0.5 * (acceleration * (time_remaining * time_remaining)))
         cycles_at_completion = syncer_cycles_remaining + self.syncer._cycles
         phase_at_completion = cycles_at_completion % 1.0
         phase_correction = phase_at_completion
