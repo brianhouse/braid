@@ -1,7 +1,5 @@
 ### BUGS
 
-- phase correction is a problem for sonification
-
 
 ### FEATURES
 

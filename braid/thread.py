@@ -10,7 +10,7 @@ class Thread(object):
 
     threads = driver.threads
 
-    def __init__(self, channel):
+    def __init__(self, channel, sync=True):
         Thread.threads.append(self)        
 
         # private reference variables
@@ -24,7 +24,8 @@ class Thread(object):
         self._previous_step = 1
         self.__phase_correction = 0.0
         self._control_values = {}    
-        self._triggers = []    
+        self._triggers = []
+        self._sync = sync 
 
         # settable/tweenable attributes        
         self.pattern = [0]
@@ -44,7 +45,7 @@ class Thread(object):
             return
         self.update_controls()
         self._cycles += delta_t * self.rate * driver.rate
-        if isinstance(self._rate, Tween):
+        if self._sync and isinstance(self._rate, Tween):
             pc = self._rate.get_phase()
             if pc is not None:
                 self.__phase_correction.target_value = pc
@@ -186,9 +187,10 @@ class Thread(object):
         if isinstance(rate, Tween):
             rate = RateTween(rate.target_value, rate.cycles, rate.signal_f) # downcast tween
             rate.start(self, self.rate)
-            phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
-            phase_correction.start(driver, self._phase_correction)
-            self.__phase_correction = phase_correction
+            if self._sync:
+                phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
+                phase_correction.start(driver, self._phase_correction)
+                self.__phase_correction = phase_correction
         self._rate = rate
 
     @property
