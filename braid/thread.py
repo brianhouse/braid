@@ -221,8 +221,10 @@ class Thread(object):
             raise NotImplementedError("Sorry")
         self._micro = micro
 
-    def start(self):
+    def start(self, thread=None):
         self._running = True
+        if thread is not None:
+            self._cycles = thread._cycles
 
     def stop(self):
         self._running = False
