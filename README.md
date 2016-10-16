@@ -1,7 +1,7 @@
 Braid
 =====
 
-An idiosyncratic musical notation system, livecoding / performance framework, and MIDI sequencer with an emphasis on polyrhythms, phasing, and entrainment. Written in Python.
+A musical notation system, livecoding framework, and monophonic MIDI sequencer with an emphasis on polyrhythms, phasing, and entrainment. Written in Python.
 
 
 
