@@ -78,11 +78,13 @@ class Driver(threading.Thread):
 
 driver = Driver()
 
-def tempo(value):
+def tempo(value=False):
     """Convert to a multiplier of 1hz cycles"""
-    value /= 60.0
-    value /= 4.0
-    driver.rate = value
+    if value:
+        value /= 60.0
+        value /= 4.0
+        driver.rate = value
+    return driver.rate * 4.0 * 60.0
 
 def start():
     driver.running = True
