@@ -1,5 +1,6 @@
 ### BUGS
 
+- () directly inside () evaluate as patterns, not as probs
 
 ### FEATURES
 

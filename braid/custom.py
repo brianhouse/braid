@@ -3,10 +3,10 @@ from .tween import *
 from .notation import *
 from .lib import midi_out
 
-class Drums(Thread):
+class Volca(Thread):
 
     def __init__(self):
-        super(Drums, self).__init__(10)
+        super(Volca, self).__init__(10)
         # 1 kick = 36 #
         # 2 snare = 38 # 2
         # 3 lotom = 43 # 7
