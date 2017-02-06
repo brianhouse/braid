@@ -1,6 +1,5 @@
 ### BUGS
 
-- tweening to same value within sync causes problems
 - Thread -> Synth (loses personality, gains clarity)
 
 
@@ -15,7 +14,7 @@ worth it, with this minimalism? or are you going to fuck around forever?
 well, if you have a dynamic constructor...
 
 so a 
-thread.ref('global', default_value || 0)
+thread.add('ref', default_value || 0)
 thread.ref = .5 # etc
 
 

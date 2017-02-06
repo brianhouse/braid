@@ -74,7 +74,7 @@ class Thread(object):
         for control in self.controls:
             value = int(getattr(self, control))
             if control not in self._control_values or value != self._control_values[control]:
-                midi_out.send_control(self._channel, self.controls[control], value)
+                midi_out.send_control(self._channel, midi_clamp(self.controls[control]), value)
                 self._control_values[control] = value
                 print("%d: %s %s" % (self._channel, control, value))
 
@@ -113,7 +113,7 @@ class Thread(object):
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""
         midi_out.send_note(self._channel, self._previous_pitch, 0)
-        midi_out.send_note(self._channel, pitch, int(velocity * 127))
+        midi_out.send_note(self._channel, pitch, midi_clamp(velocity * 127))
 
     def hold(self):
         """Override to add behavior to held notes, otherwise nothing"""
@@ -142,6 +142,24 @@ class Thread(object):
         self._pattern = pattern
 
 ## could replace with dynamic constructor
+
+    def add(self, parameter):
+
+        def getter(self):
+            if isinstance(getattr(self, "_%s" % parameter), Tween):
+                return getattr(self, "_%s" % parameter).value
+            return getattr(self, "_%s" % parameter)
+
+        def setter(self, value):
+            if isinstance(value, Tween):
+                value.start(self, getattr(self, parameter))
+            setattr(self, "_%s" % parameter, value)
+
+        properties["_%s" % parameter] = defaults[parameter] if parameter in defaults else 0
+        properties[parameter] = property(getter, setter)
+
+        self.
+
 
     @property
     def chord(self):
@@ -240,12 +258,19 @@ class Thread(object):
         self._triggers.append([f, cycles])
 
 
+def midi_clamp(value):
+    if value < 0:
+        value = 0
+    if value > 127:
+        value = 127
+    return int(value)
+
 
 def create(name, controls={}, defaults={}):
 
     properties = {'controls': controls}
     for control in controls:
-        properties["_%s" % control] = defaults[control] if control in defaults else 0.0
+        properties["_%s" % control] = defaults[control] if control in defaults else 0
 
         def getter(self):
             if isinstance(getattr(self, "_%s" % control), Tween):
