@@ -136,9 +136,11 @@ class Thread(object):
     def pattern(self, pattern):
         if isinstance(pattern, Tween):
             pattern.start(self, self.pattern)
-        if type(pattern) == list:
+        if type(pattern) == list or type(pattern) == tuple:
             pattern = Pattern(pattern)
         self._pattern = pattern
+
+## could replace with dynamic constructor
 
     @property
     def chord(self):
@@ -175,6 +177,8 @@ class Thread(object):
         if isinstance(grace, Tween):
             grace.start(self, self.grace)
         self._grace = grace
+
+###
 
     @property
     def rate(self):
@@ -264,5 +268,13 @@ def create(name, controls={}, defaults={}):
         Synth = create("Synth", control_numbers, default_values)
         synth = Synth(1)
         print(synth.res)
+
+        ## wait, would this work?
+        control_numbers = {'res': 43}
+        default_values = {'res': 69}
+        create("Synth", control_numbers, default_values)
+        synth = Synth(1)
+        print(synth.res)
+
 
     """
