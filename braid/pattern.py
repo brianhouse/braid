@@ -20,13 +20,7 @@ class Pattern(list):
         """Resolve a subbranch of the pattern"""
         steps = []
         for step in pattern:
-            # if type(step) == tuple:
-            #     step = choice(step)
-            #     if type(step) == tuple or type(step) == list:
-            #         step = self._subresolve(step)
-            # elif type(step) == list:
-            #     step = self._subresolve(step)
-            while type(step) == tuple:              ## fixed?
+            while type(step) == tuple:
                 step = choice(step)
             if type(step) == list:
                 step = self._subresolve(step)

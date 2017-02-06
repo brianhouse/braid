@@ -1,6 +1,5 @@
 ### BUGS
 
-- () directly inside () evaluate as patterns, not as probs ---- fixed, need to test
 - tweening to same value within sync causes problems
 - get rid of custom in release for clarity
 

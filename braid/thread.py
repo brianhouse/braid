@@ -62,6 +62,7 @@ class Thread(object):
                 else:
                     pattern = self.pattern
                 self._steps = pattern.resolve() # new patterns kick in here
+                print(self._steps)
             step = self._steps[self._index]
             self.play(step)
         self._last_edge = int(self._cycles)
