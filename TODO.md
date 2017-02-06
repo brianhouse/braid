@@ -1,10 +1,6 @@
 ### BUGS
 
 - tweening to same value within sync causes problems
-- get rid of custom in release for clarity
-
-- requires yaml
-
 - Thread -> Synth (loses personality, gains clarity)
 
 
@@ -27,7 +23,6 @@ thread.ref = .5 # etc
 
 
 ### tutorial
-
 - basic
 - patterns
 - notes
@@ -41,7 +36,9 @@ thread.ref = .5 # etc
 make it all nice in a github
 
 
-### concept
+### test
+- clean install
 
+### concept
 - the linear cyclical
 - the material semiotic

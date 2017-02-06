@@ -11,6 +11,7 @@ setup(
     license='GPL3',
     py_modules=['braid'],
     install_requires=[
-        "python-rtmidi>=0.5b1"
+        "python-rtmidi>=0.5b1",
+        "PyYAML>=3.11"
     ],
 )
