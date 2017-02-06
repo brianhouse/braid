@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, time, threading, queue, __main__
+import sys, time, threading, queue, __main__, atexit
 
 class Driver(threading.Thread):
 
@@ -92,7 +92,11 @@ def start():
         driver.start()
     
 def stop():
-    driver.running = False
+    driver.stop()
+
+def exit_handler():
+    driver.stop()
+atexit.register(exit_handler)    
 
 trigger = driver.trigger
 tempo(115)

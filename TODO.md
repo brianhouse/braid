@@ -1,10 +1,43 @@
 ### BUGS
 
-- () directly inside () evaluate as patterns, not as probs
+- () directly inside () evaluate as patterns, not as probs ---- fixed, need to test
+- tweening to same value within sync causes problems
+- get rid of custom in release for clarity
+
+- ## it's assuming now that it's midi values in the params. should it be mapped to 0-1? issue is that internal parameters are not 0-127. so scale it.
+
 
 ### FEATURES
 
+- lambda notes with relative volume (or other paramter) adjustment, how does that work? it doesnt. that's what grace is for. if you need a reference, make a parameter. cant. oh well? could with a fake midi object, but then it would transmit.
+
+the issue is if you want to tween a parameter of one kind of hit, but there are multiple kinds of hits happening, so it's switching back and forth. you need a reference channel.
+
+worth it, with this minimalism? or are you going to fuck around forever?
+
+well, if you have a dynamic constructor...
+
+so a 
+thread.ref('global', default_value || 0)
+thread.ref = .5 # etc
+
+
 - microrhythm functions
+
+
+### tutorial
+
+- basic
+- patterns
+- notes
+- parameters
+- tweens / sync'ing
+- lambdas
+- signals
+- hardware: creating synthes for midi devices
+- livecoding
+
+make it all nice in a github
 
 
 ### concept

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import time
 from braid import *
 
 log_midi(True)
