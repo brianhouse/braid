@@ -1,4 +1,4 @@
-import collections
+import collections, yaml, os
 from .core import driver
 from .lib import num_args, midi_out
 from .signal import linear
@@ -261,6 +261,13 @@ def create(name, controls={}, defaults={}):
     T = type(name, (Thread,), properties)
 
     return T
+
+
+with open(os.path.join(os.path.dirname(__file__), "synths.yaml")) as f:
+    synths = yaml.load(f)
+for synth, params in synths.items():
+    s = create(synth, params)
+    print(s)
 
     """
         control_numbers = {'res': 43}

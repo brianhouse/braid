@@ -1,9 +1,9 @@
 Braid
 =====
 
-Braid is a single-import module for Python that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on polyrhythms, phasing, and entrainment.
+Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on polyrhythms, phasing, and entrainment.
 
-
+Requires rtmidi
 
 
 ### Copyright/License

@@ -4,7 +4,9 @@
 - tweening to same value within sync causes problems
 - get rid of custom in release for clarity
 
-- ## it's assuming now that it's midi values in the params. should it be mapped to 0-1? issue is that internal parameters are not 0-127. so scale it.
+- requires yaml
+
+- Thread -> Synth (loses personality, gains clarity)
 
 
 ### FEATURES

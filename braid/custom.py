@@ -3,6 +3,8 @@ from .tween import *
 from .notation import *
 from .lib import midi_out
 
+## get rid of this
+
 class Volca(Thread):
 
     def __init__(self):

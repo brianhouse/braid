@@ -1,0 +1,33 @@
+VolcaKick:
+  pulse_color: 40
+  pulse_level: 41
+  amp_attack: 42
+  amp_decay: 43
+  drive: 44
+  tone: 45
+  resonator_pitch: 46
+  resonator_bend: 47
+  resonator_time: 48
+  accent: 49
+
+VolcaBeats:
+  kick_level: 40
+  snare_level: 41
+  lo_tom_level: 42
+  hi_tom_level: 43
+  cl_hat_level: 44
+  op_hat_level: 45
+  clap_level: 46
+  claves_level: 47
+  agogo_level: 48
+  crash_level: 49
+  clap_pcm: 50
+  claves_pcm: 51
+  agogo_pcm: 52
+  crash_pcm: 53
+  stutter_time: 54
+  stutter_depth: 55
+  tom_decay: 56
+  closed_hat_decay: 57
+  open_hat_decay: 58
+  hat_grain: 59
