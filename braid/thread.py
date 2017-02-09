@@ -8,7 +8,35 @@ from .tween import *
 
 class Thread(object):
 
+    """Class definitions"""
+
     threads = driver.threads
+
+    @classmethod
+    def add(cls, name, default=0.0):
+        """Add a property with tweening capability (won't send MIDI)"""
+        def getter(self):
+            if isinstance(getattr(self, "_%s" % name), Tween):
+                return getattr(self, "_%s" % name).value
+            return getattr(self, "_%s" % name)
+        def setter(self, value):
+            if isinstance(value, Tween):
+                value.start(self, getattr(self, name))
+            setattr(self, "_%s" % name, value)
+        setattr(cls, "_%s" % name, default)
+        setattr(cls, name, property(getter, setter))       
+
+    @classmethod
+    def setup(cls):
+        # standard properties
+        Thread.add('chord', None)
+        Thread.add('velocity', 1.0)
+        Thread.add('grace', 0.75)
+        Thread.add('phase', 0.0)
+        Thread.add('micro', None)
+
+
+    """Instance definitions"""
 
     def __init__(self, channel, sync=True):
         Thread.threads.append(self)        
@@ -27,14 +55,9 @@ class Thread(object):
         self._triggers = []
         self._sync = sync 
 
-        # settable/tweenable attributes        
+        # specialized properties       
         self.pattern = [0]
-        self.chord = C, MAJ
-        self.velocity = 1.0            
-        self.grace = 0.75        
-        self.rate = 1.0
-        self.phase = 0.0
-        self.micro = None
+        self.rate = 1.0        
 
         print("Created thread on channel %d" % self._channel)
 
@@ -68,7 +91,7 @@ class Thread(object):
         self._last_edge = int(self._cycles)
 
     def update_controls(self):
-        """check if MIDI attributes have changed, and if so send"""
+        """Check if MIDI attributes have changed, and if so send"""
         if not hasattr(self, "controls"):
             return
         for control in self.controls:
@@ -125,7 +148,10 @@ class Thread(object):
 
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
-        self.rest()
+        self.rest()             
+
+
+    """Specialized parameters"""
 
     @property
     def pattern(self):
@@ -140,64 +166,6 @@ class Thread(object):
         if type(pattern) == list or type(pattern) == tuple:
             pattern = Pattern(pattern)
         self._pattern = pattern
-
-## could replace with dynamic constructor
-
-    def add(self, parameter):
-
-        def getter(self):
-            if isinstance(getattr(self, "_%s" % parameter), Tween):
-                return getattr(self, "_%s" % parameter).value
-            return getattr(self, "_%s" % parameter)
-
-        def setter(self, value):
-            if isinstance(value, Tween):
-                value.start(self, getattr(self, parameter))
-            setattr(self, "_%s" % parameter, value)
-
-        properties["_%s" % parameter] = defaults[parameter] if parameter in defaults else 0
-        properties[parameter] = property(getter, setter)
-
-        self.
-
-
-    @property
-    def chord(self):
-        if isinstance(self._chord, Tween):
-            return self._chord.value        
-        return self._chord
-
-    @chord.setter
-    def chord(self, chord):
-        if isinstance(chord, Tween):
-            chord.start(self, self.chord)
-        self._chord = chord
-
-    @property
-    def velocity(self):
-        if isinstance(self._velocity, Tween):
-            return self._velocity.value
-        return self._velocity
-
-    @velocity.setter
-    def velocity(self, velocity):
-        if isinstance(velocity, Tween):
-            velocity.start(self, self.velocity)
-        self._velocity = velocity
-
-    @property
-    def grace(self):
-        if isinstance(self._grace, Tween):
-            return self._grace.value
-        return self._grace
-
-    @grace.setter
-    def grace(self, grace):
-        if isinstance(grace, Tween):
-            grace.start(self, self.grace)
-        self._grace = grace
-
-###
 
     @property
     def rate(self):
@@ -217,34 +185,13 @@ class Thread(object):
         self._rate = rate
 
     @property
-    def phase(self):
-        if isinstance(self._phase, Tween):
-            return self._phase.value        
-        return self._phase
-
-    @phase.setter
-    def phase(self, phase):
-        if isinstance(phase, Tween):
-            phase.start(self, self.phase)                
-        self._phase = phase
-
-    @property
     def _phase_correction(self):
         if isinstance(self.__phase_correction, Tween):
             return self.__phase_correction.value        
         return self.__phase_correction
 
-    @property
-    def micro(self):
-        if isinstance(self._micro, Tween):
-            return self._micro.value        
-        return self._micro
 
-    @micro.setter
-    def micro(self, micro):
-        if isinstance(micro, Tween):
-            raise NotImplementedError("Sorry")
-        self._micro = micro
+    """Sequencing"""
 
     def start(self, thread=None):
         self._running = True
@@ -258,7 +205,27 @@ class Thread(object):
         self._triggers.append([f, cycles])
 
 
+
+def make(name, controls={}, defaults={}):
+    """Make a Thread with MIDI control values and defaults (will send MIDI)"""
+    properties = {'controls': controls}
+    for control in controls:
+        properties["_%s" % control] = defaults[control] if control in defaults else 0
+        def getter(self):
+            if isinstance(getattr(self, "_%s" % control), Tween):
+                return getattr(self, "_%s" % control).value
+            return getattr(self, "_%s" % control)
+        def setter(self, value):
+            if isinstance(value, Tween):
+                value.start(self, getattr(self, control))
+            setattr(self, "_%s" % control, value)
+        properties[control] = property(getter, setter)
+    T = type(name, (Thread,), properties)
+    return T
+
+
 def midi_clamp(value):
+    """Clamp value to int between 0-127"""
     if value < 0:
         value = 0
     if value > 127:
@@ -266,34 +233,20 @@ def midi_clamp(value):
     return int(value)
 
 
-def create(name, controls={}, defaults={}):
+Thread.setup()
 
-    properties = {'controls': controls}
-    for control in controls:
-        properties["_%s" % control] = defaults[control] if control in defaults else 0
-
-        def getter(self):
-            if isinstance(getattr(self, "_%s" % control), Tween):
-                return getattr(self, "_%s" % control).value
-            return getattr(self, "_%s" % control)
-
-        def setter(self, value):
-            if isinstance(value, Tween):
-                value.start(self, getattr(self, control))
-            setattr(self, "_%s" % control, value)
-
-        properties[control] = property(getter, setter)
-
-    T = type(name, (Thread,), properties)
-
-    return T
-
-
+"""Create all synths in config file"""
 with open(os.path.join(os.path.dirname(__file__), "synths.yaml")) as f:
     synths = yaml.load(f)
 for synth, params in synths.items():
-    s = create(synth, params)
-    print(s)
+    try:
+        exec("%s = make(synth, params)" % synth)
+    except Exception:
+        print("WARNING: failed to load %s" % synth)
+    else:
+        print("Loaded %s" % synth)
+
+
 
     """
         control_numbers = {'res': 43}
