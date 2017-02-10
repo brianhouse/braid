@@ -13,7 +13,7 @@ class Thread(object):
     threads = driver.threads
 
     @classmethod
-    def add(cls, name, default=0.0):
+    def add(cls, name, default=0):
         """Add a property with tweening capability (won't send MIDI)"""
         def getter(self):
             if isinstance(getattr(self, "_%s" % name), Tween):
@@ -205,25 +205,6 @@ class Thread(object):
         self._triggers.append([f, cycles])
 
 
-
-def make(name, controls={}, defaults={}):
-    """Make a Thread with MIDI control values and defaults (will send MIDI)"""
-    properties = {'controls': controls}
-    for control in controls:
-        properties["_%s" % control] = defaults[control] if control in defaults else 0
-        def getter(self):
-            if isinstance(getattr(self, "_%s" % control), Tween):
-                return getattr(self, "_%s" % control).value
-            return getattr(self, "_%s" % control)
-        def setter(self, value):
-            if isinstance(value, Tween):
-                value.start(self, getattr(self, control))
-            setattr(self, "_%s" % control, value)
-        properties[control] = property(getter, setter)
-    T = type(name, (Thread,), properties)
-    return T
-
-
 def midi_clamp(value):
     """Clamp value to int between 0-127"""
     if value < 0:
@@ -233,6 +214,14 @@ def midi_clamp(value):
     return int(value)
 
 
+def make(name, controls={}, defaults={}):
+    """Make a Thread with MIDI control values and defaults (will send MIDI)"""
+    T = type(name, (Thread,), {})    
+    T.add('controls', controls)
+    for control in controls:
+        T.add(control, defaults[control] if control in defaults else 0)
+    return T
+
 Thread.setup()
 
 """Create all synths in config file"""
@@ -241,8 +230,8 @@ with open(os.path.join(os.path.dirname(__file__), "synths.yaml")) as f:
 for synth, params in synths.items():
     try:
         exec("%s = make(synth, params)" % synth)
-    except Exception:
-        print("WARNING: failed to load %s" % synth)
+    except Exception as e:
+        print("WARNING: failed to load %s" % synth, e)
     else:
         print("Loaded %s" % synth)
 
