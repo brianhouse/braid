@@ -225,7 +225,7 @@ def make(name, controls={}, defaults={}):
 Thread.setup()
 
 """Create all synths in config file"""
-with open(os.path.join(os.path.dirname(__file__), "synths.yaml")) as f:
+with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
     synths = yaml.load(f)
 for synth, params in synths.items():
     try:
