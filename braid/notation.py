@@ -217,3 +217,8 @@ JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
 
 R = 'R'         # random
 Z = 'REST'      # rest
+
+
+def g(note):
+    # create grace note from named step
+    return float(note)

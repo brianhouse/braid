@@ -12,7 +12,10 @@ t.pattern = C, C, C, C
 # is the same as
 t.pattern = 60, 60, 60, 60
 
-# rests are specified with a Z
+# 0s simply sustain (no MIDI sent)
+t.pattern = C, 0, C, C
+
+# rests (explicit MIDI note-offs) are specified with a Z
 t.pattern = C, Z, Z, C
 
 # by default, there is no specified chord. But if there is one, notes can be specified by scale degree
@@ -32,6 +35,11 @@ whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
 # R specifies a random note in the scale
 t.chord = C4, whole_tone_scale
 t.pattern = 1, R, R, -6
+
+# grace notes
+# g(C5)
+# v1.grace = .9
+# 1., 1., 1.
 
 
 t.start()

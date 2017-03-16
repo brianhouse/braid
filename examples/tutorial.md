@@ -3,6 +3,8 @@
 - notes
 - patterns
 - parameters
+- functions in patterns
+- pattern functions: euc, combine
 - tweens / sync'ing
 - lambdas
 - signals

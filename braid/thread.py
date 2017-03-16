@@ -202,7 +202,7 @@ class Thread(object):
         self._running = False
 
     def trigger(self, f, cycles):
-        self._triggers.append([f, cycles])
+        self._triggers.append([f, cycles + 1])
 
 
 def midi_clamp(value):
