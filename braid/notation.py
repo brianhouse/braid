@@ -54,6 +54,7 @@ class ScaleError(Exception):
 K = 36
 S = 38
 H = 42
+O = 46
 
 C0 = 12
 Db0 = 13

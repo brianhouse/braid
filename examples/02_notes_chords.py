@@ -2,6 +2,7 @@
 
 from braid import *
 
+# create a thread on channel 1
 t = Thread(1)
 
 
@@ -16,7 +17,7 @@ t.pattern = 60, 60, 60, 60
 t.pattern = C, 0, C, C
 
 # rests (explicit MIDI note-offs) are specified with a Z
-t.pattern = C, Z, Z, C
+t.pattern = C, Z, C, Z
 
 # by default, there is no specified chord. But if there is one, notes can be specified by scale degree
 t.chord = C4, MAJ
@@ -36,10 +37,16 @@ whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
 t.chord = C4, whole_tone_scale
 t.pattern = 1, R, R, -6
 
-# grace notes
-# g(C5)
-# v1.grace = .9
-# 1., 1., 1.
+# grace notes are specified by using floats
+t.pattern = 1, 1., 1., 1.
+
+# the level of the grace note is specified with a percentage (default 0.75)
+t.grace = .45
+t.pattern = 1, 1., 1, 1.
+
+# use the g function to create a grace note on note specified with a symbol
+t.chord = None
+t.pattern = C, g(C), g(C), g(C)
 
 
 t.start()

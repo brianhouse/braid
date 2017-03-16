@@ -2,8 +2,8 @@
 - basic
 - notes
 - patterns
-- parameters
 - functions in patterns
+- parameters
 - pattern functions: euc, combine
 - tweens / sync'ing
 - lambdas

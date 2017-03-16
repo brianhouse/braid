@@ -85,7 +85,7 @@ class Thread(object):
                 else:
                     pattern = self.pattern
                 self._steps = pattern.resolve() # new patterns kick in here
-                print(self._steps)
+                # print(self._steps)
             step = self._steps[self._index]
             self.play(step)
         self._last_edge = int(self._cycles)
@@ -124,7 +124,11 @@ class Thread(object):
                 pitch = step
             else:
                 root, scale = self.chord
-                pitch = root + scale[step]
+                try:
+                    pitch = root + scale[step]
+                except ScaleError as e:
+                    print(e)
+                    return
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity
             velocity *= v
@@ -163,7 +167,7 @@ class Thread(object):
     def pattern(self, pattern):
         if isinstance(pattern, Tween):
             pattern.start(self, self.pattern)
-        if type(pattern) == list or type(pattern) == tuple:
+        else:
             pattern = Pattern(pattern)
         self._pattern = pattern
 
