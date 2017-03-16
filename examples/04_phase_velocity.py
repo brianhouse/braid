@@ -28,5 +28,7 @@ t1.velocity = 0.5
 
 # grace is then a percentage of velocity
 
+# rate!
+
 
 start()

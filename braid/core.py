@@ -48,7 +48,7 @@ class Driver(threading.Thread):
                         thread.update(delta_t)
                         rc = int((time.time() - c) * 1000)
                         if rc > 1:
-                            print("\n(update took %dms)\n" % rc)
+                            print("(warning: update took %dms)\n>>> " % rc)
                 except KeyboardInterrupt:
                     self.stop()
                 # except Exception as e:            ##         

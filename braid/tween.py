@@ -1,7 +1,7 @@
 import collections, math
 from random import random
 from .signal import linear
-from .pattern import Pattern, blend
+from .pattern import Pattern, blend, euc, add, xor
 from .core import driver
 
 

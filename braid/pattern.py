@@ -1,6 +1,7 @@
 import collections
 from random import choice, random
 from .lib import num_args
+from .lib.bjorklund import bjorklund
 
 
 class Pattern(list):
@@ -138,3 +139,11 @@ def lcm(a, b):
     while tmp != 0:
         gcd, tmp = tmp, gcd % tmp
     return a * b // gcd            
+
+
+def euc(steps, pulses, note=1):
+    try:
+        return bjorklund(steps, pulses, note)
+    except ValueError:
+        print("make pulses > steps")
+        return None
