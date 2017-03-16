@@ -3,6 +3,7 @@
 from braid import *         # import braid
 
 log_midi(True)              # choose whether to see MIDI output (False by default)
+midi_out.port = 1           # change MIDI port if necessary (or pass it in on the command line, see below)
 
 t = Thread(1)               # create a thread -- the argument indicates the MIDI channel
 t.pattern = C, C, C, C      # add a pattern
@@ -13,6 +14,9 @@ start()                     # start the process (blocking in executable mode / n
 
 
 """
+
+For executable mode:
+
 In your terminal, change to the top-level braid directory.
 
 Make sure this file is executable:
@@ -24,9 +28,11 @@ Run it:
 """
 
 """
-Livecoding:
 
-Everything works the same in the terminal for livecoding.
+For livecoding mode:
+
+$ python3
+>>> from braid import *
 
 """
 

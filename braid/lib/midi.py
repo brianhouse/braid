@@ -11,7 +11,7 @@ class MidiOut(threading.Thread):
     def __init__(self, port=0, throttle=0):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.port = port  
+        self._port = port  
         self.throttle = throttle
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()            
@@ -21,11 +21,11 @@ class MidiOut(threading.Thread):
         else:
             print("No MIDI outputs available")
         if available_ports:
-            if self.port >= len(available_ports):
-                print("Port index %s not available" % self.port)
-                exit()
-            print("MIDI OUT: %s" % available_ports[self.port])
-            self.midi.open_port(self.port)
+            if self._port >= len(available_ports):
+                print("Port index %s not available" % self._port)
+                return
+            print("MIDI OUT: %s" % available_ports[self._port])
+            self.midi.open_port(self._port)
         else:
             print("MIDI OUT opening virtual output (\"Python\")...")
             self.midi.open_virtual_port("Python")           
@@ -36,6 +36,14 @@ class MidiOut(threading.Thread):
 
     def send_note(self, channel, pitch, velocity):
         self.queue.put((channel, None, (pitch, velocity)))
+
+    @property
+    def port(self):
+        return self._port
+
+    @port.setter
+    def port(self, port):
+        self.__init__(port=port, throttle=self.throttle)
 
     def run(self):
         while True:
