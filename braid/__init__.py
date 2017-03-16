@@ -6,3 +6,6 @@ from braid.lib import midi
 
 def log_midi(value):
     midi.log_midi = True if value else False
+
+if LIVECODING:
+    play()

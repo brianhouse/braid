@@ -2,6 +2,8 @@
 
 import sys, time, threading, queue, __main__, atexit
 
+LIVECODING = not hasattr(__main__, "__file__")
+
 class Driver(threading.Thread):
 
     def __init__(self):
@@ -19,7 +21,8 @@ class Driver(threading.Thread):
 
     def start(self):
         super(Driver, self).start()
-        if hasattr(__main__, "__file__"):   # allow livecoding
+        print("Braid started")
+        if not LIVECODING:
             try:
                 while self.running:
                     time.sleep(0.1)
@@ -45,12 +48,12 @@ class Driver(threading.Thread):
                         thread.update(delta_t)
                         rc = int((time.time() - c) * 1000)
                         if rc > 1:
-                            print(">>> processor overload %dms update <<<" % rc)
+                            print("\n(update took %dms)\n" % rc)
                 except KeyboardInterrupt:
                     self.stop()
-                # except Exception as e:                
+                # except Exception as e:            ##         
                 #     print("Error: %s" % e)
-            elif hasattr(__main__, '__file__'):
+            elif not LIVECODING:
                 break
             self.previous_t = self.t     
             time.sleep(self.grain)                    
@@ -72,11 +75,9 @@ class Driver(threading.Thread):
         self.running = False
         for thread in self.threads:
             thread.end()
-        time.sleep(0.1) # for midi to finish        
-        print("\n------------->X")
-
-
-driver = Driver()
+        time.sleep(0.1) # for midi to finish   
+        if not LIVECODING:     
+            print("\n------------->X")
 
 def tempo(value=False):
     """Convert to a multiplier of 1hz cycles"""
@@ -84,20 +85,31 @@ def tempo(value=False):
         value /= 60.0
         value /= 4.0
         driver.rate = value
-    return driver.rate * 4.0 * 60.0
+    else:
+        return driver.rate * 4.0 * 60.0
 
-def start():
+def play():
     driver.running = True
     if not driver.is_alive():
         driver.start()
+    print("Playing")
     
-def stop():
+def pause():
     driver.stop()
+    print("Paused")
+
+def stop():
+    for thread in driver.threads:
+        thread.stop()
+    driver.stop()
+    print("Stopped")
 
 def exit_handler():
     driver.stop()
 atexit.register(exit_handler)    
 
+driver = Driver()
 trigger = driver.trigger
+
 tempo(115)
 

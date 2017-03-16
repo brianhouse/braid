@@ -8,26 +8,26 @@ log_midi = False
 
 class MidiOut(threading.Thread):
 
-    def __init__(self, port=0, throttle=0):
+    def __init__(self, interface=0, throttle=0):
         threading.Thread.__init__(self)
         self.daemon = True
-        self._port = port  
+        self._interface = interface  
         self.throttle = throttle
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()            
-        available_ports = self.midi.get_ports()
-        if len(available_ports):
-            print("MIDI outputs available: %s" % available_ports)
+        available_interfaces = self.midi.get_ports()
+        if len(available_interfaces):
+            print("MIDI outputs available: %s" % available_interfaces)
         else:
             print("No MIDI outputs available")
-        if available_ports:
-            if self._port >= len(available_ports):
-                print("Port index %s not available" % self._port)
+        if available_interfaces:
+            if self._interface >= len(available_interfaces):
+                print("Interfaced index %s not available" % self._interface)
                 return
-            print("MIDI OUT: %s" % available_ports[self._port])
-            self.midi.open_port(self._port)
+            print("MIDI OUT: %s" % available_interfaces[self._interface])
+            self.midi.open_port(self._interface)
         else:
-            print("MIDI OUT opening virtual output (\"Python\")...")
+            print("MIDI OUT opening virtual interface (\"Python\")...")
             self.midi.open_virtual_port("Python")           
         self.start()   
 
@@ -38,12 +38,12 @@ class MidiOut(threading.Thread):
         self.queue.put((channel, None, (pitch, velocity)))
 
     @property
-    def port(self):
-        return self._port
+    def interface(self):
+        return self._interface
 
-    @port.setter
-    def port(self, port):
-        self.__init__(port=port, throttle=self.throttle)
+    @interface.setter
+    def interface(self, interface):
+        self.__init__(interface=interface, throttle=self.throttle)
 
     def run(self):
         while True:
@@ -83,7 +83,7 @@ class MidiIn(threading.Thread):
             if self.port >= len(available_ports):
                 print("Port index %s not available" % self.port)
                 exit()
-            print("MIDI IN:  %s" % available_ports[self.port])
+            print("MIDI  IN: %s" % available_ports[self.port])
             self.midi.open_port(self.port)
         else:
             print("No MIDI inputs available")

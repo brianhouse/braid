@@ -2,9 +2,9 @@
 - basic
 - notes
 - patterns
-- functions in patterns
-- parameters
 - pattern functions: euc, combine
+- built-in properties
+- functions in patterns
 - tweens / sync'ing
 - lambdas
 - signals

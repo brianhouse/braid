@@ -54,6 +54,7 @@ class Thread(object):
         self._control_values = {}    
         self._triggers = []
         self._sync = sync 
+        self._start_lock = False
 
         # specialized properties       
         self.pattern = [0]
@@ -77,7 +78,10 @@ class Thread(object):
             p = self.micro(p)
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
-            self._index = (self._index + 1) % len(self._steps) # dont skip steps
+            if self._start_lock:
+                self._index = i
+            else:
+                self._index = (self._index + 1) % len(self._steps) # dont skip steps
             if self._index == 0:
                 self.update_triggers()
                 if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
@@ -201,6 +205,14 @@ class Thread(object):
         self._running = True
         if thread is not None:
             self._cycles = thread._cycles
+            self._last_edge = 0
+            self._index = -1
+            self._start_lock = True
+        else:
+            self._cycles = 0.0
+            self._last_edge = 0
+            self._index = -1
+        print("Thread started on channel %s" % self._channel)
 
     def stop(self):
         self._running = False

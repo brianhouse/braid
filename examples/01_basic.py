@@ -3,7 +3,7 @@
 from braid import *         # import braid
 
 log_midi(True)              # choose whether to see MIDI output (False by default)
-midi_out.port = 1           # change MIDI port if necessary (or pass it in on the command line, see below)
+midi_out_interface(1)                # change MIDI interface if necessary (or pass it in on the command line, see below)
 
 t = Thread(1)               # create a thread -- the argument indicates the MIDI channel
 t.pattern = C, C, C, C      # add a pattern
@@ -33,15 +33,5 @@ For livecoding mode:
 
 $ python3
 >>> from braid import *
-
-"""
-
-
-"""
-On terminology:
-
-This framework is called Braid, and the fundamental objects are called Threads -- a Thread corresponds to a hardware or software monosynth.
-This is not a thread in the programming sense (Braid is single-threaded).
-Threads have properties and can be assigned patterns.
 
 """
