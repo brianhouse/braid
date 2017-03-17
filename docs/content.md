@@ -7,7 +7,14 @@ Braid is a way to make music with code. It comprises a musical notation system, 
 1. [Documentation](#documentation)
     1. [Basic](#basic)
     1. [Notes and Chords](#notes)
-    1. [Patterns 1](#patterns_1)
+    1. [Patterns, part 1](#patterns_1)
+    1. [Patterns, part 2](#patterns_2)
+    1. built-in properties
+    1. functions in patterns
+    1. tweens / sync'ing
+    1. lambdas
+    1. signals
+    1. hardware: creating synthes for midi devices
 
 ## Goals
 
@@ -110,6 +117,7 @@ Save it as `hello_world.py` and run `python3 hello_world.py 0`. The (optional) a
 
 From now on, we'll assume that we're livecoding within the python3 interpreter, but any code works the same in a standalone file.  
 
+
 ### <a name="top"></a>Top-level controls
 
 You can start and stop individual threads, with `my_thread.start()` and `my_thread.stop()`, which essentially behave like a mute button.  
@@ -196,12 +204,13 @@ Use the g function to create a grace note on note specified with a symbol
     >>> t.pattern = C, g(C), g(C), g(C)
 
 
-### <a name="patterns_1"></a>Patterns 1
+### <a name="patterns_1"></a>Patterns, part 1
 
 (If you're following along in the documentation, now is a good time to use `stop()` to clear things out.)
 
 Start a thread
 
+    >>> clear()
     >>> t = Thread(1)
     >>> t.chord = C, DOR
     >>> t.pattern = 1, 1, 1, 1
@@ -241,3 +250,40 @@ Patterns are python lists, so they can be manipulated as such
     >>> d.pattern[2] = S
     >>> d.pattern[6] = S
     >>> d.pattern[6] = [(S, [S, K])]
+
+
+### <a name="patterns_2"></a>Patterns, part 2
+
+    >>> clear()
+    >>> tempo(132)   
+    >>> d = Thread(10)
+    >>> d.start()
+
+There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function
+
+    >>> steps = 7
+    >>> pulses = 3
+    >>> note = K
+    >>> d.pattern = euc(steps, pulses, note)    # [K, 0, K, 0, K, 0, 0]
+
+Adding a pattern to an existing pattern fills any 0s with the new pattern
+
+    >>> d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
+
+XOR'ing a pattern to an existing pattern adds it, but turns any collisions into 0s
+
+    >>> d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
+
+These can be done even if the patterns are different lengths, to create crossrhythms
+
+    >>> d.pattern = [K, K] * 2
+    >>> d.pattern.add([H, H, H, H, H])
+
+Patterns can also be blended
+    
+    >>> d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
+
+same as
+
+    >>> d.pattern = K, K, K, K
+    >>> d.pattern.blend([S, S, S, S])

@@ -52,6 +52,7 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <li><a href="#basic">Basic</a></li>
 <li><a href="#notes">Notes and Chords</a></li>
 <li><a href="#patterns_1">Patterns 1</a></li>
+<li><a href="#patterns_2">Patterns 2</a></li>
 </ol>
 </li>
 </ol>
@@ -150,9 +151,9 @@ play()
 <p>From now on, we'll assume that we're livecoding within the python3 interpreter, but any code works the same in a standalone file.  </p>
 <h3><a name="top"></a>Top-level controls</h3>
 <p>You can start and stop individual threads, with <code>my_thread.start()</code> and <code>my_thread.stop()</code>, which essentially behave like a mute button.  </p>
-<p>Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use <code>pause()</code> to mute everything, and <code>play()</code> to get it going again. If you use <code>stop()</code>, it will stop all threads, so you'll need to start them up again individually. <code>clear()</code> is the equivalent of <code>stop()</code> + <code>play()</code>, which is useful if you want to stop all your threads but you don't want to have to remember to type <code>play()</code> when you're ready to start up again.  </p>
+<p>Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use <code>pause()</code> to mute everything, and <code>play()</code> to get it going again. If you use <code>stop()</code>, it will stop all threads, so you'll need to start them up again individually. <code>clear()</code> just stops the threads, but Braid itself is still going and if you start a thread it will sound right away.</p>
 <p><em>Advanced note</em><br />
-If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use <code>stop()</code> or <code>clear()</code> to clear these out&mdash;delete any unreferenced threads will be deleted.</p>
+If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use <code>stop()</code> or <code>clear()</code> to silence these.</p>
 <p>Try it now:</p>
 <pre><code>clear()
 </code></pre>
@@ -213,10 +214,11 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.chord = None
 <span class="int">&gt;&gt;&gt;</span> t.pattern = C, g(C), g(C), g(C)
 </code></pre>
-<h3><a name="patterns_1"></a>Patterns 1</h3>
+<h3><a name="patterns_1"></a>Patterns, part 1</h3>
 <p>(If you're following along in the documentation, now is a good time to use <code>stop()</code> to clear things out.)</p>
 <p>Start a thread</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
+<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = C, DOR
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t.start()
@@ -249,6 +251,35 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> d.pattern[2] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = [(S, [S, K])]
+</code></pre>
+<h3><a name="patterns_2"></a>Patterns, part 2</h3>
+<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
+<span class="int">&gt;&gt;&gt;</span> tempo(132)   
+<span class="int">&gt;&gt;&gt;</span> d = Thread(10)
+<span class="int">&gt;&gt;&gt;</span> d.start()
+</code></pre>
+<p>There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> steps = 7
+<span class="int">&gt;&gt;&gt;</span> pulses = 3
+<span class="int">&gt;&gt;&gt;</span> note = K
+<span class="int">&gt;&gt;&gt;</span> d.pattern = euc(steps, pulses, note)    # [K, 0, K, 0, K, 0, 0]
+</code></pre>
+<p>Adding a pattern to an existing pattern fills any 0s with the new pattern</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
+</code></pre>
+<p>XOR'ing a pattern to an existing pattern adds it, but turns any collisions into 0s</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
+</code></pre>
+<p>These can be done even if the patterns are different lengths, to create crossrhythms</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = [K, K] * 2
+<span class="int">&gt;&gt;&gt;</span> d.pattern.add([H, H, H, H, H])
+</code></pre>
+<p>Patterns can also be blended</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
+</code></pre>
+<p>same as</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = K, K, K, K
+<span class="int">&gt;&gt;&gt;</span> d.pattern.blend([S, S, S, S])
 </code></pre>
 
 </div>
