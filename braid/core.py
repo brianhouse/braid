@@ -70,14 +70,10 @@ class Driver(threading.Thread):
         self.triggers = [trigger for trigger in self.triggers if trigger[1] > 0]
 
     def stop(self):
-        if not self.running:
-            return
         self.running = False
         for thread in self.threads:
-            thread.end()
-        time.sleep(0.1) # for midi to finish   
-        if not LIVECODING:     
-            print("\n------------->X")
+            if thread._running:
+                thread.stop()
 
 def tempo(value=False):
     """Convert to a multiplier of 1hz cycles"""
@@ -95,17 +91,25 @@ def play():
     print("Playing")
     
 def pause():
-    driver.stop()
+    driver.running = False
+    for thread in driver.threads:
+        thread.end()    
     print("Paused")
 
 def stop():
-    for thread in driver.threads:
-        thread.stop()
     driver.stop()
     print("Stopped")
 
+def clear():
+    for thread in driver.threads:
+        if thread._running:
+            thread.stop()
+    print("Cleared")
+
 def exit_handler():
     driver.stop()
+    time.sleep(0.1) # for midi to finish               
+    print("\n------------->X")    
 atexit.register(exit_handler)    
 
 driver = Driver()

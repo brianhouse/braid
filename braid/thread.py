@@ -216,6 +216,7 @@ class Thread(object):
 
     def stop(self):
         self._running = False
+        self.end()
 
     def trigger(self, f, cycles):
         self._triggers.append([f, cycles + 1])
