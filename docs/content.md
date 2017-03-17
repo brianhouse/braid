@@ -1,28 +1,30 @@
 # BRAID
 
-Braid is a way to make music with code. It comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on polyrhythms, phasing, and entrainment, and it is a single-import module in python.
+Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.
 
 1. [Goals](#goals)
 1. [Reference](#reference)
 1. [Documentation](#documentation)
-    1. [Basic](#basic)
-    1. [Notes and Chords](#notes)
-    1. [Patterns, part 1](#patterns_1)
-    1. [Patterns, part 2](#patterns_2)
-    1. built-in properties
-    1. functions in patterns
-    1. tweens / sync'ing
-    1. lambdas
+    1. [Hello World](#hello)
+    1. [Notes and `chord`](#notes)
+    1. [`pattern`, part 1](#pattern_1)
+    1. [`pattern`, part 2](#pattern_2)
+    1. [`velocity` and `grace`](#velocity)
+    1. [`phase`](#phase)
+    1. [`rate`](#rate)    
+    1. functions in pattern / lambdas
+    1. tweens
     1. signals
+    1. sync'ing
     1. hardware: creating synthes for midi devices
 
 ## Goals
 
 - **Idiosyncratic**  
-Braid is not for everyone. It's for me, and is an attempt to embody the methods and aesthetics I've used in my projects&mdash;it's also for anyone else who is interested in thinking similarly. But it is far from general purpose music making. It is also an exercise in developing a langauge. 
+Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest evolving rhythmic relationships and data sonification.
 
 - **Limited scope**  
-Braid is MIDI-based, and it's monophonic. Those are pretty significant limitations, but it means that this exists and (mostly) works. It also means I can take advantage of all the awesome cheap MIDI monosynths coming out, like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series.
+Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. Those are pretty significant limitations, but it means that this exists and (mostly) works. It also means I can take advantage of all the awesome cheap MIDI monosynths coming out, like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series.
 
 - **Integrates with Python**  
 I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects.  
@@ -40,7 +42,11 @@ Braid is has very low processor overhead, suitable for running on devices like t
 This framework is called Braid, and the fundamental objects are called _threads_&mdash;a thread corresponds to a hardware or software monosynth, and refers to the temporal operations of Braid through which threads can come in and out of sync. This is not a thread in the programming sense (in that respect Braid is single-threaded).
 
 
-## <a name="documentation"></a>Reference
+## <a name="reference"></a>Reference
+
+### Glossary
+- Thread
+- cycle
 
 ### Global functions
 - `log_midi(True|False)`        Choose whether to see MIDI output (default: False)
@@ -51,6 +57,7 @@ This framework is called Braid, and the fundamental objects are called _threads_
 - `pause()`
 - `stop()`
 - `clear()`
+- `tempo()`
 
 ### Symbols
 - `K`, `S`, `H`, `O`
@@ -77,7 +84,7 @@ This framework is called Braid, and the fundamental objects are called _threads_
 
 ## <a name="documentation"></a>Documentation
 
-### <a name="basic"></a>Basic
+### <a name="hello"></a>Hello World
 
 To begin working with Braid, download the repository and navigate to the root directory. Launch a python3 interpreter and import braid: 
 
@@ -115,12 +122,12 @@ Alternately, you can create a python file with Braid syntax like this:
 
 Save it as `hello_world.py` and run `python3 hello_world.py 0`. The (optional) argument is the MIDI out interface to use.  
 
-From now on, we'll assume that we're livecoding within the python3 interpreter, but any code works the same in a standalone file.  
+From now on, we'll assume that we're livecoding within the python3 interpreter, but the code works the same in a standalone file.  
 
 
 ### <a name="top"></a>Top-level controls
 
-You can start and stop individual threads, with `my_thread.start()` and `my_thread.stop()`, which essentially behave like a mute button.  
+You can start and stop individual threads, with `some_thread.start()` and `some_thread.stop()`, which essentially behave like a mute button.  
 
 Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use `pause()` to mute everything, and `play()` to get it going again. If you use `stop()`, it will stop all threads, so you'll need to start them up again individually. `clear()` just stops the threads, but Braid itself is still going and if you start a thread it will sound right away.
 
@@ -132,7 +139,7 @@ Try it now:
     clear()
 
 
-### <a name="notes"></a>Notes and Chords
+### <a name="notes"></a>Notes and `chord`
 
 Start a thread
 
@@ -204,17 +211,15 @@ Use the g function to create a grace note on note specified with a symbol
     >>> t.pattern = C, g(C), g(C), g(C)
 
 
-### <a name="patterns_1"></a>Patterns, part 1
+### <a name="pattern_1"></a>`pattern`, part 1
 
-(If you're following along in the documentation, now is a good time to use `stop()` to clear things out.)
-
-Start a thread
+Start a thread with a pattern
 
     >>> clear()
     >>> t = Thread(1)
+    >>> t.start()
     >>> t.chord = C, DOR
     >>> t.pattern = 1, 1, 1, 1
-    >>> t.start()
 
 Once started, a thread repeats its pattern. Each repetition is called a *cycle*. Each cycle is subdivided evenly by the steps in the pattern.
 
@@ -238,8 +243,8 @@ So brackets indicate subdivisions. Parens, however, indicate a choice.
 Brackets and parens can be combined to create intricate markov chains
 
     >>> clear()
+    >>> tempo(132)                  # set the universal tempo
     >>> d = Thread(10)              # channel 10 is MIDI for drums
-    >>> tempo(132)      
     >>>
     >>> d.pattern = [([K, H], [K, K]), (K, O)], (H, [H, K]), (S, [S, (O, K), 0, g(S)]), [[H, H], ([H, H], O, [g(S), g(S), g(S), g(S)])]         # K, S, H, O are built-in aliases for 36, 38, 42, 46
     >>> d.start()
@@ -252,15 +257,15 @@ Patterns are python lists, so they can be manipulated as such
     >>> d.pattern[6] = [(S, [S, K])]
 
 
-### <a name="patterns_2"></a>Patterns, part 2
+### <a name="pattern_2"></a>`pattern`, part 2
+
+There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function
 
     >>> clear()
     >>> tempo(132)   
     >>> d = Thread(10)
     >>> d.start()
-
-There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function
-
+###
     >>> steps = 7
     >>> pulses = 3
     >>> note = K
@@ -287,3 +292,72 @@ same as
 
     >>> d.pattern = K, K, K, K
     >>> d.pattern.blend([S, S, S, S])
+
+
+### <a name="velocity"></a>`velocity` and `grace`
+
+All threads come with some properties built-in. We've seen [`chord`](#notes) already.  
+
+    >>> clear()
+    >>> t = Thread(10)
+    >>> t.start()
+    >>> t.chord = C, MAJ
+    >>> t.pattern = 1, 1., 1, 1.
+
+There is also, of course, `velocity`
+
+    >>> t.velocity = 0.5
+
+and `grace` is a percentage of velocity, to control the depth of the grace notes
+
+    >>> t.velocity = 1.0
+    >>> t.grace = .45
+
+
+
+### <a name="phase"></a>`phase`
+
+Consider the following:
+
+    >>> clear()    
+    >>>
+    >>> t1 = Thread(10)
+    >>> t1.chord = 76, CHR  # root note is "Hi Wood Block"
+    >>>
+    >>> t2 = Thread(10)
+    >>> t2.chord = 77, CHR  # root note is "Lo Wood Block"
+    >>>
+    >>> t1.pattern = [1, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0]   # thanks Steve
+    >>> t2.pattern = t1.pattern
+    >>>
+    >>> t1.start()
+    >>> t2.start(t1)            # t1 as argument
+
+Note that in this example, `t2` takes `t1` as an argument. This ensures that t2 will start in sync with t1. Otherwise, t1 and t2 will start at arbitrary times, which may not be desirable.
+
+However, each thread also has a `phase` property that allows us to control the relative phase of threads deliberately.
+
+    >>> t2.phase = 1/12     # adjust phase by one subdivision
+    >>> t2.phase = 3/12
+    >>> t2.phase = 7/12
+
+
+
+### <a name="rate"></a>`rate`
+
+By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal `tempo()` function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).
+
+However, individual threads can cycle at their own `rate`. If `1.0` is the universal rate at the specified tempo, the `rate` property of each thread is a multiplier.
+
+    >>> clear()
+    >>> t1 = Thread(1)
+    >>> t1.pattern = C, C, C, C
+    >>> t1.start()
+    >>>
+    >>> t2 = Thread(2)
+    >>> t2.pattern = G, G, G, G
+    >>> t2.rate = 0.5                   # half-speed! 
+    >>> t2.start(t1)              
+
+
+

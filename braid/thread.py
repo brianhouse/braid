@@ -89,9 +89,11 @@ class Thread(object):
                 else:
                     pattern = self.pattern
                 self._steps = pattern.resolve() # new patterns kick in here
-                # print(self._steps)
-            step = self._steps[self._index]
-            self.play(step)
+            if self._start_lock:
+                self._start_lock = False
+            else:
+                step = self._steps[self._index]
+                self.play(step)
         self._last_edge = int(self._cycles)
 
     def update_controls(self):
