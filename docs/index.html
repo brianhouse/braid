@@ -295,6 +295,9 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = K, K, K, K
 <span class="int">&gt;&gt;&gt;</span> d.pattern.blend([S, S, S, S])
 </code></pre>
+<p>blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pattern B.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
+</code></pre>
 <h3><a name="velocity"></a><code>Thread.velocity</code> and <code>Thread.grace</code></h3>
 <p>All threads come with some properties built-in. We've seen <a href="#notes"><code>chord</code></a> already.  </p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> clear()
@@ -336,6 +339,7 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <p>By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal <code>tempo()</code> function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).</p>
 <p>However, individual threads can cycle at their own <code>rate</code>. If <code>1.0</code> is the universal rate at the specified tempo, the <code>rate</code> property of each thread is a multiplier.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> clear()
+<span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = C, C, C, C
 <span class="int">&gt;&gt;&gt;</span> t1.start()
@@ -346,7 +350,23 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 </code></pre>
 <h3><a name="tweens"></a>Tweening</h3>
-<p>Now for the fun part.</p>
+<p>Now for the fun part. Any property on a thread can be <strong>tweened</strong>&mdash;that is, interpolated between two values over time (yes, the term is borrowed from Flash).</p>
+<p>This is done simply by assigning a <code>tween()</code> function to the property instead of a value. <code>tween()</code> has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> p1 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> p2 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
+<span class="int">&gt;&gt;&gt;</span> p1.pattern = pp
+<span class="int">&gt;&gt;&gt;</span> p2.pattern = pp
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> p1.start()
+<span class="int">&gt;&gt;&gt;</span> p2.start(t1)              
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> p2.phase = tween(1.0, 12)
+</code></pre>
+<p>All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127. <code>rate</code>, <code>phase</code>, <code>velocity</code>, <code>grace</code> change continuously over float values. <code>chord</code> will probabilistically waver between the current value and the target value. <code>pattern</code> will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.</p>
 
 </div>
 </body>
