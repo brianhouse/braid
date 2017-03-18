@@ -6,12 +6,12 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 1. [Reference](#reference)
 1. [Documentation](#documentation)
     1. [Hello World](#hello)
-    1. [Notes and `chord`](#notes)
-    1. [`pattern`, part 1](#pattern_1)
-    1. [`pattern`, part 2](#pattern_2)
-    1. [`velocity` and `grace`](#velocity)
-    1. [`phase`](#phase)
-    1. [`rate`](#rate)    
+    1. [Notes and `Thread.chord`](#notes)
+    1. [`Thread.pattern`, part 1](#pattern_1)
+    1. [`Thread.pattern`, part 2](#pattern_2)
+    1. [`Thread.velocity` and `Thread.grace`](#velocity)
+    1. [`Thread.phase`](#phase)
+    1. [`Thread.rate`](#rate)    
     1. functions in pattern / lambdas
     1. tweens
     1. signals
@@ -293,8 +293,11 @@ same as
     >>> d.pattern = K, K, K, K
     >>> d.pattern.blend([S, S, S, S])
 
+blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pattern B.
 
-### <a name="velocity"></a>`velocity` and `grace`
+    >>> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
+
+### <a name="velocity"></a>`Thread.velocity` and `Thread.grace`
 
 All threads come with some properties built-in. We've seen [`chord`](#notes) already.  
 
@@ -315,7 +318,7 @@ and `grace` is a percentage of velocity, to control the depth of the grace notes
 
 
 
-### <a name="phase"></a>`phase`
+### <a name="phase"></a>`Thread.phase`
 
 Consider the following:
 
@@ -337,27 +340,49 @@ Note that in this example, `t2` takes `t1` as an argument. This ensures that t2 
 
 However, each thread also has a `phase` property that allows us to control the relative phase of threads deliberately.
 
-    >>> t2.phase = 1/12     # adjust phase by one subdivision
+    >>> t2.phase = 1/12         # adjust phase by one subdivision
     >>> t2.phase = 3/12
     >>> t2.phase = 7/12
 
 
 
-### <a name="rate"></a>`rate`
+### <a name="rate"></a>`Thread.rate`
 
 By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal `tempo()` function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).
 
 However, individual threads can cycle at their own `rate`. If `1.0` is the universal rate at the specified tempo, the `rate` property of each thread is a multiplier.
 
     >>> clear()
+    >>>
     >>> t1 = Thread(1)
     >>> t1.pattern = C, C, C, C
     >>> t1.start()
     >>>
-    >>> t2 = Thread(2)
+    >>> t2 = Thread(1)
     >>> t2.pattern = G, G, G, G
     >>> t2.rate = 0.5                   # half-speed! 
     >>> t2.start(t1)              
 
 
 
+### <a name="tweens"></a>Tweening
+
+Now for the fun part. Any property on a thread can be **tweened**&mdash;that is, interpolated between two values over time (yes, the term is borrowed from Flash).
+
+This is done simply by assigning a `tween()` function to the property instead of a value. `tween()` has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value.
+
+    >>> clear()
+    >>>
+    >>> p1 = Thread(1)
+    >>> p2 = Thread(1)
+    >>>
+    >>> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
+    >>> p1.pattern = pp
+    >>> p2.pattern = pp
+    >>>
+    >>> p1.start()
+    >>> p2.start(t1)              
+    >>>
+    >>> p2.phase = tween(1.0, 12)
+
+All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127. `rate`, `phase`, `velocity`, `grace` change continuously over float values. `chord` will probabilistically waver between the current value and the target value. `pattern` will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.

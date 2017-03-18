@@ -50,12 +50,12 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <li><a href="#reference">Reference</a></li>
 <li><a href="#documentation">Documentation</a><ol>
 <li><a href="#hello">Hello World</a></li>
-<li><a href="#notes">Notes and <code>chord</code></a></li>
-<li><a href="#pattern_1"><code>pattern</code>, part 1</a></li>
-<li><a href="#pattern_2"><code>pattern</code>, part 2</a></li>
-<li><a href="#velocity"><code>velocity</code> and <code>grace</code></a></li>
-<li><a href="#phase"><code>phase</code></a></li>
-<li><a href="#rate"><code>rate</code></a>    </li>
+<li><a href="#notes">Notes and <code>Thread.chord</code></a></li>
+<li><a href="#pattern_1"><code>Thread.pattern</code>, part 1</a></li>
+<li><a href="#pattern_2"><code>Thread.pattern</code>, part 2</a></li>
+<li><a href="#velocity"><code>Thread.velocity</code> and <code>Thread.grace</code></a></li>
+<li><a href="#phase"><code>Thread.phase</code></a></li>
+<li><a href="#rate"><code>Thread.rate</code></a>    </li>
 <li>functions in pattern / lambdas</li>
 <li>tweens</li>
 <li>signals</li>
@@ -295,7 +295,7 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = K, K, K, K
 <span class="int">&gt;&gt;&gt;</span> d.pattern.blend([S, S, S, S])
 </code></pre>
-<h3><a name="velocity"></a><code>velocity</code> and <code>grace</code></h3>
+<h3><a name="velocity"></a><code>Thread.velocity</code> and <code>Thread.grace</code></h3>
 <p>All threads come with some properties built-in. We've seen <a href="#notes"><code>chord</code></a> already.  </p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> clear()
 <span class="int">&gt;&gt;&gt;</span> t = Thread(10)
@@ -310,7 +310,7 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.velocity = 1.0
 <span class="int">&gt;&gt;&gt;</span> t.grace = .45
 </code></pre>
-<h3><a name="phase"></a><code>phase</code></h3>
+<h3><a name="phase"></a><code>Thread.phase</code></h3>
 <p>Consider the following:</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> clear()    
 <span class="int">&gt;&gt;&gt;</span>
@@ -328,11 +328,11 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 </code></pre>
 <p>Note that in this example, <code>t2</code> takes <code>t1</code> as an argument. This ensures that t2 will start in sync with t1. Otherwise, t1 and t2 will start at arbitrary times, which may not be desirable.</p>
 <p>However, each thread also has a <code>phase</code> property that allows us to control the relative phase of threads deliberately.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t2.phase = 1/12     # adjust phase by one subdivision
+<pre><code><span class="int">&gt;&gt;&gt;</span> t2.phase = 1/12         # adjust phase by one subdivision
 <span class="int">&gt;&gt;&gt;</span> t2.phase = 3/12
 <span class="int">&gt;&gt;&gt;</span> t2.phase = 7/12
 </code></pre>
-<h3><a name="rate"></a><code>rate</code></h3>
+<h3><a name="rate"></a><code>Thread.rate</code></h3>
 <p>By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal <code>tempo()</code> function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).</p>
 <p>However, individual threads can cycle at their own <code>rate</code>. If <code>1.0</code> is the universal rate at the specified tempo, the <code>rate</code> property of each thread is a multiplier.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> clear()
@@ -340,11 +340,13 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = C, C, C, C
 <span class="int">&gt;&gt;&gt;</span> t1.start()
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t2 = Thread(2)
+<span class="int">&gt;&gt;&gt;</span> t2 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t2.pattern = G, G, G, G
 <span class="int">&gt;&gt;&gt;</span> t2.rate = 0.5                   # half-speed! 
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 </code></pre>
+<h3><a name="tweens"></a>Tweening</h3>
+<p>Now for the fun part.</p>
 
 </div>
 </body>
