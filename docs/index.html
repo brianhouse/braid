@@ -237,7 +237,7 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [1, 1], 1, 1
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [1, 1], 1, [1, 1, 1]
 </code></pre>
-<p>...or a subdivision of subdivisions, ad finitum</p>
+<p><span class="int">...</span>or a subdivision of subdivisions, ad finitum</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [2, [1., 1.]], [3, [2, 1], 1.], [5, [4., 3.]]
 </code></pre>
 <p>So brackets indicate subdivisions. Parens, however, indicate a choice.</p>
@@ -346,7 +346,7 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <pre><code><span class="int">&gt;&gt;&gt;</span> t2.stop()
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 <span class="int">&gt;&gt;&gt;</span> def x(): t2.rate = 0.5
-...
+<span class="int">...</span>
 <span class="int">&gt;&gt;&gt;</span> t2.trigger(x)
 </code></pre>
 <h3><a name="tweens"></a>Tweening</h3>
@@ -393,8 +393,8 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 </code></pre>
 <p>Since signals are just functions, you can write your own in Python. <code>ease_out</code>, for example, is just</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> def ease_out(pos):
-...    pos = clamp(pos)    
-...    return (pos - 1)**3 + 1
+<span class="int">...</span>    pos = clamp(pos)    
+<span class="int">...</span>    return (pos - 1)**3 + 1
 </code></pre>
 <p>To view a graphic representation of the function, plot it.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> plot(ease_out)
