@@ -13,9 +13,9 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [`Thread.phase`](#phase)
     1. [`Thread.rate`](#rate)    
     1. [Tweening](#tweens)
-    1. signals
+    1. [Signals](#signals)
+    1. [Tweening rate and sync](#sync)
     1. functions in pattern / lambdas
-    1. sync'ing
     1. sequencing: triggers
     1. hardware: creating synthes for midi devices
 
@@ -59,28 +59,29 @@ This framework is called Braid, and the fundamental objects are called _threads_
 - `stop()`
 - `clear()`
 - `tempo()`
+- `g()`
 
 ### Symbols
 - `K`, `S`, `H`, `O`
 
-### Scales
-`CHR` Chromatic  
-`MAJ` Major  
-`DOM` Dominant  
-`MIN` Harmonic minor  
-`PEN` Pentatonic  
-`SUSb9` Suspended flat 9  
-`ION` Ionian  
-`DOR` Dorian  
-`PRG` Phrygian  
-`MYX` Myxolydian  
-`AOL` Aolian  
-`LOC` Locrian  
-`MMI` ??  
-`BLU` Blues  
-`SDR` Gamelan Slendro  
-`PLG` Gamelan Pelog  
-`JAM` jamz  
+### <a name="scales"></a>Scales
+`CHR` Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+`MAJ` Major, 0, 2, 4, 5, 7, 9, 11
+`DOM` Dominant, 0, 2, 4, 5, 7, 9, 10
+`MIN` Harmonic minor, 0, 2, 3, 5, 7, 8, 11
+`MMI` Major-Minor, 0, 2, 4, 5, 6, 9, 11  
+`PEN` Pentatonic, 0, 2, 5, 7, 10
+`SUSb9` Suspended flat 9, 0, 1, 3, 5, 7, 8, 10
+`ION` Ionian, 0, 2, 4, 5, 7, 9, 11
+`DOR` Dorian, 0, 2, 3, 5, 7, 9, 10 
+`PRG` Phrygian, 0, 1, 3, 5, 7, 8, 10
+`MYX` Myxolydian, 0, 2, 4, 5, 7, 9, 10
+`AOL` Aolian, 0, 2, 3, 5, 7, 8, 10
+`LOC` Locrian, 0, 1, 3, 5, 6, 8, 10
+`BLU` Blues, 0, 3, 5, 6, 7, 10
+`SDR` Gamelan Slendro, 0, 2, 5, 7, 9
+`PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10
+`JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11
 
 
 ## <a name="documentation"></a>Documentation
@@ -172,26 +173,7 @@ Negative numbers designate the octave below
 
     >>> t.pattern = -5, -7, 1, 5
 
-A chord consists of a root note and a scale. For example, `C, MAJ` is a major scale built off of C4. That means `1, 2, 3, 4, 5` is the equivalent of `C4, D4, E4, F4, G4`. But behind the scenes, it's specified like this: `Scale([0, 2, 4, 5, 7, 9, 11])`  
-  
-Built-in scales are:  
-`CHR` Chromatic  
-`MAJ` Major  
-`DOM` Dominant  
-`MIN` Harmonic minor  
-`PEN` Pentatonic  
-`SUSb9` Suspended flat 9  
-`ION` Ionian  
-`DOR` Dorian  
-`PRG` Phrygian  
-`MYX` Myxolydian  
-`AOL` Aolian  
-`LOC` Locrian  
-`MMI` ??  
-`BLU` Blues  
-`SDR` Gamelan Slendro  
-`PLG` Gamelan Pelog  
-`JAM` jamz  
+A chord consists of a root note and a scale. For example, `C, MAJ` is a major scale built off of C4. That means `1, 2, 3, 4, 5` is the equivalent of `C4, D4, E4, F4, G4`. But behind the scenes, it's specified like this: `Scale([0, 2, 4, 5, 7, 9, 11])`. Here's the [list](#scales) of built-in scales.
   
 Custom scales can be generated with the following syntax, where numbers are chromatic steps from the root
 
@@ -406,4 +388,7 @@ All properties on a thread can be tweened. Device specific MIDI parameters move 
     >>> t.pattern = euc(8, 5, 77)
     >>> t.pattern = tween(euc(8, 6, 76), 8)
     >>> t.pattern = euc(8, 5, 77)
+
+
+### <a name="signals"></a>Signals
 
