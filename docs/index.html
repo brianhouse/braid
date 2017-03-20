@@ -358,13 +358,11 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> p2 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
-<span class="int">&gt;&gt;&gt;</span> p1.pattern = pp
-<span class="int">&gt;&gt;&gt;</span> p2.pattern = pp
+<span class="int">&gt;&gt;&gt;</span> p1.pattern = p2.pattern = pp
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> p1.start()
-<span class="int">&gt;&gt;&gt;</span> p2.start(t1)              
+<span class="int">&gt;&gt;&gt;</span> p1.start(); p2.start(t1)            # two commands, one line
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> p2.phase = tween(1.0, 12)
+<span class="int">&gt;&gt;&gt;</span> p2.phase = tween(1/12, 4.0)
 </code></pre>
 <p>All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127. <code>rate</code>, <code>phase</code>, <code>velocity</code>, <code>grace</code> change continuously over float values. <code>chord</code> will probabilistically waver between the current value and the target value. <code>pattern</code> will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.</p>
 

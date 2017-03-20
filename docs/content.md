@@ -12,10 +12,11 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [`Thread.velocity` and `Thread.grace`](#velocity)
     1. [`Thread.phase`](#phase)
     1. [`Thread.rate`](#rate)    
-    1. functions in pattern / lambdas
-    1. tweens
+    1. [Tweening](#tweens)
     1. signals
+    1. functions in pattern / lambdas
     1. sync'ing
+    1. sequencing: triggers
     1. hardware: creating synthes for midi devices
 
 ## Goals
@@ -338,7 +339,7 @@ Consider the following:
 
 Note that in this example, `t2` takes `t1` as an argument. This ensures that t2 will start in sync with t1. Otherwise, t1 and t2 will start at arbitrary times, which may not be desirable.
 
-However, each thread also has a `phase` property that allows us to control the relative phase of threads deliberately.
+However, each thread also has a `phase` property that allows us to control the relative phase of threads deliberately. Phase goes from 0-1 and indicates how much of the cycle the pattern is offset.
 
     >>> t2.phase = 1/12         # adjust phase by one subdivision
     >>> t2.phase = 3/12
@@ -360,9 +361,17 @@ However, individual threads can cycle at their own `rate`. If `1.0` is the unive
     >>>
     >>> t2 = Thread(1)
     >>> t2.pattern = G, G, G, G
-    >>> t2.rate = 0.5                   # half-speed! 
-    >>> t2.start(t1)              
+    >>> t2.start(t1)           
+    >>>
+    >>> t2.rate = 0.5                   # half-speed!    
 
+Notice that depending on when you hit return, changing the rate can make threads out of sync. The way to get around this is to make sure it changes on a cycle edge. For this, use a [trigger](#triggers):
+
+    >>> t2.stop()
+    >>> t2.start(t1)
+    >>> def x(): t2.rate = 0.5
+    ...
+    >>> t2.trigger(x)
 
 
 ### <a name="tweens"></a>Tweening
@@ -377,12 +386,24 @@ This is done simply by assigning a `tween()` function to the property instead of
     >>> p2 = Thread(1)
     >>>
     >>> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
-    >>> p1.pattern = pp
-    >>> p2.pattern = pp
+    >>> p1.pattern = p2.pattern = pp
     >>>
-    >>> p1.start()
-    >>> p2.start(t1)              
+    >>> p1.start(); p2.start(p1)            # two commands, one line
     >>>
-    >>> p2.phase = tween(1.0, 12)
+    >>> p2.phase = tween(1/12, 4.0)         # take four cycles to move one subdivision
 
 All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127. `rate`, `phase`, `velocity`, `grace` change continuously over float values. `chord` will probabilistically waver between the current value and the target value. `pattern` will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.
+
+    >>> clear()
+    >>>
+    >>> t = Thread(1)
+    >>> t.start()
+    >>> t.pattern = K, K, S, [0, 0, 0, K]
+    >>> t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
+    >>>
+    >>> # or:
+    >>>
+    >>> t.pattern = euc(8, 5, 77)
+    >>> t.pattern = tween(euc(8, 6, 76), 8)
+    >>> t.pattern = euc(8, 5, 77)
+
