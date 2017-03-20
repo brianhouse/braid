@@ -108,29 +108,37 @@ Braid is has very low processor overhead, suitable for running on devices like t
 <li><code>clear()</code></li>
 <li><code>tempo()</code></li>
 <li><code>g()</code></li>
+<li><code>clamp()</code></li>
+<li><code>plot()</code></li>
 </ul>
 <h3>Symbols</h3>
 <ul>
 <li><code>K</code>, <code>S</code>, <code>H</code>, <code>O</code></li>
 </ul>
 <h3><a name="scales"></a>Scales</h3>
-<p><code>CHR</code> Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-<code>MAJ</code> Major, 0, 2, 4, 5, 7, 9, 11
-<code>DOM</code> Dominant, 0, 2, 4, 5, 7, 9, 10
-<code>MIN</code> Harmonic minor, 0, 2, 3, 5, 7, 8, 11
+<p><code>CHR</code> Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11<br />
+<code>MAJ</code> Major, 0, 2, 4, 5, 7, 9, 11<br />
+<code>DOM</code> Dominant, 0, 2, 4, 5, 7, 9, 10<br />
+<code>MIN</code> Harmonic minor, 0, 2, 3, 5, 7, 8, 11<br />
 <code>MMI</code> Major-Minor, 0, 2, 4, 5, 6, 9, 11<br />
-<code>PEN</code> Pentatonic, 0, 2, 5, 7, 10
-<code>SUSb9</code> Suspended flat 9, 0, 1, 3, 5, 7, 8, 10
-<code>ION</code> Ionian, 0, 2, 4, 5, 7, 9, 11
-<code>DOR</code> Dorian, 0, 2, 3, 5, 7, 9, 10 
-<code>PRG</code> Phrygian, 0, 1, 3, 5, 7, 8, 10
-<code>MYX</code> Myxolydian, 0, 2, 4, 5, 7, 9, 10
-<code>AOL</code> Aolian, 0, 2, 3, 5, 7, 8, 10
-<code>LOC</code> Locrian, 0, 1, 3, 5, 6, 8, 10
-<code>BLU</code> Blues, 0, 3, 5, 6, 7, 10
-<code>SDR</code> Gamelan Slendro, 0, 2, 5, 7, 9
-<code>PLG</code> Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10
-<code>JAM</code> jamz, 0, 2, 3, 5, 6, 7, 10, 11</p>
+<code>PEN</code> Pentatonic, 0, 2, 5, 7, 10<br />
+<code>SUSb9</code> Suspended flat 9, 0, 1, 3, 5, 7, 8, 10<br />
+<code>ION</code> Ionian, 0, 2, 4, 5, 7, 9, 11<br />
+<code>DOR</code> Dorian, 0, 2, 3, 5, 7, 9, 10<br />
+<code>PRG</code> Phrygian, 0, 1, 3, 5, 7, 8, 10<br />
+<code>MYX</code> Myxolydian, 0, 2, 4, 5, 7, 9, 10<br />
+<code>AOL</code> Aolian, 0, 2, 3, 5, 7, 8, 10<br />
+<code>LOC</code> Locrian, 0, 1, 3, 5, 6, 8, 10<br />
+<code>BLU</code> Blues, 0, 3, 5, 6, 7, 10<br />
+<code>SDR</code> Gamelan Slendro, 0, 2, 5, 7, 9<br />
+<code>PLG</code> Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10<br />
+<code>JAM</code> jamz, 0, 2, 3, 5, 6, 7, 10, 11  </p>
+<h3>Signals</h3>
+<p><code>linear</code> (default)<br />
+<code>ease_in</code><br />
+<code>ease_out</code><br />
+<code>ease_in_out</code><br />
+<code>ease_out_in</code>  </p>
 <h2><a name="documentation"></a>Documentation</h2>
 <h3><a name="hello"></a>Hello World</h3>
 <p>To begin working with Braid, download the repository and navigate to the root directory. Launch a python3 interpreter and import braid: </p>
@@ -371,6 +379,39 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> t.pattern = euc(8, 5, 77)
 </code></pre>
 <h3><a name="signals"></a>Signals</h3>
+<p>Tweens can take an additional property, called a signal. This is any function that takes a float value from 0 to 1 and return another value from 0 to 1&mdash;a nonlinear transition function when you don't want to go from A to B in a straight line. (Yes, Flash again).</p>
+<p>Built-in signals: <code>linear</code> (default), <code>ease_in</code>, <code>ease_out</code>, <code>ease_in_out</code>, <code>ease_out_in</code></p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
+<span class="int">&gt;&gt;&gt;</span> 
+<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.chord = D, DOR
+<span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 3, 5, 7] * 4
+<span class="int">&gt;&gt;&gt;</span> t.start()
+<span class="int">&gt;&gt;&gt;</span> 
+<span class="int">&gt;&gt;&gt;</span> t.chord = tween((E, MAJ), 8, ease_in_out)
+<span class="int">&gt;&gt;&gt;</span> t.chord = tween((E, MAJ), 8, ease_out_in)
+</code></pre>
+<p>Since signals are just functions, you can write your own in Python. <code>ease_out</code>, for example, is just</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> def ease_out(pos):
+...    pos = clamp(pos)    
+...    return (pos - 1)**3 + 1
+</code></pre>
+<p>To view a graphic representation of the function, plot it.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> plot(ease_out)
+</code></pre>
+<p>You can also convert <em>any</em> timeseries data into a signal function using <code>make_signal()</code>. You might use this to tween velocity over an entire composition, for example, or for data sonification.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary breakpoints
+<span class="int">&gt;&gt;&gt;</span> f = make_signal(data)
+<span class="int">&gt;&gt;&gt;</span> plot(f)
+<span class="int">&gt;&gt;&gt;</span> 
+<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 2, 3, 4] * 4
+<span class="int">&gt;&gt;&gt;</span> t.start()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
+<span class="int">&gt;&gt;&gt;</span> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
+</code></pre>
 
 </div>
 </body>

@@ -60,28 +60,37 @@ This framework is called Braid, and the fundamental objects are called _threads_
 - `clear()`
 - `tempo()`
 - `g()`
+- `clamp()`
+- `plot()`
 
 ### Symbols
 - `K`, `S`, `H`, `O`
 
 ### <a name="scales"></a>Scales
-`CHR` Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-`MAJ` Major, 0, 2, 4, 5, 7, 9, 11
-`DOM` Dominant, 0, 2, 4, 5, 7, 9, 10
-`MIN` Harmonic minor, 0, 2, 3, 5, 7, 8, 11
+`CHR` Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11  
+`MAJ` Major, 0, 2, 4, 5, 7, 9, 11  
+`DOM` Dominant, 0, 2, 4, 5, 7, 9, 10  
+`MIN` Harmonic minor, 0, 2, 3, 5, 7, 8, 11  
 `MMI` Major-Minor, 0, 2, 4, 5, 6, 9, 11  
-`PEN` Pentatonic, 0, 2, 5, 7, 10
-`SUSb9` Suspended flat 9, 0, 1, 3, 5, 7, 8, 10
-`ION` Ionian, 0, 2, 4, 5, 7, 9, 11
-`DOR` Dorian, 0, 2, 3, 5, 7, 9, 10 
-`PRG` Phrygian, 0, 1, 3, 5, 7, 8, 10
-`MYX` Myxolydian, 0, 2, 4, 5, 7, 9, 10
-`AOL` Aolian, 0, 2, 3, 5, 7, 8, 10
-`LOC` Locrian, 0, 1, 3, 5, 6, 8, 10
-`BLU` Blues, 0, 3, 5, 6, 7, 10
-`SDR` Gamelan Slendro, 0, 2, 5, 7, 9
-`PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10
-`JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11
+`PEN` Pentatonic, 0, 2, 5, 7, 10  
+`SUSb9` Suspended flat 9, 0, 1, 3, 5, 7, 8, 10  
+`ION` Ionian, 0, 2, 4, 5, 7, 9, 11  
+`DOR` Dorian, 0, 2, 3, 5, 7, 9, 10  
+`PRG` Phrygian, 0, 1, 3, 5, 7, 8, 10  
+`MYX` Myxolydian, 0, 2, 4, 5, 7, 9, 10  
+`AOL` Aolian, 0, 2, 3, 5, 7, 8, 10  
+`LOC` Locrian, 0, 1, 3, 5, 6, 8, 10  
+`BLU` Blues, 0, 3, 5, 6, 7, 10  
+`SDR` Gamelan Slendro, 0, 2, 5, 7, 9  
+`PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10  
+`JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11  
+
+### Signals
+`linear` (default)  
+`ease_in`  
+`ease_out`  
+`ease_in_out`  
+`ease_out_in`  
 
 
 ## <a name="documentation"></a>Documentation
@@ -391,4 +400,43 @@ All properties on a thread can be tweened. Device specific MIDI parameters move 
 
 
 ### <a name="signals"></a>Signals
+
+Tweens can take an additional property, called a signal. This is any function that takes a float value from 0 to 1 and return another value from 0 to 1&mdash;a nonlinear transition function when you don't want to go from A to B in a straight line. (Yes, Flash again).
+
+Built-in signals: `linear` (default), `ease_in`, `ease_out`, `ease_in_out`, `ease_out_in`
+
+    >>> clear()
+    >>> 
+    >>> t = Thread(1)
+    >>> t.chord = D, DOR
+    >>> t.pattern = [1, 3, 5, 7] * 4
+    >>> t.start()
+    >>> 
+    >>> t.chord = tween((E, MAJ), 8, ease_in_out)
+    >>> t.chord = tween((E, MAJ), 8, ease_out_in)
+
+Since signals are just functions, you can write your own in Python. `ease_out`, for example, is just
+
+    >>> def ease_out(pos):
+    ...    pos = clamp(pos)    
+    ...    return (pos - 1)**3 + 1
+
+To view a graphic representation of the function, plot it.
+
+    >>> plot(ease_out)
+
+You can also convert _any_ timeseries data into a signal function using `make_signal()`. You might use this to tween velocity over an entire composition, for example, or for data sonification.
+
+    >>> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary breakpoints
+    >>> f = make_signal(data)
+    >>> plot(f)
+    >>> 
+    >>> t = Thread(1)
+    >>> t.chord = D, SUSb9
+    >>> t.pattern = [1, 2, 3, 4] * 4
+    >>> t.start()
+    >>>
+    >>> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
+    >>> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
+
 

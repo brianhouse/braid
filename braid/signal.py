@@ -1,4 +1,4 @@
-import time, math
+import time, math, __main__
 from random import random
 
 def clamp(pos):
@@ -69,7 +69,7 @@ class Plotter():
 
     @classmethod
     def plot(cls, bp_f, color="red"):
-        if cls.instance is None:
+        if not hasattr(__main__, "__file__") or cls.instance is None:
             cls.instance = Plotter()
         points = [(i + cls.instance.margin, ((1.0 - bp_f(float(i) / cls.instance.width)) * cls.instance.height) + cls.instance.margin) for i in range(int(cls.instance.width))]
         cls.instance.w.create_line(points, fill=color, width=2.0)
