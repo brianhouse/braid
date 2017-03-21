@@ -247,7 +247,7 @@ def make(controls={}, defaults={}):
     T = type(name, (Thread,), {})    
     T.add('controls', controls)
     for control in controls:
-        T.add(control, defaults[control] if control in defaults else 0)
+        T.add(control, defaults[control] if control in defaults else 64)
     return T
 
 Thread.setup()

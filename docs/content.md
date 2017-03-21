@@ -3,7 +3,6 @@
 Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.
 
 1. [Goals](#goals)
-1. [Reference](#reference)
 1. [Tutorial](#tutorial)
     1. [Prerequisites](#prereqs)
     1. [Hello World](#hello)
@@ -20,6 +19,8 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [Triggers](#triggers)
     1. ['MIDI devices and properties'](#devices)
     1. ['Customizing MIDI behavior'](#custom)
+1. [Reference](#reference)
+    
 
 ## Goals
 
@@ -38,67 +39,10 @@ I find specialized development environments frustrating, as they limit what's po
 - **Works on small devices**  
 Braid is has very low processor overhead, suitable for running on devices like the Raspberry Pi.
 
-
-
 #### A note on names
 
 This framework is called Braid, and the fundamental objects are called _threads_&mdash;a thread corresponds to a hardware or software monosynth, and refers to the temporal operations of Braid through which threads can come in and out of sync. This is not a thread in the programming sense (in that respect Braid is single-threaded).
 
-
-## <a name="reference"></a>Reference
-
-### Glossary
-- Thread
-- cycle
-- step
-- trigger
-
-### Global functions
-- `log_midi(True|False)`        Choose whether to see MIDI output (default: False)
-- `midi_out_interface(int)`     Change MIDI interface for output (zero-indexed)
-- `Thread(int channel)`         Create a Thread on the specified MIDI channel
-- `Scale([ints])`               Create a Scale with a list of ints corresponding to half-steps from root (0)
-- `play()`
-- `pause()`
-- `stop()`
-- `clear()`
-- `tempo()`
-- `g()`
-- `clamp()`
-- `plot()`
-- `trigger()`
-- `random()`
-- `choice()`
-- `make()`
-
-### Symbols
-- `K`, `S`, `H`, `O`
-
-### <a name="scales"></a>Scales
-`CHR` Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11  
-`MAJ` Major, 0, 2, 4, 5, 7, 9, 11  
-`DOM` Dominant, 0, 2, 4, 5, 7, 9, 10  
-`MIN` Harmonic minor, 0, 2, 3, 5, 7, 8, 11  
-`MMI` Major-Minor, 0, 2, 4, 5, 6, 9, 11  
-`PEN` Pentatonic, 0, 2, 5, 7, 10  
-`SUSb9` Suspended flat 9, 0, 1, 3, 5, 7, 8, 10  
-`ION` Ionian, 0, 2, 4, 5, 7, 9, 11  
-`DOR` Dorian, 0, 2, 3, 5, 7, 9, 10  
-`PRG` Phrygian, 0, 1, 3, 5, 7, 8, 10  
-`MYX` Myxolydian, 0, 2, 4, 5, 7, 9, 10  
-`AOL` Aolian, 0, 2, 3, 5, 7, 8, 10  
-`LOC` Locrian, 0, 1, 3, 5, 6, 8, 10  
-`BLU` Blues, 0, 3, 5, 6, 7, 10  
-`SDR` Gamelan Slendro, 0, 2, 5, 7, 9  
-`PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10  
-`JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11  
-
-### Signals
-`linear` (default)  
-`ease_in`  
-`ease_out`  
-`ease_in_out`  
-`ease_out_in`  
 
 
 ## <a name="tutorial"></a>Tutorial
@@ -112,7 +56,7 @@ Additionally, this documentation assumes a general knowledge of MIDI.
 
 ### <a name="hello"></a>Hello World
 
-Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on OS X, to simplify things there is general_MIDI_bridge.app included which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
+Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on OS X, to simplify things download and run http://brianhouse.net/download/general_MIDI_bridge.app.zip which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
 
 To begin working with Braid, navigate to the root directory of the downloaded repository in a terminal. Launch a python3 interpreter and `import braid`: 
 
@@ -561,3 +505,60 @@ Note: A second dictionary can be passed to `make()` as an additional parameter w
 ### <a name="custom"></a>Customizing MIDI behavior
 
 Coming soon. See `custom.py` in the examples.
+
+
+
+## <a name="reference"></a>Reference
+
+### Glossary
+- Thread
+- cycle
+- step
+- trigger
+
+### Global functions
+- `log_midi(True|False)`        Choose whether to see MIDI output (default: False)
+- `midi_out_interface(int)`     Change MIDI interface for output (zero-indexed)
+- `Thread(int channel)`         Create a Thread on the specified MIDI channel
+- `Scale([ints])`               Create a Scale with a list of ints corresponding to half-steps from root (0)
+- `play()`
+- `pause()`
+- `stop()`
+- `clear()`
+- `tempo()`
+- `g()`
+- `clamp()`
+- `plot()`
+- `trigger()`
+- `random()`
+- `choice()`
+- `make()`
+
+### Symbols
+- `K`, `S`, `H`, `O`
+
+### <a name="scales"></a>Scales
+`CHR` Chromatic, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11  
+`MAJ` Major, 0, 2, 4, 5, 7, 9, 11  
+`DOM` Dominant, 0, 2, 4, 5, 7, 9, 10  
+`MIN` Harmonic minor, 0, 2, 3, 5, 7, 8, 11  
+`MMI` Major-Minor, 0, 2, 4, 5, 6, 9, 11  
+`PEN` Pentatonic, 0, 2, 5, 7, 10  
+`SUSb9` Suspended flat 9, 0, 1, 3, 5, 7, 8, 10  
+`ION` Ionian, 0, 2, 4, 5, 7, 9, 11  
+`DOR` Dorian, 0, 2, 3, 5, 7, 9, 10  
+`PRG` Phrygian, 0, 1, 3, 5, 7, 8, 10  
+`MYX` Myxolydian, 0, 2, 4, 5, 7, 9, 10  
+`AOL` Aolian, 0, 2, 3, 5, 7, 8, 10  
+`LOC` Locrian, 0, 1, 3, 5, 6, 8, 10  
+`BLU` Blues, 0, 3, 5, 6, 7, 10  
+`SDR` Gamelan Slendro, 0, 2, 5, 7, 9  
+`PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10  
+`JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11  
+
+### Signals
+`linear` (default)  
+`ease_in`  
+`ease_out`  
+`ease_in_out`  
+`ease_out_in`  
