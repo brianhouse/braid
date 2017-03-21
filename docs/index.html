@@ -155,7 +155,7 @@ Loaded VolcaBeats
 Braid started
 Playing</span>
 </code></pre>
-<p>Now, create a thread&mdash;the fundamental object of Braid&mdash;and start it:</p>
+<p>Now, create a <strong>thread</strong>&mdash;the fundamental object of Braid&mdash;and start it:</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)               # create a thread&amp;mdash;the argument indicates the MIDI channel
 <span class="int">&gt;&gt;&gt;</span> t.pattern = C, C, C, C      # add a pattern
 <span class="int">&gt;&gt;&gt;</span> t.start()                   # start it
@@ -165,19 +165,19 @@ Playing</span>
 <pre><code>#!/usr/bin/env python3
 
 from braid import *
+
 t = Thread(1)
 t.pattern = C, C, C, C
 t.start()
 
 play()
 </code></pre>
-<p>Save it as <code>hello_world.py</code> and run <code>python3 hello_world.py 0</code>. The (optional) argument is the MIDI out interface to use.  </p>
+<p>Save it as <code>hello_world.py</code>, make it executable with <code>chmod +x hello_world.py</code> and run <code>./hello_world.py 0 0</code>. The (optional) arguments designate the MIDI out and in interfaces to use.  </p>
 <p>From now on, we'll assume that we're livecoding within the python3 interpreter, but the code works the same in a standalone file.  </p>
 <h3><a name="top"></a>Top-level controls</h3>
-<p>You can start and stop individual threads, with <code>some_thread.start()</code> and <code>some_thread.stop()</code>, which essentially behave like a mute button.  </p>
+<p>You can start and stop individual threads, with <code>a_thread.start()</code> and <code>a_thread.stop()</code>, which essentially behave like a mute button.  </p>
 <p>Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use <code>pause()</code> to mute everything, and <code>play()</code> to get it going again. If you use <code>stop()</code>, it will stop all threads, so you'll need to start them up again individually. <code>clear()</code> just stops the threads, but Braid itself is still going and if you start a thread it will sound right away.</p>
-<p><em>Advanced note</em><br />
-If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use <code>stop()</code> or <code>clear()</code> to silence these.</p>
+<p><em>Advanced note</em>: If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use <code>stop()</code> or <code>clear()</code> to silence these.</p>
 <p>Try it now:</p>
 <pre><code>clear()
 </code></pre>
@@ -412,6 +412,8 @@ If you're doing a lot of livecoding, it's easy to create a new thread with the s
 <span class="int">&gt;&gt;&gt;</span> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
 <span class="int">&gt;&gt;&gt;</span> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
 </code></pre>
+<h3><a name="sync"></a>Sync, and tweening rate</h3>
+<p>Braid does something special when you assign a tween to <code>Thread.rate</code>. Ordinarily, if two</p>
 
 </div>
 </body>

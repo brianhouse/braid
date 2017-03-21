@@ -16,7 +16,7 @@ class Tween(object):
     def start(self, thread, start_value):
         self.thread = thread
         self.start_value = start_value
-        self.start_cycle = float(math.ceil(self.thread._cycles)) # threads always start on next cycle
+        self.start_cycle = float(math.ceil(self.thread._cycles)) # tweens always start on next cycle
 
     @property
     def value(self):            

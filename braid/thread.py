@@ -5,7 +5,6 @@ from .signal import linear
 from .notation import *
 from .tween import *
 
-
 class Thread(object):
 
     """Class definitions"""
@@ -186,12 +185,18 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if isinstance(rate, Tween):
-            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f) # downcast tween
-            rate.start(self, self.rate)
+            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f)         # downcast tween
             if self._sync:
-                phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
-                phase_correction.start(driver, self._phase_correction)
-                self.__phase_correction = phase_correction
+                def rt():
+                    rate.start(self, self.rate)
+                    phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
+                    phase_correction.start(driver, self._phase_correction)
+                    self.__phase_correction = phase_correction
+                    self._rate = rate
+                self.trigger(rt)                                                    # this wont work unless it happens on an edge, and we need to do that here unlike other tweens
+                return
+            else:
+                rate.start(self, self.rate)
         self._rate = rate
 
     @property

@@ -15,20 +15,20 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [Tweening](#tweens)
     1. [Signals](#signals)
     1. [Tweening rate and sync](#sync)
-    1. functions in pattern / lambdas
-    1. sequencing: triggers
+    1. [Triggers](#triggers)
+    1. functions in pattern
     1. hardware: creating synthes for midi devices
 
 ## Goals
 
-- **Idiosyncratic**  
-Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest evolving rhythmic relationships and data sonification.
+- **Idiosyncracy**  
+Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making, nor does it have pedagogy in mind. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data.
 
 - **Limited scope**  
 Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. Those are pretty significant limitations, but it means that this exists and (mostly) works. It also means I can take advantage of all the awesome cheap MIDI monosynths coming out, like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series.
 
 - **Integrates with Python**  
-I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects.  
+I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects. This is the source of much of its usefullness and power (particularly when it comes to working with data).  
 
 - **Both livecoding and scripting**  
  Sometimes I want to improvise within a livecoding framework, sometimes I want to make a composition. Braid doesn't make much of a distinction between these ways of operating, as it's all python and uses the interpreter as a livecoding environment. Premade scripts can be easily executed within the interpreter.
@@ -95,6 +95,8 @@ This framework is called Braid, and the fundamental objects are called _threads_
 
 ## <a name="documentation"></a>Documentation
 
+Braid is, fundamentally, an extension to Python 3. This documentation won't cover python syntax&mdash;for that, look [here](https://docs.python.org/3/tutorial/). Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner (aka me?).
+
 ### <a name="hello"></a>Hello World
 
 To begin working with Braid, download the repository and navigate to the root directory. Launch a python3 interpreter and import braid: 
@@ -112,7 +114,7 @@ To begin working with Braid, download the repository and navigate to the root di
     Braid started
     Playing}
 
-Now, create a thread&mdash;the fundamental object of Braid&mdash;and start it:
+Now, create a **thread**&mdash;the fundamental object of Braid&mdash;and start it:
 
     >>> t = Thread(1)               # create a thread&mdash;the argument indicates the MIDI channel
     >>> t.pattern = C, C, C, C      # add a pattern
@@ -125,25 +127,25 @@ Alternately, you can create a python file with Braid syntax like this:
     #!/usr/bin/env python3
 
     from braid import *
+
     t = Thread(1)
     t.pattern = C, C, C, C
     t.start()
 
     play()
 
-Save it as `hello_world.py` and run `python3 hello_world.py 0`. The (optional) argument is the MIDI out interface to use.  
+Save it as `hello_world.py`, make it executable with `chmod +x hello_world.py` and run `./hello_world.py 0 0`. The (optional) arguments designate the MIDI out and in interfaces to use.  
 
 From now on, we'll assume that we're livecoding within the python3 interpreter, but the code works the same in a standalone file.  
 
 
 ### <a name="top"></a>Top-level controls
 
-You can start and stop individual threads, with `some_thread.start()` and `some_thread.stop()`, which essentially behave like a mute button.  
+You can start and stop individual threads, with `a_thread.start()` and `a_thread.stop()`, which essentially behave like a mute button.  
 
 Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use `pause()` to mute everything, and `play()` to get it going again. If you use `stop()`, it will stop all threads, so you'll need to start them up again individually. `clear()` just stops the threads, but Braid itself is still going and if you start a thread it will sound right away.
 
-_Advanced note_  
-If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use `stop()` or `clear()` to silence these.
+_Advanced note_: If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use `stop()` or `clear()` to silence these.
 
 Try it now:
 
@@ -209,9 +211,9 @@ Start a thread with a pattern
 
     >>> clear()
     >>> t = Thread(1)
-    >>> t.start()
     >>> t.chord = C, DOR
     >>> t.pattern = 1, 1, 1, 1
+    >>> t.start()
 
 Once started, a thread repeats its pattern. Each repetition is called a *cycle*. Each cycle is subdivided evenly by the steps in the pattern.
 
@@ -254,6 +256,7 @@ Patterns are python lists, so they can be manipulated as such
 There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function
 
     >>> clear()
+    >>>
     >>> tempo(132)   
     >>> d = Thread(10)
     >>> d.start()
@@ -289,15 +292,17 @@ blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pa
 
     >>> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
 
+
 ### <a name="velocity"></a>`Thread.velocity` and `Thread.grace`
 
 All threads come with some properties built-in. We've seen [`chord`](#notes) already.  
 
     >>> clear()
+    >>>
     >>> t = Thread(10)
-    >>> t.start()
     >>> t.chord = C, MAJ
     >>> t.pattern = 1, 1., 1, 1.
+    >>> t.start()
 
 There is also, of course, `velocity`
 
@@ -307,7 +312,6 @@ and `grace` is a percentage of velocity, to control the depth of the grace notes
 
     >>> t.velocity = 1.0
     >>> t.grace = .45
-
 
 
 ### <a name="phase"></a>`Thread.phase`
@@ -340,9 +344,9 @@ However, each thread also has a `phase` property that allows us to control the r
 
 ### <a name="rate"></a>`Thread.rate`
 
-By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal `tempo()` function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).
+As we've already used it, the `tempo()` function sets the universal BPM (or at least the equivalent BPM if cycles were in 4/4 time). Braid silently keeps track of cycles at this tempo. By default, the cycles of each thread match this reference. We just saw how `phase` can offset the patterns of a thread&mdash;it does this in relation to the reference cycle.
 
-However, individual threads can cycle at their own `rate`. If `1.0` is the universal rate at the specified tempo, the `rate` property of each thread is a multiplier.
+Likewise, individual threads can also cycle at their own `rate`. The `rate` property of each thread is a multiplier of the reference cycles&mdash;0.5 is twice as slow, 2 is twice as fast.
 
     >>> clear()
     >>>
@@ -350,31 +354,35 @@ However, individual threads can cycle at their own `rate`. If `1.0` is the unive
     >>> t1.pattern = C, C, C, C
     >>> t1.start()
     >>>
-    >>> t2 = Thread(1)
+    >>> t2 = Thread(2)
     >>> t2.pattern = G, G, G, G
-    >>> t2.start(t1)           
+    >>> t2.start(t1)                    # keep in phase
     >>>
-    >>> t2.rate = 0.5                   # half-speed!    
+    >>> t2.rate = 1/2                   # half-speed!    
 
-Notice that depending on when you hit return, changing the rate can make threads out of sync. The way to get around this is to make sure it changes on a cycle edge. For this, use a [trigger](#triggers):
+Notice that depending on when you hit return, changing the rate can make threads go out of sync (similar to how starting threads at different times puts them out of phase). The way to get around this is to make sure it changes on a cycle edge. For this, use a [trigger](#triggers):
 
     >>> t2.stop()
     >>> t2.start(t1)
-    >>> def x(): t2.rate = 0.5
-    ...
+    >>> def x(): t2.rate = 0.5          # one-line python function
+    ...                                 # hit return twice
     >>> t2.trigger(x)
+
+If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.
+
+
 
 
 ### <a name="tweens"></a>Tweening
 
 Now for the fun part. Any property on a thread can be **tweened**&mdash;that is, interpolated between two values over time (yes, the term is borrowed from Flash).
 
-This is done simply by assigning a `tween()` function to the property instead of a value. `tween()` has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value.
+This is done simply by assigning a `tween()` function to the property instead of a value. `tween()` has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value, starting with the next cycle.
 
     >>> clear()
     >>>
     >>> p1 = Thread(1)
-    >>> p2 = Thread(1)
+    >>> p2 = Thread(2)
     >>>
     >>> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
     >>> p1.pattern = p2.pattern = pp
@@ -439,4 +447,31 @@ You can also convert _any_ timeseries data into a signal function using `make_si
     >>> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
     >>> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
 
+
+### <a name="sync"></a>Sync, and tweening rate
+
+Braid does something special when you assign a tween to `Thread.rate`. Ordinarily, if two threads started in sync and one thread tweened its rate, they would inevitably end up out of sync. However, Braid automatically adjusts its tweening function such that threads will remain aligned as best as possible.
+
+    >>> clear()
+    >>> 
+    >>> t1 = Thread(1)
+    >>> t1.chord = D, SUSb9
+    >>> t1.pattern = 1, 1, 1, 1
+    >>> t1.start()
+    >>>
+    >>> t2 = Thread(2)
+    >>> t2.chord = D, SUSb9
+    >>> t2.pattern = 4, 4, 4, 4
+    >>> t2.start(t1)
+    >>>    
+    >>> t2.rate = tween(0.5, 4)
+
+As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name. Note that rate tweens kept in sync in this way will start at the beginning of the next cycle that they are called.
+
+If you _don't_ want this functionality, pass `sync=False` to the thread constructor, and the thread won't try to reconcile itself.
+
+    >>> t = Thread(1, sync=False)
+
+
+### <a name="triggers"></a>Triggers
 
