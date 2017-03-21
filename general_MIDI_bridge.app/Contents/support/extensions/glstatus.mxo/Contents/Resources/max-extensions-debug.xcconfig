@@ -1,3 +1,0 @@
-#include "../../c74support/max-includes/max-external-debug.xcconfig"
-
-DSTROOT = $(SYSBUILD)/$(CONFIGURATION)/Cycling '74/extensions

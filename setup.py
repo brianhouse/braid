@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name="braid",
-    version="1.1.0",
+    version="0.9.0",
     description="A musical notation system, livecoding framework, and sequencer for monophonic MIDI synths.",
     author="Brian House",
     url="https://github.com/brianhouse/braid",

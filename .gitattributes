@@ -1,1 +1,2 @@
-general_MIDI_bridge.app linguist-vendored=true
+*.js linguist-vendored=true
+*.html linguist-vendored=true
