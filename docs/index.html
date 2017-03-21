@@ -18,8 +18,9 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
             margin: 0px;
             padding: 0px;       
             background: #87e0fd;
-            background: linear-gradient(to bottom, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
-        }
+            /*background: linear-gradient(to bottom, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);*/
+            background: linear-gradient(to bottom, #e0fffc 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);            
+        }    
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
@@ -48,28 +49,30 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <ol>
 <li><a href="#goals">Goals</a></li>
 <li><a href="#reference">Reference</a></li>
-<li><a href="#documentation">Documentation</a><ol>
+<li><a href="#tutorial">Tutorial</a><ol>
+<li><a href="#prereqs">Prerequisites</a></li>
 <li><a href="#hello">Hello World</a></li>
 <li><a href="#notes">Notes and <code>Thread.chord</code></a></li>
 <li><a href="#pattern_1"><code>Thread.pattern</code>, part 1</a></li>
 <li><a href="#pattern_2"><code>Thread.pattern</code>, part 2</a></li>
+<li><a href="#pattern_3"><code>Thread.pattern</code>, part 3</a></li>
 <li><a href="#velocity"><code>Thread.velocity</code> and <code>Thread.grace</code></a></li>
 <li><a href="#phase"><code>Thread.phase</code></a></li>
 <li><a href="#rate"><code>Thread.rate</code></a>    </li>
 <li><a href="#tweens">Tweening</a></li>
 <li><a href="#signals">Signals</a></li>
 <li><a href="#sync">Tweening rate and sync</a></li>
-<li>functions in pattern / lambdas</li>
-<li>sequencing: triggers</li>
-<li>hardware: creating synthes for midi devices</li>
+<li><a href="#triggers">Triggers</a></li>
+<li><a href="#devices">'MIDI devices and properties'</a></li>
+<li><a href="#custom">'Customizing MIDI behavior'</a></li>
 </ol>
 </li>
 </ol>
 <h2>Goals</h2>
 <ul>
 <li>
-<p><strong>Idiosyncratic</strong><br />
-Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest evolving rhythmic relationships and data sonification.</p>
+<p><strong>Idiosyncracy</strong><br />
+Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making, nor does it have pedagogy in mind. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data.</p>
 </li>
 <li>
 <p><strong>Limited scope</strong><br />
@@ -77,7 +80,7 @@ Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesiz
 </li>
 <li>
 <p><strong>Integrates with Python</strong><br />
-I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects.  </p>
+I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects. This is the source of much of its usefullness and power (particularly when it comes to working with data).  </p>
 </li>
 <li>
 <p><strong>Both livecoding and scripting</strong><br />
@@ -95,6 +98,8 @@ Braid is has very low processor overhead, suitable for running on devices like t
 <ul>
 <li>Thread</li>
 <li>cycle</li>
+<li>step</li>
+<li>trigger</li>
 </ul>
 <h3>Global functions</h3>
 <ul>
@@ -110,6 +115,10 @@ Braid is has very low processor overhead, suitable for running on devices like t
 <li><code>g()</code></li>
 <li><code>clamp()</code></li>
 <li><code>plot()</code></li>
+<li><code>trigger()</code></li>
+<li><code>random()</code></li>
+<li><code>choice()</code></li>
+<li><code>make()</code></li>
 </ul>
 <h3>Symbols</h3>
 <ul>
@@ -139,17 +148,21 @@ Braid is has very low processor overhead, suitable for running on devices like t
 <code>ease_out</code><br />
 <code>ease_in_out</code><br />
 <code>ease_out_in</code>  </p>
-<h2><a name="documentation"></a>Documentation</h2>
+<h2><a name="tutorial"></a>Tutorial</h2>
+<h3><a name="prereq"></a>Prerequisites</h3>
+<p>Braid is, fundamentally, an extension to Python 3. This documentation won't cover python syntax&mdash;for that, look <a href="https://docs.python.org/3/tutorial/">here</a>. Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner (aka me?).</p>
+<p>Additionally, this documentation assumes a general knowledge of MIDI.</p>
 <h3><a name="hello"></a>Hello World</h3>
-<p>To begin working with Braid, download the repository and navigate to the root directory. Launch a python3 interpreter and import braid: </p>
+<p>Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on OS X, to simplify things there is general_MIDI_bridge.app included which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).</p>
+<p>To begin working with Braid, navigate to the root directory of the downloaded repository in a terminal. Launch a python3 interpreter and <code>import braid</code>: </p>
 <pre><code>$ python3
 <span class="output">Python 3.6.0 (default, Mar  4 2017, 12:32:37) 
 [GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.</span>
 <span class="int">&gt;&gt;&gt;</span> from braid import *
-<span class="output">MIDI outputs available: ['to Max 1', 'to Max 2']
-MIDI OUT: to Max 1
-MIDI  IN: from Max 1
+<span class="output">MIDI outputs available: ['to general_MIDI_bridge 1', 'to general_MIDI_bridge 2']
+MIDI OUT: to general_MIDI_bridge 1
+MIDI  IN: from general_MIDI_bridge 1
 Loaded VolcaKick
 Loaded VolcaBeats
 Braid started
@@ -220,15 +233,14 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.chord = None
 <span class="int">&gt;&gt;&gt;</span> t.pattern = C, g(C), g(C), g(C)
 </code></pre>
-<h3><a name="pattern_1"></a><code>pattern</code>, part 1</h3>
+<h3><a name="pattern_1"></a><code>Thread.pattern</code>, part 1</h3>
 <p>Start a thread with a pattern</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
-<span class="int">&gt;&gt;&gt;</span> t.start()
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = C, DOR
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
+<span class="int">&gt;&gt;&gt;</span> t.start()
 </code></pre>
-<p>Once started, a thread repeats its pattern. Each repetition is called a <em>cycle</em>. Each cycle is subdivided evenly by the steps in the pattern.</p>
+<p>Once started, a thread repeats its pattern. Each repetition is called a <em>cycle</em>. Each cycle is subdivided evenly by the <strong>steps</strong> in the pattern.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 0, 1, 0              # 4/4
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 0, 1                 # 3/4
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 0, 1, 1, 0, 1     # 7/8
@@ -244,8 +256,7 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, (2, 3, 4), 1, 1
 </code></pre>
 <p>Brackets and parens can be combined to create intricate markov chains</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span> tempo(132)                  # set the universal tempo
+<pre><code><span class="int">&gt;&gt;&gt;</span> tempo(132)                  # set the universal tempo
 <span class="int">&gt;&gt;&gt;</span> d = Thread(10)              # channel 10 is MIDI for drums
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> d.pattern = [([K, H], [K, K]), (K, O)], (H, [H, K]), (S, [S, (O, K), 0, g(S)]), [[H, H], ([H, H], O, [g(S), g(S), g(S), g(S)])]         # K, S, H, O are built-in aliases for 36, 38, 42, 46
@@ -256,11 +267,12 @@ play()
 <span class="int">&gt;&gt;&gt;</span> d.pattern[2] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = [(S, [S, K])]
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> d.pattern.reverse()
 </code></pre>
-<h3><a name="pattern_2"></a><code>pattern</code>, part 2</h3>
+<h3><a name="pattern_2"></a><code>Thread.pattern</code>, part 2</h3>
 <p>There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span> tempo(132)   
+<pre><code><span class="int">&gt;&gt;&gt;</span> tempo(132)   
 <span class="int">&gt;&gt;&gt;</span> d = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> d.start()
 </code></pre>
@@ -290,13 +302,24 @@ play()
 <p>blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pattern B.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
 </code></pre>
+<h3><a name="pattern_3"></a><code>Thread.pattern</code>, part 3</h3>
+<p>Additionally, any given step in a pattern may also be a function. This function should return a note value. This might be used for some interesting pattern effects, as well as manipulating synth parameters at each step (see <a href="#devices">below</a>)</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.chord = D, PRG
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def x():
+<span class="int">...</span>    return choice([1, 3, 5, 7])
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t.pattern = [x] * 8
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t.start()
+</code></pre>
 <h3><a name="velocity"></a><code>Thread.velocity</code> and <code>Thread.grace</code></h3>
 <p>All threads come with some properties built-in. We've seen <a href="#notes"><code>chord</code></a> already.  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span> t = Thread(10)
-<span class="int">&gt;&gt;&gt;</span> t.start()
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> t.chord = C, MAJ
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1., 1, 1.
+<span class="int">&gt;&gt;&gt;</span> t.start()
 </code></pre>
 <p>There is also, of course, <code>velocity</code></p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.velocity = 0.5
@@ -307,9 +330,7 @@ play()
 </code></pre>
 <h3><a name="phase"></a><code>Thread.phase</code></h3>
 <p>Consider the following:</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()    
-<span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t1 = Thread(10)
+<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = 76, CHR  # root note is "Hi Wood Block"
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t2 = Thread(10)
@@ -328,34 +349,31 @@ play()
 <span class="int">&gt;&gt;&gt;</span> t2.phase = 7/12
 </code></pre>
 <h3><a name="rate"></a><code>Thread.rate</code></h3>
-<p>By default, the cycle of each thread corresponds to the universal tempo (as we've seen, the universal <code>tempo()</code> function sets the BPM, or at least the equivalent BPM if cycles were in 4/4 time).</p>
-<p>However, individual threads can cycle at their own <code>rate</code>. If <code>1.0</code> is the universal rate at the specified tempo, the <code>rate</code> property of each thread is a multiplier.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<p>As we've already used it, the <code>tempo()</code> function sets the universal BPM (or at least the equivalent BPM if cycles were in 4/4 time). Braid silently keeps track of cycles at this tempo. By default, the cycles of each thread match this reference. We just saw how <code>phase</code> can offset the patterns of a thread&mdash;it does this in relation to the reference cycle.</p>
+<p>Likewise, individual threads can also cycle at their own <code>rate</code>. The <code>rate</code> property of each thread is a multiplier of the reference cycles&mdash;0.5 is twice as slow, 2 is twice as fast.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = C, C, C, C
 <span class="int">&gt;&gt;&gt;</span> t1.start()
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t2 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t2 = Thread(2)
 <span class="int">&gt;&gt;&gt;</span> t2.pattern = G, G, G, G
-<span class="int">&gt;&gt;&gt;</span> t2.start(t1)           
+<span class="int">&gt;&gt;&gt;</span> t2.start(t1)                    # keep in phase
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t2.rate = 0.5                   # half-speed!
+<span class="int">&gt;&gt;&gt;</span> t2.rate = 1/2                   # half-speed!
 </code></pre>
-<p>Notice that depending on when you hit return, changing the rate can make threads out of sync. The way to get around this is to make sure it changes on a cycle edge. For this, use a <a href="#triggers">trigger</a>:</p>
+<p>Notice that depending on when you hit return, changing the rate can make threads go out of sync (similar to how starting threads at different times puts them out of phase). The way to get around this is to make sure it changes on a cycle edge. For this, use a <a href="#triggers">trigger</a>:</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t2.stop()
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
-<span class="int">&gt;&gt;&gt;</span> def x(): t2.rate = 0.5
-<span class="int">...</span>
+<span class="int">&gt;&gt;&gt;</span> def x(): t2.rate = 0.5          # one-line python function
+<span class="int">...</span>                                 # hit return twice
 <span class="int">&gt;&gt;&gt;</span> t2.trigger(x)
 </code></pre>
+<p>If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.</p>
 <h3><a name="tweens"></a>Tweening</h3>
 <p>Now for the fun part. Any property on a thread can be <strong>tweened</strong>&mdash;that is, interpolated between two values over time (yes, the term is borrowed from Flash).</p>
-<p>This is done simply by assigning a <code>tween()</code> function to the property instead of a value. <code>tween()</code> has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> p1 = Thread(1)
-<span class="int">&gt;&gt;&gt;</span> p2 = Thread(1)
+<p>This is done simply by assigning a <code>tween()</code> function to the property instead of a value. <code>tween()</code> has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value, starting with the next cycle.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> p1 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> p2 = Thread(2)
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
 <span class="int">&gt;&gt;&gt;</span> p1.pattern = p2.pattern = pp
@@ -364,10 +382,8 @@ play()
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> p2.phase = tween(1/12, 4.0)         # take four cycles to move one subdivision
 </code></pre>
-<p>All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127. <code>rate</code>, <code>phase</code>, <code>velocity</code>, <code>grace</code> change continuously over float values. <code>chord</code> will probabilistically waver between the current value and the target value. <code>pattern</code> will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<p>All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127 (see <a href="#devices">below</a>). <code>rate</code>, <code>phase</code>, <code>velocity</code>, <code>grace</code> change continuously over float values. <code>chord</code> will probabilistically waver between the current value and the target value. <code>pattern</code> will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.start()
 <span class="int">&gt;&gt;&gt;</span> t.pattern = K, K, S, [0, 0, 0, K]
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
@@ -381,9 +397,7 @@ play()
 <h3><a name="signals"></a>Signals</h3>
 <p>Tweens can take an additional property, called a signal. This is any function that takes a float value from 0 to 1 and return another value from 0 to 1&mdash;a nonlinear transition function when you don't want to go from A to B in a straight line. (Yes, Flash again).</p>
 <p>Built-in signals: <code>linear</code> (default), <code>ease_in</code>, <code>ease_out</code>, <code>ease_in_out</code>, <code>ease_out_in</code></p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> clear()
-<span class="int">&gt;&gt;&gt;</span> 
-<span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, DOR
 <span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 3, 5, 7] * 4
 <span class="int">&gt;&gt;&gt;</span> t.start()
@@ -413,7 +427,84 @@ play()
 <span class="int">&gt;&gt;&gt;</span> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
 </code></pre>
 <h3><a name="sync"></a>Sync, and tweening rate</h3>
-<p>Braid does something special when you assign a tween to <code>Thread.rate</code>. Ordinarily, if two</p>
+<p>Braid does something special when you assign a tween to <code>Thread.rate</code>. Ordinarily, if two threads started in sync and one thread tweened its rate, they would inevitably end up out of sync. However, Braid automatically adjusts its tweening function such that threads will remain aligned as best as possible.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
+<span class="int">&gt;&gt;&gt;</span> t1.start()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t2 = Thread(2)
+<span class="int">&gt;&gt;&gt;</span> t2.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t2.pattern = 4, 4, 4, 4
+<span class="int">&gt;&gt;&gt;</span> t2.start(t1)
+<span class="int">&gt;&gt;&gt;</span>    
+<span class="int">&gt;&gt;&gt;</span> t2.rate = tween(0.5, 4)
+</code></pre>
+<p>As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name. Note that rate tweens kept in sync in this way will start at the beginning of the next cycle that they are called.</p>
+<p>If you <em>don't</em> want this functionality, pass <code>sync=False</code> to the thread constructor, and the thread won't try to reconcile itself.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
+</code></pre>
+<h3><a name="triggers"></a>Triggers</h3>
+<p>You can sequence in Braid using triggers. A trigger consists of a function and the number of cycles to wait before executing it. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
+<span class="int">&gt;&gt;&gt;</span> t.start()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def x(): t.pattern = 4, 4, 4, 4         # one-line python function
+<span class="int">...</span>
+<span class="int">&gt;&gt;&gt;</span> t.trigger(x, 2)
+</code></pre>
+<p>You might want to reuse the same triggered function with different threads. This is facilitated by including an argument in the function definition which will be passed the thread that triggered it.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
+<span class="int">&gt;&gt;&gt;</span> t1.start()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t2 = Thread(2)
+<span class="int">&gt;&gt;&gt;</span> t2.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t2.pattern = 4, 4, 4, 4
+<span class="int">&gt;&gt;&gt;</span> t2.start(t1)
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def x(t): t.pattern = R, R, R, R    # generic 't' argument
+<span class="int">...</span>
+<span class="int">&gt;&gt;&gt;</span> t1.trigger(x, 2)
+<span class="int">&gt;&gt;&gt;</span> t2.trigger(x, 2)                    # same function
+</code></pre>
+<p>For universal triggers, no argument can be supplied. But they are particularly useful for sets of changes, as defined in larger functions, or universal functions. But there is no strict reason to use one or the other.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
+<span class="int">&gt;&gt;&gt;</span> t1.start()
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t2 = Thread(2)
+<span class="int">&gt;&gt;&gt;</span> t2.chord = D, SUSb9
+<span class="int">&gt;&gt;&gt;</span> t2.pattern = 4, 4, 4, 4
+<span class="int">&gt;&gt;&gt;</span> t2.start(t1)
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def x():
+<span class="int">...</span>     tempo(tempo() * 1.3)                    # calling tempo without arguments returns the current value
+<span class="int">...</span>     t1.chord = D2, SUSb9
+<span class="int">...</span>     t1.phase = 1/8
+<span class="int">...</span>     t1.pattern = t2.pattern = R, R, R, R
+<span class="int">&gt;&gt;&gt;</span> trigger(x, 2)
+</code></pre>
+<h3><a name="devices"></a>MIDI devices and properties</h3>
+<p>Braid is designed to work with hardware monosynths. Thus far, the only actual MIDI output we've been sending are MIDI notes. But CC values from devices are mapped directly to thread properties.</p>
+<p>Devices are represented in Braid as extensions to the thread object. To create a custom thread, use the <code>make()</code> function. <code>make()</code> is passed a dictionary with property names mapped to MIDI CC channels.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> Voltron = make({'attack': 54, 'decay': 53, 'filter_cutoff': 52, 'pulse_width': 51})
+</code></pre>
+<p>Now, Voltron can be used like any thread, but it will also have the specified CC values that can be set, tweened, etc.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Voltron(1)
+<span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 2, 3, 5] * 4
+<span class="int">&gt;&gt;&gt;</span> t.filter_cutoff = 0
+<span class="int">&gt;&gt;&gt;</span> t.filter_cutoff = tween(127, 8)
+<span class="int">&gt;&gt;&gt;</span> t.start()
+</code></pre>
+<p>Since you'll probably be using the same MIDI devices all the time, and it is tedious to specify this each time you run Braid (especially with large numbers of controls), Braid also automatically loads custom thread types from the <code>synths.yaml</code> file in the root directory.</p>
+<p>Note: A second dictionary can be passed to <code>make()</code> as an additional parameter with property names mapped to default MIDI values.</p>
+<h3><a name="custom"></a>Customizing MIDI behavior</h3>
+<p>Coming soon. See <code>custom.py</code> in the examples.</p>
 
 </div>
 </body>

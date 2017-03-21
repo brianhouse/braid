@@ -1,0 +1,8 @@
+#include "../../c74support/max-includes/max-external-release.xcconfig"
+
+DSTROOT = $(SYSBUILD)/$(CONFIGURATION)/Cycling '74/msp-externals
+HEADER_SEARCH_PATHS = $(HEADER_SEARCH_PATHS_COMMON) "$(C74SUPPORT)/msp-includes"
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_COMMON) "$(C74SUPPORT)/msp-includes/$(C74_FRAMEWORK_PATH_SUFFIX)"
+
+C74_SYM_LINKER_FLAGS_MSP = -Wl,-U,_dsp_add,-U,_dsp_add64,-U,_z_add_signalmethod,-U,_z_dsp_free,-U,_z_dsp_setup
+

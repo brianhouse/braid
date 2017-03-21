@@ -1,0 +1,2 @@
+max definejargon test test jargon 1 2 3 4.5 i love you;
+max definejargon toto who loves the french?;

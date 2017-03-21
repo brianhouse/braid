@@ -111,7 +111,10 @@ class Thread(object):
         for trigger in self._triggers:
             trigger[1] -= 1
             if trigger[1] == 0:
-                trigger[0]()
+                if num_args(trigger[0]):
+                    trigger[0](self)
+                else:
+                    trigger[0]()
         self._triggers = [trigger for trigger in self._triggers if trigger[1] > 0]
 
     def play(self, step, velocity=None):
@@ -238,8 +241,9 @@ def midi_clamp(value):
     return int(value)
 
 
-def make(name, controls={}, defaults={}):
+def make(controls={}, defaults={}):
     """Make a Thread with MIDI control values and defaults (will send MIDI)"""
+    name = "T%s" % str(random())[-4:]           # name doesn't really do anything
     T = type(name, (Thread,), {})    
     T.add('controls', controls)
     for control in controls:
@@ -253,7 +257,7 @@ with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
     synths = yaml.load(f)
 for synth, params in synths.items():
     try:
-        exec("%s = make(synth, params)" % synth)
+        exec("%s = make(params)" % synth)
     except Exception as e:
         print("WARNING: failed to load %s" % synth, e)
     else:

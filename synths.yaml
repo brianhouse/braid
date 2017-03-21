@@ -1,3 +1,20 @@
+Anode:
+  attack: 54
+  decay: 53
+  filter_cutoff: 52
+  pulse_width: 51
+  osc_detune: 50
+  lfo_rate: 49
+  lfo_depth: 48
+  glide: 55
+  vcf_envelope: 56
+  sustain: 64
+  octave: 65
+  sweep: 66
+  lfo_destination: 67
+  lfo_random: 68
+  osc_wave: 70
+
 VolcaKick:
   pulse_colour: 40
   pulse_level: 41
