@@ -61,13 +61,13 @@ VolcaBeats:
     open_hat_decay: 58
     hat_grain: 59
   defaults:
-    clap_pcm: 0
-    claves_pcm: 0
-    agogo_pcm: 0
-    crash_pcm: 0
+    clap_pcm: 127
+    claves_pcm: 127
+    agogo_pcm: 127
+    crash_pcm: 127
     stutter_time: 0
     stutter_depth: 0
-    tom_decay: 0
+    tom_decay: 127
     closed_hat_decay: 64
     open_hat_decay: 64
     hat_grain: 127
