@@ -46,7 +46,7 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 
 <h1>BRAID</h1>
 <p>Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. </p>
-<p>Braid can be downloaded from its <a href="https://github.com/brianhouse/braid">GitHub repository</a>.</p>
+<p>Braid can be downloaded from its <a href="https://github.com/brianhouse/braid/releases">GitHub repository</a>.</p>
 <p>It is developed by <a href="http://brianhouse.net">Brian House</a>.</p>
 <h2>Contents</h2>
 <ol>
@@ -491,13 +491,18 @@ play()
 <p>Coming soon. See <code>custom.py</code> in the examples.</p>
 <h3><a name="properties"></a>Adding properties</h3>
 <p>In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.add('ref')
+<span class="int">&gt;&gt;&gt;</span> t.ref = 0
+<span class="int">&gt;&gt;&gt;</span> t.ref = tween(1.0, 8)
+</code></pre>
 <h2><a name="reference"></a>Reference</h2>
 <h3><a name="glossary"></a>Glossary</h3>
 <ul>
-<li>Thread</li>
-<li>cycle</li>
-<li>step</li>
-<li>trigger</li>
+<li><code>Thread</code></li>
+<li><code>cycle</code></li>
+<li><code>step</code></li>
+<li><code>trigger</code></li>
 </ul>
 <h3><a name="functions"></a>Global functions</h3>
 <ul>

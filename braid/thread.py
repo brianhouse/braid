@@ -12,7 +12,7 @@ class Thread(object):
     threads = driver.threads
 
     @classmethod
-    def add(cls, name, default=0):
+    def add_attr(cls, name, default=0):
         """Add a property with tweening capability (won't send MIDI)"""
         def getter(self):
             if isinstance(getattr(self, "_%s" % name), Tween):
@@ -32,19 +32,34 @@ class Thread(object):
     @classmethod
     def setup(cls):
         # standard properties
-        Thread.add('chord', None)
-        Thread.add('velocity', 1.0)
-        Thread.add('grace', 0.75)
-        Thread.add('phase', 0.0)
-        Thread.add('micro', None)
+        Thread.add_attr('chord', None)
+        Thread.add_attr('velocity', 1.0)
+        Thread.add_attr('grace', 0.75)
+        Thread.add_attr('phase', 0.0)
+        Thread.add_attr('micro', None)
 
 
     """Instance definitions"""
+
+    def __setattr__(self, key, value):
+        if not key == "_attr_frozen" and self._attr_frozen and not hasattr(self, key):
+            print("No property %s" % key)
+            return
+        object.__setattr__(self, key, value)
+
+    def __getattr__(self, key):
+        print("No property %s" % key) 
+
+    def add(self, param, default=0):
+        self._attr_frozen = False
+        self.__class__.add_attr(param, default)
+        self._attr_frozen = True
 
     def __init__(self, channel, sync=True):
         Thread.threads.append(self)        
 
         # private reference variables
+        self._attr_frozen = False        
         self._channel = channel
         self._running = False
         self._cycles = 0.0
@@ -64,6 +79,7 @@ class Thread(object):
         self.rate = 1.0        
 
         print("Created thread on channel %d" % self._channel)
+        self._attr_frozen = True
 
 
     def update(self, delta_t):        
@@ -249,9 +265,9 @@ def make(controls={}, defaults={}):
     """Make a Thread with MIDI control values and defaults (will send MIDI)"""
     name = "T%s" % str(random())[-4:]           # name doesn't really do anything
     T = type(name, (Thread,), {})    
-    T.add('controls', controls)
+    T.add_attr('controls', controls)
     for control in controls:
-        T.add(control, defaults[control] if control in defaults else 0)    # mid-level for knobs, off for switches
+        T.add_attr(control, defaults[control] if control in defaults else 0)    # mid-level for knobs, off for switches
     return T
 
 Thread.setup()
