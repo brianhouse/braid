@@ -1,6 +1,13 @@
 # BRAID
 
-Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.
+Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. 
+
+Braid can be downloaded from its [GitHub repository](https://github.com/brianhouse/braid).
+
+It is developed by [Brian House](http://brianhouse.net).
+
+
+## Contents
 
 1. [Goals](#goals)
 1. [Tutorial](#tutorial)
@@ -18,8 +25,14 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [Tweening rate and sync](#sync)
     1. [Triggers](#triggers)
     1. [MIDI devices and properties](#devices)
+    1. [Adding properties](#properties)
     1. [Customizing MIDI behavior](#custom)
 1. [Reference](#reference)
+    1. [Glossary](#glossary)
+    1. [Global functions](#functions)
+    1. [Symbols](#symbols)
+    1. [Scales](#scales)
+    1. [Signals](#signals)
     
 
 ## Goals
@@ -252,7 +265,7 @@ blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pa
 
 ### <a name="pattern_3"></a>`Thread.pattern`, part 3
 
-Additionally, any given step in a pattern may also be a function. This function should return a note value. This might be used for some interesting pattern effects, as well as manipulating synth parameters at each step (see [below](#devices))
+Additionally, any given step in a pattern may also be a function. This function should return a note value.
 
     >>> t = Thread(1)
     >>> t.chord = D, PRG
@@ -263,6 +276,37 @@ Additionally, any given step in a pattern may also be a function. This function 
     >>> t.pattern = [x] * 8
     >>>
     >>> t.start()
+
+ This is particularly useful for manipulating synth parameters at each step (see [below](#devices)). In this case, creating a wrapped function allows the actual note value to be passed as a parameter.
+
+    >>> t = VolcaKick(1)
+    >>>
+    >>> def k(n):
+    ...     def f(t):
+    ...         t.pulse_colour = 127
+    ...         t.pulse_level = 127
+    ...         t.tone = 40
+    ...         t.amp_attack = 0
+    ...         t.amp_decay = 80
+    ...         t.resonator_pitch = 0
+    ...         return n
+    ...     return f
+    >>>
+    >>> def s(n):
+    ...     def f(t):    
+    ...         t.pulse_colour = 127
+    ...         t.pulse_level = 127
+    ...         t.tone = 60
+    ...         t.amp_attack = 0
+    ...         t.amp_decay = 20
+    ...         t.resonator_pitch = 34
+    ...         return n
+    ...     return f
+    >>>
+    >>> t.pattern = k(1), k(3), s(20), k(1)              # custom properties for k and s notes
+    >>> t.start()
+
+
 
 
 ### <a name="velocity"></a>`Thread.velocity` and `Thread.grace`
@@ -507,16 +551,22 @@ Note: A second dictionary can be passed to `make()` as an additional parameter w
 Coming soon. See `custom.py` in the examples.
 
 
+### <a name="properties"></a>Adding properties
+
+In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.
+
+
+
 
 ## <a name="reference"></a>Reference
 
-### Glossary
+### <a name="glossary"></a>Glossary
 - Thread
 - cycle
 - step
 - trigger
 
-### Global functions
+### <a name="functions"></a>Global functions
 - `log_midi(True|False)`        Choose whether to see MIDI output (default: False)
 - `midi_out_interface(int)`     Change MIDI interface for output (zero-indexed)
 - `Thread(int channel)`         Create a Thread on the specified MIDI channel
@@ -534,7 +584,7 @@ Coming soon. See `custom.py` in the examples.
 - `choice()`
 - `make()`
 
-### Symbols
+### <a name="symbols"></a>Symbols
 - `K`, `S`, `H`, `O`
 
 ### <a name="scales"></a>Scales
@@ -557,7 +607,7 @@ Coming soon. See `custom.py` in the examples.
 `JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11  
 `DRM` stepwise drums, 0, 2, 7, 14, 6, 10, 3, 39, 31, 13
 
-### Signals
+### <a name="signals"></a>Signals
 `linear` (default)  
 `ease_in`  
 `ease_out`  

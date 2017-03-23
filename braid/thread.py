@@ -256,34 +256,25 @@ def make(controls={}, defaults={}):
 
 Thread.setup()
 
-"""Create all synths in config file"""
-with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
-    synths = yaml.load(f)
-for synth, params in synths.items():
-    controls = params['controls']
-    defaults = params['defaults']
-    try:
-        exec("%s = make(controls, defaults)" % synth)
-    except Exception as e:
-        print("WARNING: failed to load %s" % synth, e)
-    else:
-        print("Loaded %s" % synth)
-
-
-
-    """
-        control_numbers = {'res': 43}
-        default_values = {'res': 69}
-        Synth = create("Synth", control_numbers, default_values)
-        synth = Synth(1)
-        print(synth.res)
-
-        ## wait, would this work?
-        control_numbers = {'res': 43}
-        default_values = {'res': 69}
-        create("Synth", control_numbers, default_values)
-        synth = Synth(1)
-        print(synth.res)
-
-
-    """
+"""Create all synths in config file--look in the directory above the braid module, and in the current directory"""
+synths = {}
+try:
+    with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
+        synths.update(yaml.load(f))
+except FileNotFoundError as e:
+    pass
+try:
+    with open(os.path.join(os.getcwd(), "synths.yaml")) as f:
+        synths.update(yaml.load(f))
+except FileNotFoundError as e:
+    pass
+if len(synths):
+    for synth, params in synths.items():
+        controls = params['controls']
+        defaults = params['defaults']
+        try:
+            exec("%s = make(controls, defaults)" % synth)
+        except Exception as e:
+            print("WARNING: failed to load %s" % synth, e)
+        else:
+            print("Loaded %s" % synth)

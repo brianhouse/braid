@@ -45,7 +45,10 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <div id="content" class="markdown-body">
 
 <h1>BRAID</h1>
-<p>Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.</p>
+<p>Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. </p>
+<p>Braid can be downloaded from its <a href="https://github.com/brianhouse/braid">GitHub repository</a>.</p>
+<p>It is developed by <a href="http://brianhouse.net">Brian House</a>.</p>
+<h2>Contents</h2>
 <ol>
 <li><a href="#goals">Goals</a></li>
 <li><a href="#tutorial">Tutorial</a><ol>
@@ -63,10 +66,18 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <li><a href="#sync">Tweening rate and sync</a></li>
 <li><a href="#triggers">Triggers</a></li>
 <li><a href="#devices">MIDI devices and properties</a></li>
+<li><a href="#properties">Adding properties</a></li>
 <li><a href="#custom">Customizing MIDI behavior</a></li>
 </ol>
 </li>
-<li><a href="#reference">Reference</a></li>
+<li><a href="#reference">Reference</a><ol>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#functions">Global functions</a></li>
+<li><a href="#symbols">Symbols</a></li>
+<li><a href="#scales">Scales</a></li>
+<li><a href="#signals">Signals</a></li>
+</ol>
+</li>
 </ol>
 <h2>Goals</h2>
 <ul>
@@ -248,7 +259,7 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
 </code></pre>
 <h3><a name="pattern_3"></a><code>Thread.pattern</code>, part 3</h3>
-<p>Additionally, any given step in a pattern may also be a function. This function should return a note value. This might be used for some interesting pattern effects, as well as manipulating synth parameters at each step (see <a href="#devices">below</a>)</p>
+<p>Additionally, any given step in a pattern may also be a function. This function should return a note value.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, PRG
 <span class="int">&gt;&gt;&gt;</span>
@@ -257,6 +268,34 @@ play()
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t.pattern = [x] * 8
 <span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t.start()
+</code></pre>
+<p>This is particularly useful for manipulating synth parameters at each step (see <a href="#devices">below</a>). In this case, creating a wrapped function allows the actual note value to be passed as a parameter.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t = VolcaKick(1)
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def k(n):
+<span class="int">...</span>     def f(t):
+<span class="int">...</span>         t.pulse_colour = 127
+<span class="int">...</span>         t.pulse_level = 127
+<span class="int">...</span>         t.tone = 40
+<span class="int">...</span>         t.amp_attack = 0
+<span class="int">...</span>         t.amp_decay = 80
+<span class="int">...</span>         t.resonator_pitch = 0
+<span class="int">...</span>         return n
+<span class="int">...</span>     return f
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> def s(n):
+<span class="int">...</span>     def f(t):    
+<span class="int">...</span>         t.pulse_colour = 127
+<span class="int">...</span>         t.pulse_level = 127
+<span class="int">...</span>         t.tone = 60
+<span class="int">...</span>         t.amp_attack = 0
+<span class="int">...</span>         t.amp_decay = 20
+<span class="int">...</span>         t.resonator_pitch = 34
+<span class="int">...</span>         return n
+<span class="int">...</span>     return f
+<span class="int">&gt;&gt;&gt;</span>
+<span class="int">&gt;&gt;&gt;</span> t.pattern = k(1), k(3), s(20), k(1)              # custom properties for k and s notes
 <span class="int">&gt;&gt;&gt;</span> t.start()
 </code></pre>
 <h3><a name="velocity"></a><code>Thread.velocity</code> and <code>Thread.grace</code></h3>
@@ -450,15 +489,17 @@ play()
 <p>Note: A second dictionary can be passed to <code>make()</code> as an additional parameter with property names mapped to default MIDI values.</p>
 <h3><a name="custom"></a>Customizing MIDI behavior</h3>
 <p>Coming soon. See <code>custom.py</code> in the examples.</p>
+<h3><a name="properties"></a>Adding properties</h3>
+<p>In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.</p>
 <h2><a name="reference"></a>Reference</h2>
-<h3>Glossary</h3>
+<h3><a name="glossary"></a>Glossary</h3>
 <ul>
 <li>Thread</li>
 <li>cycle</li>
 <li>step</li>
 <li>trigger</li>
 </ul>
-<h3>Global functions</h3>
+<h3><a name="functions"></a>Global functions</h3>
 <ul>
 <li><code>log_midi(True|False)</code>        Choose whether to see MIDI output (default: False)</li>
 <li><code>midi_out_interface(int)</code>     Change MIDI interface for output (zero-indexed)</li>
@@ -477,7 +518,7 @@ play()
 <li><code>choice()</code></li>
 <li><code>make()</code></li>
 </ul>
-<h3>Symbols</h3>
+<h3><a name="symbols"></a>Symbols</h3>
 <ul>
 <li><code>K</code>, <code>S</code>, <code>H</code>, <code>O</code></li>
 </ul>
@@ -500,7 +541,7 @@ play()
 <code>PLG</code> Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10<br />
 <code>JAM</code> jamz, 0, 2, 3, 5, 6, 7, 10, 11<br />
 <code>DRM</code> stepwise drums, 0, 2, 7, 14, 6, 10, 3, 39, 31, 13</p>
-<h3>Signals</h3>
+<h3><a name="signals"></a>Signals</h3>
 <p><code>linear</code> (default)<br />
 <code>ease_in</code><br />
 <code>ease_out</code><br />
