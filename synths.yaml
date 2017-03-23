@@ -1,50 +1,133 @@
 Anode:
-  attack: 54
-  decay: 53
-  filter_cutoff: 52
-  pulse_width: 51
-  osc_detune: 50
-  lfo_rate: 49
-  lfo_depth: 48
-  glide: 55
-  vcf_envelope: 56
-  sustain: 64
-  octave: 65
-  sweep: 66
-  lfo_destination: 67
-  lfo_random: 68
-  osc_wave: 70
+  controls:
+    attack: 54
+    decay: 53
+    filter_cutoff: 52
+    pulse_width: 51
+    osc_detune: 50
+    lfo_rate: 49
+    lfo_depth: 48
+    glide: 55
+    vcf_envelope: 56
+    sustain: 64
+    octave: 65
+    sweep: 66
+    lfo_destination: 67
+    lfo_random: 68
+    osc_wave: 70
+  defaults:
+    attack: 0
+    decay: 64
+    filter_cutoff: 0
+    pulse_width: 64
+    osc_detune: 64
+    lfo_rate: 0
+    lfo_depth: 0
+    glide: 0
+    vcf_envelope: 0
+    sustain: 0
+    octave: 0
+    sweep: 0
+    lfo_destination: 0
+    lfo_random: 0
+    osc_wave: 127
+
 
 VolcaKick:
-  pulse_colour: 40
-  pulse_level: 41
-  amp_attack: 42
-  amp_decay: 43
-  drive: 44
-  tone: 45
-  resonator_pitch: 46
-  resonator_bend: 47
-  resonator_time: 48
-  accent: 49
+  controls:
+    pulse_colour: 40
+    pulse_level: 41
+    amp_attack: 42
+    amp_decay: 43
+    drive: 44
+    tone: 45
+    resonator_pitch: 46
+    resonator_bend: 47
+    resonator_time: 48
+    accent: 49
+  defaults: 
+    None
 
 VolcaBeats:
-  kick_level: 40
-  snare_level: 41
-  lo_tom_level: 42
-  hi_tom_level: 43
-  cl_hat_level: 44
-  op_hat_level: 45
-  clap_level: 46
-  claves_level: 47
-  agogo_level: 48
-  crash_level: 49
-  clap_pcm: 50
-  claves_pcm: 51
-  agogo_pcm: 52
-  crash_pcm: 53
-  stutter_time: 54
-  stutter_depth: 55
-  tom_decay: 56
-  closed_hat_decay: 57
-  open_hat_decay: 58
-  hat_grain: 59
+  controls:
+    clap_pcm: 50
+    claves_pcm: 51
+    agogo_pcm: 52
+    crash_pcm: 53
+    stutter_time: 54
+    stutter_depth: 55
+    tom_decay: 56
+    closed_hat_decay: 57
+    open_hat_decay: 58
+    hat_grain: 59
+  defaults:
+    clap_pcm: 0
+    claves_pcm: 0
+    agogo_pcm: 0
+    crash_pcm: 0
+    stutter_time: 0
+    stutter_depth: 0
+    tom_decay: 0
+    closed_hat_decay: 64
+    open_hat_decay: 64
+    hat_grain: 127
+
+Meeblip:
+  controls:
+    filter_resonance: 48
+    filter_cutoff: 49
+    lfo_frequency: 50
+    lfo_level: 51
+    filter_env: 52
+    portamento: 53
+    pulse_width: 54
+    detune: 55
+    filter_decay: 58
+    filter_attack: 59
+    amp_decay: 60
+    amp_attack: 61
+    fm: 65
+    lfo_random: 66
+    lfo_wave: 67
+    filter_mode: 68
+    distortion: 69
+    lfo_enable: 70
+    lfo_destination: 71
+    anti_alias: 72
+    osc_octave: 73
+    osc_enable: 74
+    osc_wave: 75
+    sustain: 76
+    osc_noise: 77
+    pwm_sweep: 78
+    wave: 79
+  defaults:
+    filter_resonance: 64
+    filter_cutoff: 64
+    lfo_frequency: 64
+    lfo_level: 64
+    filter_env: 64
+    portamento: 64
+    pulse_width: 64
+    detune: 64
+    filter_decay: 64
+    filter_attack: 0
+    amp_decay: 64
+    amp_attack: 0
+    fm: 0
+    lfo_random: 0
+    lfo_wave: 0
+    filter_mode: 0
+    distortion: 127
+    lfo_enable: 0
+    lfo_destination: 0
+    anti_alias: 0
+    osc_octave: 127
+    osc_enable: 127
+    osc_wave: 127
+    sustain: 0
+    osc_noise: 0
+    pwm_sweep: 0
+    wave: 0
+
+

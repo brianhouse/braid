@@ -21,6 +21,10 @@ class Thread(object):
         def setter(self, value):
             if isinstance(value, Tween):
                 value.start(self, getattr(self, name))
+            if value is True:
+                value = 127
+            if value is False:
+                value = 0
             setattr(self, "_%s" % name, value)
         setattr(cls, "_%s" % name, default)
         setattr(cls, name, property(getter, setter))       
@@ -247,7 +251,7 @@ def make(controls={}, defaults={}):
     T = type(name, (Thread,), {})    
     T.add('controls', controls)
     for control in controls:
-        T.add(control, defaults[control] if control in defaults else 64)
+        T.add(control, defaults[control] if control in defaults else 0)    # mid-level for knobs, off for switches
     return T
 
 Thread.setup()
@@ -256,8 +260,10 @@ Thread.setup()
 with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
     synths = yaml.load(f)
 for synth, params in synths.items():
+    controls = params['controls']
+    defaults = params['defaults']
     try:
-        exec("%s = make(params)" % synth)
+        exec("%s = make(controls, defaults)" % synth)
     except Exception as e:
         print("WARNING: failed to load %s" % synth, e)
     else:

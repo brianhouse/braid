@@ -17,8 +17,8 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
     1. [Signals](#signals)
     1. [Tweening rate and sync](#sync)
     1. [Triggers](#triggers)
-    1. ['MIDI devices and properties'](#devices)
-    1. ['Customizing MIDI behavior'](#custom)
+    1. [MIDI devices and properties](#devices)
+    1. [Customizing MIDI behavior](#custom)
 1. [Reference](#reference)
     
 
@@ -357,16 +357,16 @@ This is done simply by assigning a `tween()` function to the property instead of
 
 All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127 (see [below](#devices)). `rate`, `phase`, `velocity`, `grace` change continuously over float values. `chord` will probabilistically waver between the current value and the target value. `pattern` will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.
 
-    >>> t = Thread(1)
+    >>> t = Thread(10)
     >>> t.start()
     >>> t.pattern = K, K, S, [0, 0, 0, K]
     >>> t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
     >>>
     >>> # or:
     >>>
-    >>> t.pattern = euc(8, 5, 77)
-    >>> t.pattern = tween(euc(8, 6, 76), 8)
-    >>> t.pattern = euc(8, 5, 77)
+    >>> t.pattern = euc(8, 5, 43)
+    >>> t.pattern = tween(euc(8, 6, 50), 8)
+    >>> t.pattern = tween(euc(8, 5, 43), 8)
 
 
 ### <a name="signals"></a>Signals
@@ -555,6 +555,7 @@ Coming soon. See `custom.py` in the examples.
 `SDR` Gamelan Slendro, 0, 2, 5, 7, 9  
 `PLG` Gamelan Pelog, 0, 1, 3, 6, 7, 8, 10  
 `JAM` jamz, 0, 2, 3, 5, 6, 7, 10, 11  
+`DRM` stepwise drums, 0, 2, 7, 14, 6, 10, 3, 39, 31, 13
 
 ### Signals
 `linear` (default)  

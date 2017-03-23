@@ -214,6 +214,10 @@ PLG = Scale([0, 1, 3, 6, 7, 8, 10])
 JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
 
 
+# stepwise drums
+
+DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
+
 #
 
 R = 'R'         # random
