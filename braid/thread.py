@@ -37,6 +37,7 @@ class Thread(object):
         Thread.add_attr('grace', 0.75)
         Thread.add_attr('phase', 0.0)
         Thread.add_attr('micro', None)
+        Thread.add_attr('controls', None)
 
 
     """Instance definitions"""
@@ -49,6 +50,7 @@ class Thread(object):
 
     def __getattr__(self, key):
         print("No property %s" % key) 
+        return None
 
     def add(self, param, default=0):
         self._attr_frozen = False
@@ -117,7 +119,7 @@ class Thread(object):
 
     def update_controls(self):
         """Check if MIDI attributes have changed, and if so send"""
-        if not hasattr(self, "controls"):
+        if not hasattr(self, "controls") or self.controls is None:
             return
         for control in self.controls:
             value = int(getattr(self, control))
