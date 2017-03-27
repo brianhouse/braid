@@ -376,7 +376,7 @@ Notice that depending on when you hit return, changing the rate can make threads
     >>> t2.start(t1)
     >>> def x(): t2.rate = 0.5          # one-line python function
     ...                                 # hit return twice
-    >>> t2.trigger(x)
+    >>> t2.trigger(x)                   # executes x at the beginning of the next cycle
 
 If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.
 
@@ -479,6 +479,10 @@ If you _don't_ want this functionality, pass `sync=False` to the thread construc
 
 You can sequence in Braid using triggers. A trigger consists of a function and the number of *complete* cycles to wait before executing it. Triggers can be added to individual threads (`Thread.trigger()`), which then reference the thread's cycle, or they can use the universal `trigger()` function, which reference the universal (silent) cycles (as we've seen with `Thread.rate` and `Thread.phase`, these can be different).
 
+Triggers execute at the edge between cycles. 
+
+#### Thread Triggers
+
     >>> t = Thread(1)
     >>> t.chord = D, SUSb9
     >>> t.pattern = 1, 1, 1, 1
@@ -486,7 +490,9 @@ You can sequence in Braid using triggers. A trigger consists of a function and t
     >>>
     >>> def x(): t.pattern = 4, 4, 4, 4         # one-line python function
     ...
-    >>> t.trigger(x, 2)
+    >>> t.trigger(x)                            # triggers x at the end of the current cycle
+    >>> t.trigger(x, 1)                         # triggers x at the end of the first complete cycle
+    >>> t.trigger(x, 4)                         # triggers x at the end of the fourth complete cycle
 
 You might want to reuse the same triggered function with different threads. This is facilitated by including an argument in the function definition which will be passed the thread that triggered it.
 
@@ -505,7 +511,29 @@ You might want to reuse the same triggered function with different threads. This
     >>> t1.trigger(x, 2)
     >>> t2.trigger(x, 2)                    # same function
 
-For universal triggers, no argument can be supplied. But they are particularly useful for sets of changes, as defined in larger functions, or universal functions. But there is no strict reason to use one or the other.
+Using a third argument, triggers can be repeated infinitely or for a set number of times.
+
+    >>> t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
+    >>> t.trigger(y, 6, True)   # trigger x every 6 cycles 
+
+Also:
+    
+    >>> t.trigger(y, 0, True)   # nope
+
+    >>> t.trigger(y)            # you probably wanted to do this
+    >>> t.trigger(y, 1, True)   
+
+To cancel all triggers on a thread, pass `False`.
+
+    >>> t.trigger(False)
+
+To cancel any triggers on a thread that are repeating infinitely, pass `repeat=False` without other arguments.
+
+    >>> t.trigger(repeat=False)
+
+#### Universal Triggers
+
+For universal triggers, no argument can be supplied. But universal triggers are particularly useful for sets of changes, as defined in larger functions, or universal functions. 
 
     >>> t1 = Thread(1)
     >>> t1.chord = D, SUSb9

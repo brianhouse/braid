@@ -133,10 +133,13 @@ class Thread(object):
         for t, trigger in enumerate(self._triggers):
             trigger[3] += 1                             # increment edge
             if (trigger[1] + 1) - trigger[3] == 0:      # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
-                if num_args(trigger[0]):
-                    trigger[0](self)
-                else:
-                    trigger[0]()
+                try:
+                    if num_args(trigger[0]):
+                        trigger[0](self)
+                    else:
+                        trigger[0]()
+                except Exception as e:
+                    print(e)
                 if trigger[2] is True:
                     self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
                 else:
@@ -257,9 +260,16 @@ class Thread(object):
         self._running = False
         self.end()
 
-    def trigger(self, f, cycles=0, repeat=0):
-        assert(callable(f))
-        self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
+    def trigger(self, f=None, cycles=0, repeat=0):
+        if f is None and repeat is False:
+            self._triggers = [trigger for trigger in self._triggers if trigger[2] is not True]  # filter repeat=True
+        elif f is False:
+            self._triggers = []
+        else:
+            assert(callable(f))
+            if cycles == 0:
+                assert repeat == 0
+            self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
 
 
 def midi_clamp(value):

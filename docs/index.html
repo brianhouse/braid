@@ -350,7 +350,7 @@ play()
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 <span class="int">&gt;&gt;&gt;</span> def x(): t2.rate = 0.5          # one-line python function
 <span class="int">...</span>                                 # hit return twice
-<span class="int">&gt;&gt;&gt;</span> t2.trigger(x)
+<span class="int">&gt;&gt;&gt;</span> t2.trigger(x)                   # executes x at the beginning of the next cycle
 </code></pre>
 <p>If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.</p>
 <h3><a name="tweens"></a>Tweening</h3>
@@ -429,7 +429,9 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
 </code></pre>
 <h3><a name="triggers"></a>Triggers</h3>
-<p>You can sequence in Braid using triggers. A trigger consists of a function and the number of cycles to wait before executing it. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
+<p>You can sequence in Braid using triggers. A trigger consists of a function and the number of <em>complete</em> cycles to wait before executing it. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
+<p>Triggers execute at the edge between cycles. </p>
+<h4>Thread Triggers</h4>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
@@ -437,7 +439,9 @@ play()
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> def x(): t.pattern = 4, 4, 4, 4         # one-line python function
 <span class="int">...</span>
-<span class="int">&gt;&gt;&gt;</span> t.trigger(x, 2)
+<span class="int">&gt;&gt;&gt;</span> t.trigger(x)                            # triggers x at the end of the current cycle
+<span class="int">&gt;&gt;&gt;</span> t.trigger(x, 1)                         # triggers x at the end of the first complete cycle
+<span class="int">&gt;&gt;&gt;</span> t.trigger(x, 4)                         # triggers x at the end of the fourth complete cycle
 </code></pre>
 <p>You might want to reuse the same triggered function with different threads. This is facilitated by including an argument in the function definition which will be passed the thread that triggered it.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
@@ -455,7 +459,24 @@ play()
 <span class="int">&gt;&gt;&gt;</span> t1.trigger(x, 2)
 <span class="int">&gt;&gt;&gt;</span> t2.trigger(x, 2)                    # same function
 </code></pre>
-<p>For universal triggers, no argument can be supplied. But they are particularly useful for sets of changes, as defined in larger functions, or universal functions. But there is no strict reason to use one or the other.</p>
+<p>Using a third argument, triggers can be repeated infinitely or for a set number of times.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
+<span class="int">&gt;&gt;&gt;</span> t.trigger(y, 6, True)   # trigger x every 6 cycles
+</code></pre>
+<p>Also:</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(y, 0, True)   # nope
+
+<span class="int">&gt;&gt;&gt;</span> t.trigger(y)            # you probably wanted to do this
+<span class="int">&gt;&gt;&gt;</span> t.trigger(y, 1, True)
+</code></pre>
+<p>To cancel all triggers on a thread, pass <code>False</code>.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(False)
+</code></pre>
+<p>To cancel any triggers on a thread that are repeating infinitely, pass <code>repeat=False</code> without other arguments.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(repeat=False)
+</code></pre>
+<h4>Universal Triggers</h4>
+<p>For universal triggers, no argument can be supplied. But universal triggers are particularly useful for sets of changes, as defined in larger functions, or universal functions. </p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
