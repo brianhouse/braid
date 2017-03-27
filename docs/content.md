@@ -477,7 +477,7 @@ If you _don't_ want this functionality, pass `sync=False` to the thread construc
 
 ### <a name="triggers"></a>Triggers
 
-You can sequence in Braid using triggers. A trigger consists of a function and the number of cycles to wait before executing it. Triggers can be added to individual threads (`Thread.trigger()`), which then reference the thread's cycle, or they can use the universal `trigger()` function, which reference the universal (silent) cycles (as we've seen with `Thread.rate` and `Thread.phase`, these can be different).
+You can sequence in Braid using triggers. A trigger consists of a function and the number of *complete* cycles to wait before executing it. Triggers can be added to individual threads (`Thread.trigger()`), which then reference the thread's cycle, or they can use the universal `trigger()` function, which reference the universal (silent) cycles (as we've seen with `Thread.rate` and `Thread.phase`, these can be different).
 
     >>> t = Thread(1)
     >>> t.chord = D, SUSb9

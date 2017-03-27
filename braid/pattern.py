@@ -58,26 +58,21 @@ class Pattern(list):
 
     def replace(self, value, target):
         list.__init__(self, [target if step == value else value for step in self])
-        return self
 
     def rotate(self, steps=1):
         list.__init__(self, self[steps:] + self[:steps])
-        return self
 
     def blend(self, pattern_2, balance=0.5):
         l = blend(self, pattern_2, balance)
         list.__init__(self, l)
-        return self
 
     def add(self, pattern_2):
         l = add(self, pattern_2)
         list.__init__(self, l)
-        return self
 
     def xor(self, pattern_2):
         l = xor(self, pattern_2)
         list.__init__(self, l)
-        return self
 
 
 def prep(pattern_1, pattern_2):
