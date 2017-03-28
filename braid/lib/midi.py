@@ -15,11 +15,7 @@ class MidiOut(threading.Thread):
         self.throttle = throttle
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiOut()            
-        available_interfaces = self.midi.get_ports()
-        if len(available_interfaces):
-            print("MIDI outputs available: %s" % available_interfaces)
-        else:
-            print("No MIDI outputs available")
+        available_interfaces = self.scan()
         if available_interfaces:
             if self._interface >= len(available_interfaces):
                 print("Interfaced index %s not available" % self._interface)
@@ -30,6 +26,14 @@ class MidiOut(threading.Thread):
             print("MIDI OUT opening virtual interface (\"Python\")...")
             self.midi.open_virtual_port("Python")           
         self.start()   
+
+    def scan(self):
+        available_interfaces = self.midi.get_ports()
+        if len(available_interfaces):
+            print("MIDI outputs available: %s" % available_interfaces)
+        else:
+            print("No MIDI outputs available")
+        return available_interfaces
 
     def send_control(self, channel, control, value):
         self.queue.put((channel, (control, value), None))

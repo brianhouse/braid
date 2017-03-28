@@ -528,7 +528,8 @@ play()
 <h3><a name="functions"></a>Global functions</h3>
 <ul>
 <li><code>log_midi(True|False)</code>        Choose whether to see MIDI output (default: False)</li>
-<li><code>midi_out_interface(int)</code>     Change MIDI interface for output (zero-indexed)</li>
+<li><code>midi_out.interface = int</code>    Change MIDI interface for output (zero-indexed)</li>
+<li><code>midi_out.scan()</code>             Scan MIDI interfaces</li>
 <li><code>Thread(int channel)</code>         Create a Thread on the specified MIDI channel</li>
 <li><code>Scale([ints])</code>               Create a Scale with a list of ints corresponding to half-steps from root (0)</li>
 <li><code>play()</code></li>
