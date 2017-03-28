@@ -429,7 +429,7 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
 </code></pre>
 <h3><a name="triggers"></a>Triggers</h3>
-<p>You can sequence in Braid using triggers. A trigger consists of a function and the number of <em>complete</em> cycles to wait before executing it. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
+<p>You can sequence in Braid using triggers. A trigger consists of a function, the number of <em>complete</em> cycles to wait before executing it, and whether or not (and how many times) to repeat. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
 <p>Triggers execute at the edge between cycles. </p>
 <h4>Thread Triggers</h4>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
@@ -476,7 +476,7 @@ play()
 <pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(repeat=False)
 </code></pre>
 <h4>Universal Triggers</h4>
-<p>For universal triggers, no argument can be supplied. But universal triggers are particularly useful for sets of changes, as defined in larger functions, or universal functions. </p>
+<p>For universal triggers, no thread argument can be supplied to the trigger function. And universal triggers operate via the underlying cycle at the global tempo. Otherwise, they are the same as thread triggers, and are particularly useful for sets of changes, as defined in larger functions, or universal functions. </p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1

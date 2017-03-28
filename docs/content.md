@@ -477,7 +477,7 @@ If you _don't_ want this functionality, pass `sync=False` to the thread construc
 
 ### <a name="triggers"></a>Triggers
 
-You can sequence in Braid using triggers. A trigger consists of a function and the number of *complete* cycles to wait before executing it. Triggers can be added to individual threads (`Thread.trigger()`), which then reference the thread's cycle, or they can use the universal `trigger()` function, which reference the universal (silent) cycles (as we've seen with `Thread.rate` and `Thread.phase`, these can be different).
+You can sequence in Braid using triggers. A trigger consists of a function, the number of *complete* cycles to wait before executing it, and whether or not (and how many times) to repeat. Triggers can be added to individual threads (`Thread.trigger()`), which then reference the thread's cycle, or they can use the universal `trigger()` function, which reference the universal (silent) cycles (as we've seen with `Thread.rate` and `Thread.phase`, these can be different).
 
 Triggers execute at the edge between cycles. 
 
@@ -533,7 +533,7 @@ To cancel any triggers on a thread that are repeating infinitely, pass `repeat=F
 
 #### Universal Triggers
 
-For universal triggers, no argument can be supplied. But universal triggers are particularly useful for sets of changes, as defined in larger functions, or universal functions. 
+For universal triggers, no thread argument can be supplied to the trigger function. And universal triggers operate via the underlying cycle at the global tempo. Otherwise, they are the same as thread triggers, and are particularly useful for sets of changes, as defined in larger functions, or universal functions. 
 
     >>> t1 = Thread(1)
     >>> t1.chord = D, SUSb9

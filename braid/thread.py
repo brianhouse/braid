@@ -130,6 +130,7 @@ class Thread(object):
 
     def update_triggers(self):
         """Check trigger functions a fire as necessary"""
+        updated = False
         for t, trigger in enumerate(self._triggers):
             trigger[3] += 1                             # increment edge
             if (trigger[1] + 1) - trigger[3] == 0:      # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
@@ -144,10 +145,12 @@ class Thread(object):
                     self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
                 else:
                     trigger[2] -= 1
-                    if trigger[2]:
+                    if trigger[2] > 0:
                         self.trigger(trigger[0], trigger[1], trigger[2] - 1)    # same, but decrement repeats
                 self._triggers[t] = None                                        # clear this trigger
-        self._triggers = [trigger for trigger in self._triggers if trigger is not None]
+                updated = True
+        if updated:
+            self._triggers = [trigger for trigger in self._triggers if trigger is not None]
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
@@ -266,10 +269,14 @@ class Thread(object):
         elif f is False:
             self._triggers = []
         else:
-            assert(callable(f))
-            if cycles == 0:
-                assert repeat == 0
-            self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
+            try:
+                assert(callable(f))
+                if cycles == 0:
+                    assert repeat == 0
+            except AssertionError as e:
+                print("Bad arguments for trigger")
+            else:
+                self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
 
 
 def midi_clamp(value):

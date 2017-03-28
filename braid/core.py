@@ -17,7 +17,7 @@ class Driver(threading.Thread):
         self.previous_cycles = 0
         self.running = False
         self._cycles = 0.0
-        self.triggers = []
+        self._triggers = []
 
     def start(self):
         super(Driver, self).start()
@@ -56,18 +56,44 @@ class Driver(threading.Thread):
             elif not LIVECODING:
                 break
             self.previous_t = self.t     
-            time.sleep(self.grain)                    
+            time.sleep(self.grain)                
 
-    def trigger(self, f, cycles):
-        self.triggers.append([f, cycles])
+    def trigger(self, f=None, cycles=0, repeat=0):
+        if f is None and repeat is False:
+            self._triggers = [trigger for trigger in self._triggers if trigger[2] is not True]  # filter repeat=True
+        elif f is False:
+            self._triggers = []
+        else:
+            try:
+                assert(callable(f))
+                if cycles == 0:
+                    assert repeat == 0
+            except AssertionError as e:
+                print("Bad arguments for trigger")
+            else:
+                self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far                
 
     def update_triggers(self):
         """Check trigger functions a fire as necessary"""
-        for trigger in self.triggers:
-            trigger[1] -= 1
-            if trigger[1] == 0:
-                trigger[0]()
-        self.triggers = [trigger for trigger in self.triggers if trigger[1] > 0]
+        updated = False
+        for t, trigger in enumerate(self._triggers):
+            trigger[3] += 1                             # increment edge
+            if (trigger[1] + 1) - trigger[3] == 0:      # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
+                try:
+                    trigger[0]()
+                except Exception as e:
+                    print(e)
+                if trigger[2] is True:
+                    self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
+                else:
+                    trigger[2] -= 1
+                    if trigger[2] > 0:
+                        print("triggering new trigger with %s" % trigger[2])
+                        self.trigger(trigger[0], trigger[1], trigger[2] - 1)    # same, but decrement repeats
+                self._triggers[t] = None                                         # clear this trigger
+                updated = True
+        if updated:
+            self._triggers = [trigger for trigger in self._triggers if trigger is not None]
 
     def stop(self):
         self.running = False
