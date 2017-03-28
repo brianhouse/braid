@@ -1,6 +1,6 @@
 import collections, yaml, os
 from .core import driver
-from .lib import num_args, midi_out
+from . import num_args, midi_out
 from .signal import linear
 from .notation import *
 from .tween import *

@@ -10,6 +10,7 @@ It is developed by [Brian House](http://brianhouse.net).
 ## Contents
 
 1. [Goals](#goals)
+1. [Installation](#installation)
 1. [Tutorial](#tutorial)
     1. [Prerequisites](#prereqs)
     1. [Hello World](#hello)
@@ -56,6 +57,21 @@ Braid is has very low processor overhead, suitable for running on devices like t
 
 This framework is called Braid, and the fundamental objects are called _threads_&mdash;a thread corresponds to a hardware or software monosynth, and refers to the temporal operations of Braid through which threads can come in and out of sync. This is not a thread in the programming sense (in that respect Braid is single-threaded).
 
+
+## <a name="installation"></a>Installation
+
+
+text editor
+
+homebrew
+
+install into system or into what?
+
+shortcut
+
+test function
+
+run app
 
 
 ## <a name="tutorial"></a>Tutorial
