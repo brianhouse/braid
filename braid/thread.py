@@ -312,7 +312,7 @@ try:
 except FileNotFoundError as e:
     pass
 try:
-    with open("/usr/local/braidsynths.yaml") as f:
+    with open("/usr/local/braid/synths.yaml") as f:
         synths.update(yaml.load(f))
 except FileNotFoundError as e:
     pass
