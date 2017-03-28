@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: braid
+Version: 0.10.1
+Summary: A musical notation system, livecoding framework, and sequencer for monophonic MIDI synths.
+Home-page: https://braid.live
+Author: Brian House
+Author-email: brian_house@brown.edu
+License: GPL3
+Description: UNKNOWN
+Platform: UNKNOWN

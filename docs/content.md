@@ -73,6 +73,8 @@ test function
 
 run app
 
+pip install git+git://github.com/Arya-ai/braid
+
 
 ## <a name="tutorial"></a>Tutorial
 
