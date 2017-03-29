@@ -7,10 +7,11 @@ from .core import driver
 
 class Tween(object):
 
-    def __init__(self, target_value, cycles, signal_f=linear):
+    def __init__(self, target_value, cycles, signal_f=linear, on_end=None):
         self.target_value = target_value
         self.cycles = cycles
         self.signal_f = signal_f
+        self.end_f = on_end
         self.finished = False
 
     def start(self, thread, start_value):
@@ -38,6 +39,11 @@ class Tween(object):
         if position >= 1.0:
             position = 1.0
             self.finished = True
+            if self.end_f is not None:
+                try:
+                    self.end_f()
+                except Exception as e:
+                    print(e) 
         return position        
 
     
@@ -87,12 +93,12 @@ class RateTween(ScalarTween):
         return phase_correction
 
 
-def tween(value, cycles, signal_f=linear):
+def tween(value, cycles, signal_f=linear, on_end=None):
     if type(value) == int or type(value) == float:
-        return ScalarTween(value, cycles, signal_f)
+        return ScalarTween(value, cycles, signal_f, on_end)
     if type(value) == tuple:
-        return ChordTween(value, cycles, signal_f)
+        return ChordTween(value, cycles, signal_f, one_end)
     if type(value) == list: # careful, lists are always patterns
         value = Pattern(value)
     if type(value) == Pattern:
-        return PatternTween(value, cycles, signal_f)
+        return PatternTween(value, cycles, signal_f, on_end)
