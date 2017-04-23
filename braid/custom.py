@@ -22,7 +22,7 @@ else:
 
     def note(self, pitch, velocity):
         if pitch == 36:
-            velocity /= 2.0
+            velocity /= 3.0
         try:
             midi_out.send_control(self._channel, DRM.index(pitch - 36) + 40, midi_clamp(velocity * 127))
         except ValueError:

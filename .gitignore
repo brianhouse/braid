@@ -5,3 +5,6 @@ shimring
 build
 dist
 examples/*
+dev
+refs
+NOTES.md

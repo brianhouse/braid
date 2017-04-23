@@ -68,7 +68,7 @@ VolcaBeats:
     stutter_time: 0
     stutter_depth: 0
     tom_decay: 127
-    closed_hat_decay: 64
+    closed_hat_decay: 50
     open_hat_decay: 64
     hat_grain: 127
 

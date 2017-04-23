@@ -64,7 +64,7 @@ Open that terminal.
 
 You'll need to have python3 installed (which should also come with pip3). On OS X, the best way to do this is to use [Homebrew](https://brew.sh/). After installing Homebrew, `brew install python3` is all you need. On Linux, `sudo apt-get python3`.
 
-To install (or update) Braid: `pip3 install git+git://github.com/brianhouse/braid`
+To install (or update) Braid: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
 
 At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run->Run Module") Braid scripts, or use it to livecode (Run->Python Shell).
 
