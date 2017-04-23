@@ -44,12 +44,15 @@ class Thread(object):
 
     def __setattr__(self, key, value):
         if not key == "_attr_frozen" and self._attr_frozen and not hasattr(self, key):
-            print("No property %s" % key)
+            print("[No property %s]" % key)
             return
-        object.__setattr__(self, key, value)
+        try:
+            object.__setattr__(self, key, value)
+        except Exception as e:
+            print("[Error: \"%s\"]" % e)
 
     def __getattr__(self, key):
-        print("No property %s" % key) 
+        print("[No property %s]" % key) 
         return None
 
     def add(self, param, default=0):
@@ -80,7 +83,7 @@ class Thread(object):
         self.pattern = [0]
         self.rate = 1.0        
 
-        print("Created thread on channel %d" % self._channel)
+        print("[Created thread on channel %d]" % self._channel)
         self._attr_frozen = True
 
 
@@ -126,7 +129,7 @@ class Thread(object):
             if control not in self._control_values or value != self._control_values[control]:
                 midi_out.send_control(self._channel, midi_clamp(self.controls[control]), value)
                 self._control_values[control] = value
-                print("%d: %s %s" % (self._channel, control, value))
+                print("[CTRL %d: %s %s]" % (self._channel, control, value))
 
     def update_triggers(self):
         """Check trigger functions a fire as necessary"""
@@ -140,7 +143,7 @@ class Thread(object):
                     else:
                         trigger[0]()
                 except Exception as e:
-                    print(e)
+                    print("\n[Trigger error: %s]" % e)
                 if trigger[2] is True:
                     self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
                 else:
@@ -170,7 +173,7 @@ class Thread(object):
                 try:
                     pitch = root + scale[step]
                 except ScaleError as e:
-                    print(e)
+                    print("\n[Error: %s]" % e)
                     return
             velocity = 1.0 - (random() * 0.05) if velocity is None else velocity
             velocity *= self.velocity
@@ -257,11 +260,12 @@ class Thread(object):
             self._cycles = 0.0
             self._last_edge = 0
             self._index = -1
-        print("Thread started on channel %s" % self._channel)
+        print("[Thread started on channel %s]" % self._channel)
 
     def stop(self):
         self._running = False
         self.end()
+        print("[Thread stopped on channel %s]" % self._channel)
 
     def trigger(self, f=None, cycles=0, repeat=0):
         if f is None and repeat is False:
@@ -274,7 +278,7 @@ class Thread(object):
                 if cycles == 0:
                     assert repeat == 0
             except AssertionError as e:
-                print("Bad arguments for trigger")
+                print("\n[Bad arguments for trigger]")
             else:
                 self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
 
@@ -323,6 +327,6 @@ if len(synths):
         try:
             exec("%s = make(controls, defaults)" % synth)
         except Exception as e:
-            print("WARNING: failed to load %s" % synth, e)
+            print("Warning: failed to load %s" % synth, e)
         else:
             print("Loaded %s" % synth)
