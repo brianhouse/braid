@@ -43,7 +43,7 @@ class Tween(object):
                 try:
                     self.end_f()
                 except Exception as e:
-                    print(e) 
+                    print("[Error tween.on_end: %s]" % e)
         return position        
 
     

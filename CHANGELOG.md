@@ -1,6 +1,9 @@
 CHANGELOG
 =========
 
+## v0.10.2
+- improved error handling
+
 ## v0.10.1
 - refactored to eliminate lib folder
 - added on_end to Tween
