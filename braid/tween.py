@@ -7,16 +7,18 @@ from .core import driver
 
 class Tween(object):
 
-    def __init__(self, target_value, cycles, signal_f=linear, on_end=None):
+    def __init__(self, target_value, cycles, signal_f=linear, on_end=None, osc=False, start_value=None):
         self.target_value = target_value
         self.cycles = cycles
         self.signal_f = signal_f
         self.end_f = on_end
+        self.osc = osc
+        self.start_value = start_value
         self.finished = False
 
     def start(self, thread, start_value):
         self.thread = thread
-        self.start_value = start_value
+        self.start_value = start_value if self.start_value is None else self.start_value    # needed for osc
         self.start_cycle = float(math.ceil(self.thread._cycles)) # tweens always start on next cycle
 
     @property
@@ -37,13 +39,19 @@ class Tween(object):
         if position <= 0.0:
             position = 0.0
         if position >= 1.0:
-            position = 1.0
-            self.finished = True
+            position = 1.0            
             if self.end_f is not None:
                 try:
                     self.end_f()
                 except Exception as e:
                     print("[Error tween.on_end: %s]" % e)
+            if self.osc:
+                sv = self.target_value
+                self.target_value = self.start_value
+                self.start_value = sv
+                self.start_cycle = self.thread._cycles - ((self.thread._cycles - self.start_cycle) - self.cycles)
+            else:
+                self.finished = True
         return position        
 
     
@@ -93,12 +101,15 @@ class RateTween(ScalarTween):
         return phase_correction
 
 
-def tween(value, cycles, signal_f=linear, on_end=None):
+def tween(value, cycles, signal_f=linear, on_end=None, osc=False, start=None):
     if type(value) == int or type(value) == float:
-        return ScalarTween(value, cycles, signal_f, on_end)
+        return ScalarTween(value, cycles, signal_f, on_end, osc, start)
     if type(value) == tuple:
-        return ChordTween(value, cycles, signal_f, one_end)
+        return ChordTween(value, cycles, signal_f, one_end, osc, start)
     if type(value) == list: # careful, lists are always patterns
         value = Pattern(value)
     if type(value) == Pattern:
-        return PatternTween(value, cycles, signal_f, on_end)
+        return PatternTween(value, cycles, signal_f, on_end, osc, start)
+
+def osc(start, value, cycles, signal_f=linear, on_end=None, osc=True):
+    return tween(value, cycles, signal_f, on_end, osc, start)

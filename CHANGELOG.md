@@ -1,8 +1,9 @@
 CHANGELOG
 =========
 
-## v0.10.2
+## v0.11.0
 - improved error handling
+- added osc feature
 
 ## v0.10.1
 - refactored to eliminate lib folder
