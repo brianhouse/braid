@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, time, threading, queue, __main__, atexit
+from .midi import midi_in
 
 LIVECODING = not hasattr(__main__, "__file__")
 
@@ -37,7 +38,7 @@ class Driver(threading.Thread):
                 try:
                     if not self.running:
                         break
-                    # midi_in.perform_callbacks()
+                    midi_in.perform_callbacks()
                     delta_t = self.t - self.previous_t
                     self._cycles += delta_t * self.rate
                     if int(self._cycles) != self.previous_cycles:

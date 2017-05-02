@@ -75,31 +75,57 @@ class MidiOut(threading.Thread):
 
 class MidiIn(threading.Thread):
 
-    def __init__(self, port=0):
+    def __init__(self, interface=0):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.port = port  
+        self._interface = interface          
         self.queue = queue.Queue()
         self.midi = rtmidi.MidiIn()
         self.callbacks = {}
-        available_ports = self.midi.get_ports()
-        if len(available_ports):
-            if self.port >= len(available_ports):
-                print("Port index %s not available" % self.port)
-                exit()
-            print("MIDI  IN: %s" % available_ports[self.port])
-            self.midi.open_port(self.port)
+        self.threads = []
+        available_interfaces = self.scan()
+        if available_interfaces:
+            if self._interface >= len(available_interfaces):
+                print("Interfaced index %s not available" % self._interface)
+                return
+            print("MIDI IN: %s" % available_interfaces[self._interface])
+            self.midi.open_port(self._interface)
         else:
-            print("No MIDI inputs available")
-            return
+            print("MIDI IN opening virtual interface (\"Python\")...")
+            self.midi.open_virtual_port("Python")           
         self.start()           
         
+    def scan(self):
+        available_interfaces = self.midi.get_ports()
+        if len(available_interfaces):
+            print("MIDI inputs available: %s" % available_interfaces)
+        else:
+            print("No MIDI inputs available")
+        return available_interfaces        
+
+    @property
+    def interface(self):
+        return self._interface
+
+    @interface.setter
+    def interface(self, interface):
+        self.__init__(interface=interface)
+
     def run(self):
-        def receive_control(event, data=None):
+        def receive_message(event, data=None):
             message, deltatime = event
-            nop, control, value = message
-            self.queue.put((control, value / 127.0))
-        self.midi.set_callback(receive_control)
+            if message[0] < 144:
+                nop, control, value = message
+                self.queue.put((control, value / 127.0))
+            else:
+                if len(message) < 3:
+                    return        ## ?
+                channel, pitch, velocity = message
+                channel -= 144
+                if channel < len(self.threads):
+                    thread = self.threads[channel]
+                    thread.note(pitch, velocity)
+        self.midi.set_callback(receive_message)
         while True:
             time.sleep(0.1)
 

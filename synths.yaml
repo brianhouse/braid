@@ -1,3 +1,47 @@
+Triode:
+  controls:
+    lfo_depth: 48
+    lfo_rate: 49
+    detune: 50
+    glide: 51
+    attack: 60
+    decay: 55
+    filter_res: 52
+    filter_cutoff: 53
+    filter_attack: 59
+    filter_decay: 54    
+    filter_accent: 56
+    filter_mod: 57
+    pulse_width: 58
+    sustain: 64
+    sub: 65
+    pwm_sweep: 66
+    lfo_dest: 67    
+    osc: 68
+    lfo_randomize: 69
+    lfo_retrigger: 70
+  defaults:
+    lfo_depth: 0
+    lfo_rate: 0
+    detune: 64
+    glide: 0
+    attack: 0
+    decay: 0
+    filter_res: 64
+    filter_cutoff: 127
+    filter_attack: 0
+    filter_decay: 0    
+    filter_accent: 127
+    filter_mod: 127
+    pulse_width: 64
+    sustain: 127
+    sub: 127
+    pwm_sweep: 127
+    lfo_dest: 127    
+    osc: 127
+    lfo_randomize: 0
+    lfo_retrigger: 127
+
 Anode:
   controls:
     attack: 54
@@ -31,7 +75,6 @@ Anode:
     lfo_destination: 0
     lfo_random: 0
     osc_wave: 127
-
 
 VolcaKick:
   controls:

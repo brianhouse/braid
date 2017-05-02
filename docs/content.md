@@ -608,6 +608,7 @@ In some cases, you may want to use a reference property that does not directly a
 ### <a name="functions"></a>Global functions
 - `log_midi(True|False)`        Choose whether to see MIDI output (default: False)
 - `midi_out.interface = int`    Change MIDI interface for output (zero-indexed)
+- `midi_in.interface = int`     Change MIDI interface for input (zero-indexed)
 - `midi_out.scan()`             Scan MIDI interfaces
 - `Thread(int channel)`         Create a Thread on the specified MIDI channel
 - `Scale([ints])`               Create a Scale with a list of ints corresponding to half-steps from root (0)
