@@ -16,8 +16,8 @@ Triode:
     sustain: 64
     sub: 65
     pwm_sweep: 66
-    lfo_dest: 67    
     osc: 68
+    lfo_dest: 67    
     lfo_randomize: 69
     lfo_retrigger: 70
   defaults:
@@ -37,8 +37,8 @@ Triode:
     sustain: 127
     sub: 127
     pwm_sweep: 127
-    lfo_dest: 127    
     osc: 127
+    lfo_dest: 127    
     lfo_randomize: 0
     lfo_retrigger: 127
 
@@ -62,16 +62,16 @@ Anode:
   defaults:
     attack: 0
     decay: 64
-    filter_cutoff: 0
+    filter_cutoff: 64
     pulse_width: 64
     osc_detune: 64
     lfo_rate: 0
     lfo_depth: 0
     glide: 0
     vcf_envelope: 0
-    sustain: 0
+    sustain: 127
     octave: 0
-    sweep: 0
+    sweep: 127
     lfo_destination: 0
     lfo_random: 0
     osc_wave: 127

@@ -1,5 +1,5 @@
 try:
-    from . import Triode, VolcaKick, VolcaBeats, midi_out, midi_clamp
+    from . import Anode, Triode, VolcaKick, VolcaBeats, midi_out, midi_clamp
 except ImportError as e:
     print("Custom Threads failed: %s" % e)
 else:
@@ -33,4 +33,10 @@ else:
 
     def note(self, pitch, velocity):
         midi_out.send_note(self._channel, pitch, midi_clamp(velocity * 127))
-    Triode.note = note
+    Anode.note = note
+    Triode.note = note    
+
+    def rest(self):
+        print("REST")
+        midi_out.send_note(self._channel, self._previous_pitch, 0)       
+    Anode.rest = rest

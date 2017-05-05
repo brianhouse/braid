@@ -113,6 +113,13 @@ def tempo(value=False):
     else:
         return driver.rate * 4.0 * 60.0
 
+def rate(value=False):
+    """Cycles in hz"""
+    if value:
+        driver.rate = value
+    else:
+        return driver.rate
+
 def play():
     driver.running = True
     if not driver.is_alive():
