@@ -6,6 +6,7 @@ CHANGELOG
 - added osc feature
 - added 'keyboard' setting
 - added MidiIn->Thread capability
+- added breakpoint signals
 
 ## v0.10.1
 - refactored to eliminate lib folder
