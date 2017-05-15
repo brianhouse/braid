@@ -61,7 +61,7 @@ Anode:
     osc_wave: 70
   defaults:
     attack: 0
-    decay: 64
+    decay: 0
     filter_cutoff: 64
     pulse_width: 64
     osc_detune: 64

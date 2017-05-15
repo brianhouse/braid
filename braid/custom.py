@@ -29,14 +29,3 @@ else:
             print("(warning: note doesn't exist)")
         midi_out.send_note(self._channel, pitch, 127)
     VolcaBeats.note = note
-
-
-    def note(self, pitch, velocity):
-        midi_out.send_note(self._channel, pitch, midi_clamp(velocity * 127))
-    Anode.note = note
-    Triode.note = note    
-
-    def rest(self):
-        print("REST")
-        midi_out.send_note(self._channel, self._previous_pitch, 0)       
-    Anode.rest = rest

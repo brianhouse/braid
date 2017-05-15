@@ -81,7 +81,8 @@ class Thread(object):
 
         # specialized properties       
         self.pattern = [0]
-        self.rate = 1.0        
+        self.rate = 1.0   
+        self.keyboard = False     
 
         print("[Created thread on channel %d]" % self._channel)
         self._attr_frozen = True
@@ -179,14 +180,18 @@ class Thread(object):
             velocity *= self.velocity
             velocity *= v
             self.note(pitch, velocity)
-            self._previous_pitch = pitch
         if step != 0:        
             self._previous_step = step            
 
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""
-        midi_out.send_note(self._channel, self._previous_pitch, 0)
-        midi_out.send_note(self._channel, pitch, midi_clamp(velocity * 127))
+        if self.keyboard is True and velocity == 0:
+            midi_out.send_note(self._channel, pitch, 0)
+        else:
+            if self.keyboard is not True:
+                midi_out.send_note(self._channel, self._previous_pitch, 0)
+            midi_out.send_note(self._channel, pitch, midi_clamp(velocity * 127))
+            self._previous_pitch = pitch
 
     def hold(self):
         """Override to add behavior to held notes, otherwise nothing"""
