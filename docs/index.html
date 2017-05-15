@@ -382,6 +382,9 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween(euc(8, 6, 50), 8)
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween(euc(8, 5, 43), 8)
 </code></pre>
+<p>When a tween completes, it can trigger a function, using the <code>on_end</code> parameter. The following example tweens the phase of Thread <code>t</code> over 8 cycles, and then stops the thread (Note the lack of parentheses around <code>t.stop</code>&mdash;we want the thread to execute the function at the end of the tween, not during this declaration!).</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> t.phase = tween(0.5, 8, on_end=t.stop)
+</code></pre>
 <h3><a name="signals"></a>Signals</h3>
 <p>Tweens can take an additional property, called a signal. This is any function that takes a float value from 0 to 1 and return another value from 0 to 1&mdash;a nonlinear transition function when you don't want to go from A to B in a straight line. (Yes, Flash again).</p>
 <p>Built-in signals: <code>linear</code> (default), <code>ease_in</code>, <code>ease_out</code>, <code>ease_in_out</code>, <code>ease_out_in</code></p>
@@ -401,9 +404,9 @@ play()                      # dont forget this
 <p>To view a graphic representation of the function, plot it.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> plot(ease_out)
 </code></pre>
-<p>You can also convert <em>any</em> timeseries data into a signal function using <code>make_signal()</code>. You might use this to tween velocity over an entire composition, for example, or for data sonification.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary breakpoints
-<span class="int">&gt;&gt;&gt;</span> f = make_signal(data)
+<p>You can also convert <em>any</em> timeseries data into a signal function using <code>timeseries()</code>. You might use this to tween velocity over an entire composition, for example, or for data sonification.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
+<span class="int">&gt;&gt;&gt;</span> f = timeseries(data)
 <span class="int">&gt;&gt;&gt;</span> plot(f)
 <span class="int">&gt;&gt;&gt;</span> 
 <span class="int">&gt;&gt;&gt;</span> t = Thread(1)
@@ -413,6 +416,22 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
 <span class="int">&gt;&gt;&gt;</span> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
+</code></pre>
+<p>Likewise, you can specify a function with breakpoints using <code>breakpoints()</code>. Each breakpoint is specified with an x,y coordinate system&mdash;it doesn't matter what the range and domain are, as it will be normalized. Additionally, a signal shape can be specified for each breakpoint transition, which allows complex curves and transitions.</p>
+<pre><code><span class="int">&gt;&gt;&gt;</span> f = breakpoints( 
+                [0, 0],
+                [2, 0],
+                [8, 1, ease_in_out],
+                [13, 0, ease_in_out],
+                [20, 3, ease_in_out],
+                [24, 0, ease_out],
+                [27, 1, ease_in_out],
+                [28.5, 0, ease_out],
+                [37.5, 4, ease_in_out],
+                [48, 0, ease_out]
+                )
+<span class="int">&gt;&gt;&gt;</span> f = breakpoints(data)
+<span class="int">&gt;&gt;&gt;</span> plot(f)
 </code></pre>
 <h3><a name="sync"></a>Sync, and tweening rate</h3>
 <p>Braid does something special when you assign a tween to <code>Thread.rate</code>. Ordinarily, if two threads started in sync and one thread tweened its rate, they would inevitably end up out of sync. However, Braid automatically adjusts its tweening function such that threads will remain aligned as best as possible.</p>
@@ -533,6 +552,7 @@ play()                      # dont forget this
 <ul>
 <li><code>log_midi(True|False)</code>        Choose whether to see MIDI output (default: False)</li>
 <li><code>midi_out.interface = int</code>    Change MIDI interface for output (zero-indexed)</li>
+<li><code>midi_in.interface = int</code>     Change MIDI interface for input (zero-indexed)</li>
 <li><code>midi_out.scan()</code>             Scan MIDI interfaces</li>
 <li><code>Thread(int channel)</code>         Create a Thread on the specified MIDI channel</li>
 <li><code>Scale([ints])</code>               Create a Scale with a list of ints corresponding to half-steps from root (0)</li>
@@ -548,6 +568,8 @@ play()                      # dont forget this
 <li><code>random()</code></li>
 <li><code>choice()</code></li>
 <li><code>make()</code></li>
+<li><code>timeseries()</code></li>
+<li><code>breakpoints()</code></li>
 </ul>
 <h3><a name="symbols"></a>Symbols</h3>
 <ul>

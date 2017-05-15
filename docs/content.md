@@ -420,6 +420,11 @@ All properties on a thread can be tweened. Device specific MIDI parameters move 
     >>> t.pattern = tween(euc(8, 6, 50), 8)
     >>> t.pattern = tween(euc(8, 5, 43), 8)
 
+When a tween completes, it can trigger a function, using the `on_end` parameter. The following example tweens the phase of Thread `t` over 8 cycles, and then stops the thread (Note the lack of parentheses around `t.stop`&mdash;we want the thread to execute the function at the end of the tween, not during this declaration!).
+
+    >>> t.phase = tween(0.5, 8, on_end=t.stop)
+
+
 
 ### <a name="signals"></a>Signals
 
@@ -445,10 +450,10 @@ To view a graphic representation of the function, plot it.
 
     >>> plot(ease_out)
 
-You can also convert _any_ timeseries data into a signal function using `make_signal()`. You might use this to tween velocity over an entire composition, for example, or for data sonification.
+You can also convert _any_ timeseries data into a signal function using `timeseries()`. You might use this to tween velocity over an entire composition, for example, or for data sonification.
 
-    >>> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary breakpoints
-    >>> f = make_signal(data)
+    >>> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
+    >>> f = timeseries(data)
     >>> plot(f)
     >>> 
     >>> t = Thread(1)
@@ -458,6 +463,23 @@ You can also convert _any_ timeseries data into a signal function using `make_si
     >>>
     >>> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
     >>> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
+
+Likewise, you can specify a function with breakpoints using `breakpoints()`. Each breakpoint is specified with an x,y coordinate system&mdash;it doesn't matter what the range and domain are, as it will be normalized. Additionally, a signal shape can be specified for each breakpoint transition, which allows complex curves and transitions.
+
+    >>> f = breakpoints( 
+                    [0, 0],
+                    [2, 0],
+                    [8, 1, ease_in_out],
+                    [13, 0, ease_in_out],
+                    [20, 3, ease_in_out],
+                    [24, 0, ease_out],
+                    [27, 1, ease_in_out],
+                    [28.5, 0, ease_out],
+                    [37.5, 4, ease_in_out],
+                    [48, 0, ease_out]
+                    )
+    >>> f = breakpoints(data)
+    >>> plot(f)
 
 
 ### <a name="sync"></a>Sync, and tweening rate
@@ -624,6 +646,8 @@ In some cases, you may want to use a reference property that does not directly a
 - `random()`
 - `choice()`
 - `make()`
+- `timeseries()`
+- `breakpoints()`
 
 ### <a name="symbols"></a>Symbols
 - `K`, `S`, `H`, `O`
