@@ -4,6 +4,8 @@ CHANGELOG
 ## v0.11.0
 - improved error handling
 - added osc feature
+- added 'keyboard' setting
+- added MidiIn->Thread capability
 
 ## v0.10.1
 - refactored to eliminate lib folder
