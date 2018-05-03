@@ -88,7 +88,7 @@ class Thread(object):
         self._attr_frozen = True
 
 
-    def update(self, delta_t):        
+    def update(self, delta_t):
         """Run each tick and update the state of the Thread"""
         if not self._running:
             return
@@ -162,6 +162,7 @@ class Thread(object):
         step = int(step) if type(step) == float else step
         if isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
+            self.update_controls()  # to handle note-level CC changes
         if step == Z:
             self.rest()
         elif step == 0 or step is None:
