@@ -84,7 +84,7 @@ class RateTween(ScalarTween):
         self.thread = driver    # rate tweens are based on the driver reference
         self.syncer = thread    # this is the actual reference to the current thread
         self.start_value = start_value
-        self.start_cycle = float(math.ceil(driver._cycles))  
+        self.start_cycle = driver._cycles # float(math.ceil(driver._cycles)) # it's a float, so if you ceil this, it's always the _next_ edge, even if it should be "0"
 
     def get_phase(self):
         driver_cycles_remaining = self.cycles - (driver._cycles - self.start_cycle)

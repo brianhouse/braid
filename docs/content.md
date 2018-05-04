@@ -498,7 +498,7 @@ Braid does something special when you assign a tween to `Thread.rate`. Ordinaril
     >>>    
     >>> t2.rate = tween(0.5, 4)
 
-As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name. Note that rate tweens kept in sync in this way will start at the beginning of the next cycle that they are called.
+As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name.
 
 If you _don't_ want this functionality, pass `sync=False` to the thread constructor, and the thread won't try to reconcile itself.
 

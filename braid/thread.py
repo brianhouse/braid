@@ -181,7 +181,6 @@ class Thread(object):
             velocity *= self.velocity
             velocity *= v
             self.note(pitch, velocity)
-            print(self.rate)
         if step != 0:        
             self._previous_step = step            
 
