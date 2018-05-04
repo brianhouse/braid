@@ -1,4 +1,4 @@
-import collections, yaml, os
+import collections, yaml, os, math
 from .core import driver
 from . import num_args, midi_out
 from .signal import linear
@@ -258,7 +258,10 @@ class Thread(object):
     def start(self, thread=None):
         self._running = True
         if thread is not None:
-            self._cycles = thread._cycles
+            self._cycles = math.floor(thread._cycles)
+            time_to_edge = (thread._cycles % 1.0) / thread.rate
+            self._cycles += time_to_edge * self.rate
+
             self._last_edge = 0
             self._index = -1
             self._start_lock = True
@@ -267,13 +270,11 @@ class Thread(object):
             self._last_edge = 0
             self._index = -1
         print("[Thread started on channel %s]" % self._channel)
-        return self
 
     def stop(self):
         self._running = False
         self.end()
         print("[Thread stopped on channel %s]" % self._channel)
-        return self
 
     def trigger(self, f=None, cycles=0, repeat=0):
         if f is None and repeat is False:
