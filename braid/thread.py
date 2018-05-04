@@ -267,11 +267,13 @@ class Thread(object):
             self._last_edge = 0
             self._index = -1
         print("[Thread started on channel %s]" % self._channel)
+        return self
 
     def stop(self):
         self._running = False
         self.end()
         print("[Thread stopped on channel %s]" % self._channel)
+        return self
 
     def trigger(self, f=None, cycles=0, repeat=0):
         if f is None and repeat is False:

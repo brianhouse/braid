@@ -50,6 +50,7 @@ class Tween(object):
                 self.target_value = self.start_value
                 self.start_value = sv
                 self.start_cycle = self.thread._cycles - ((self.thread._cycles - self.start_cycle) - self.cycles)
+                position = abs(1 - position)
             else:
                 self.finished = True
         return position        
