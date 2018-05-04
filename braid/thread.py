@@ -181,6 +181,7 @@ class Thread(object):
             velocity *= self.velocity
             velocity *= v
             self.note(pitch, velocity)
+            print(self.rate)
         if step != 0:        
             self._previous_step = step            
 
@@ -232,7 +233,7 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if isinstance(rate, Tween):
-            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f, rate.end_f) # downcast tween
+            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f, rate.end_f, rate.osc) # downcast tween
             if self._sync:
                 def rt():
                     rate.start(self, self.rate)
