@@ -81,7 +81,7 @@ class Driver(threading.Thread):
         updated = False
         for t, trigger in enumerate(self._triggers):
             trigger[3] += 1                             # increment edge
-            if (trigger[1] + 1) - trigger[3] == 0:      # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
+            if trigger[1] - trigger[3] == 0: 
                 try:
                     trigger[0]()
                 except Exception as e:
