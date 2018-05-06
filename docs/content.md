@@ -606,7 +606,7 @@ Note: A second dictionary can be passed to `make()` as an additional parameter w
 
 ### <a name="custom"></a>Customizing MIDI behavior
 
-Coming soon. See `custom.py` in the examples.
+See `custom.py` in the examples.
 
 
 ### <a name="properties"></a>Adding properties

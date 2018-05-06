@@ -158,11 +158,11 @@ class Thread(object):
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""        
-        v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
-        step = int(step) if type(step) == float else step
-        if isinstance(step, collections.Callable):
+        while isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
             self.update_controls()  # to handle note-level CC changes
+        v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
+        step = int(step) if type(step) == float else step
         if step == Z:
             self.rest()
         elif step == 0 or step is None:
