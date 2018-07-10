@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+## v0.12.0
+- fixed note-level control change so it fires a priori
+- fixed issues 7-10
+- changed notation octaves to MIDI standard instead of traditional
+- added saw feature
+
 ## v0.11.0
 - improved error handling
 - added osc feature
