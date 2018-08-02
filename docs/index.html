@@ -106,9 +106,9 @@ Braid is has very low processor overhead, suitable for running on devices like t
 <h4>A note on names</h4>
 <p>This framework is called Braid, and the fundamental objects are called <em>threads</em>&mdash;a thread corresponds to a hardware or software monosynth, and refers to the temporal operations of Braid through which threads can come in and out of sync. This is not a thread in the programming sense (in that respect Braid is single-threaded).</p>
 <h2><a name="installation"></a>Installation</h2>
-<p>Open that terminal.</p>
-<p>You'll need to have python3 installed (which should also come with pip3). On OS X, the best way to do this is to use <a href="https://brew.sh/">Homebrew</a>. After installing Homebrew, <code>brew install python3</code> is all you need. On Linux, <code>sudo apt-get python3</code>.</p>
-<p>To install (or update) Braid: <code>pip3 install git+git://github.com/brianhouse/braid --upgrade</code></p>
+<p>You'll need to have Python 3 installed. Currently, 3.6 is supported, but 3.7 is not. On OS X, you can download the appropriate version <a href="https://www.python.org/ftp/python/3.6.6/python-3.6.6-macosx10.9.pkg">here</a>.</p>
+<p>Now open that terminal.</p>
+<p>To install (or update) Braid, type: <code>pip3 install git+git://github.com/brianhouse/braid --upgrade</code></p>
 <p>At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run-&gt;Run Module") Braid scripts, or use it to livecode (Run-&gt;Python Shell).</p>
 <h2><a name="tutorial"></a>Tutorial</h2>
 <h3><a name="prereq"></a>Prerequisites</h3>
@@ -447,7 +447,7 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span>    
 <span class="int">&gt;&gt;&gt;</span> t2.rate = tween(0.5, 4)
 </code></pre>
-<p>As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name. Note that rate tweens kept in sync in this way will start at the beginning of the next cycle that they are called.</p>
+<p>As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name.</p>
 <p>If you <em>don't</em> want this functionality, pass <code>sync=False</code> to the thread constructor, and the thread won't try to reconcile itself.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
 </code></pre>
@@ -532,7 +532,7 @@ play()                      # dont forget this
 <p>Since you'll probably be using the same MIDI devices all the time, and it is tedious to specify this each time you run Braid (especially with large numbers of controls), Braid also automatically loads custom thread types from the <code>synths.yaml</code> file in the root directory.</p>
 <p>Note: A second dictionary can be passed to <code>make()</code> as an additional parameter with property names mapped to default MIDI values.</p>
 <h3><a name="custom"></a>Customizing MIDI behavior</h3>
-<p>Coming soon. See <code>custom.py</code> in the examples.</p>
+<p>See <code>custom.py</code> in the examples.</p>
 <h3><a name="properties"></a>Adding properties</h3>
 <p>In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.</p>
 <pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
