@@ -60,13 +60,13 @@ This framework is called Braid, and the fundamental objects are called _threads_
 
 ## <a name="installation"></a>Installation
 
-You'll need to have Python 3 installed. Currently, 3.6 is supported, but 3.7 is not. On OS X, you can download the appropriate version [here](https://www.python.org/ftp/python/3.6.6/python-3.6.6-macosx10.9.pkg).
+You'll need to have Python 3 installed—if you're using macOS, I recommend doing so with Homebrew. Tested with python 3.7.
 
 Now open that terminal.
 
-To install (or update) Braid, type: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
+To install (or update) Braid: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
 
-At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run->Run Module") Braid scripts, or use it to livecode (Run->Python Shell).
+At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run->Run Module") Braid scripts, or use it to "livecode" (Run->Python Shell).
 
 ## <a name="tutorial"></a>Tutorial
 
@@ -79,7 +79,7 @@ Additionally, this documentation assumes a general knowledge of MIDI.
 
 ### <a name="hello"></a>Hello World
 
-Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on OS X, to simplify things download and run [this simple MIDI bridge app](http://brianhouse.net/download/general_MIDI_bridge.app.zip) which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
+Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on macOS, to simplify things download and run [this simple MIDI bridge app](http://brianhouse.net/download/general_MIDI_bridge.app.zip) which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
 
 To begin working with Braid, launch a python3 interpreter (from the terminal by typing `python3`, or from within IDLE by selecting Run -> Python Shell) and `import braid`: 
 
