@@ -23,8 +23,8 @@ class MidiOut(threading.Thread):
             print("MIDI OUT: %s" % available_interfaces[self._interface])
             self.midi.open_port(self._interface)
         else:
-            print("MIDI OUT opening virtual interface (\"Python\")...")
-            self.midi.open_virtual_port("Python")           
+            print("MIDI OUT opening virtual interface (\"Braid\")...")
+            self.midi.open_virtual_port("Braid")           
         self.start()   
 
     def scan(self):
@@ -90,13 +90,11 @@ class MidiIn(threading.Thread):
                 return
             print("MIDI IN: %s" % available_interfaces[self._interface])
             self.midi.open_port(self._interface)
-        else:
-            print("MIDI IN opening virtual interface (\"Python\")...")
-            self.midi.open_virtual_port("Python")           
         self.start()           
         
     def scan(self):
         available_interfaces = self.midi.get_ports()
+        available_interfaces.remove("Braid")
         if len(available_interfaces):
             print("MIDI inputs available: %s" % available_interfaces)
         else:
@@ -150,3 +148,4 @@ class MidiIn(threading.Thread):
 midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
 midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
 time.sleep(0.5)
+print("MIDI ready")

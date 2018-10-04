@@ -5,6 +5,8 @@ shimring
 build
 dist
 examples/*
+recordings
 dev
 refs
 NOTES.md
+*backup.zip

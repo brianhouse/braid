@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## v0.12.1
+- channel now a changeable parameter
+- start now called automatically when not livecoding
+
 ## v0.12.0
 - fixed note-level control change so it fires a priori
 - fixed issues 7-10

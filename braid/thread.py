@@ -1,5 +1,5 @@
 import collections, yaml, os, math
-from .core import driver
+from .core import driver, LIVECODING
 from . import num_args, midi_out
 from .signal import linear
 from .notation import *
@@ -79,13 +79,16 @@ class Thread(object):
         self._sync = sync 
         self._start_lock = False
 
-        # specialized properties       
+        # specialized properties   
         self.pattern = [0]
         self.rate = 1.0   
         self.keyboard = False     
 
         print("[Created thread on channel %d]" % self._channel)
         self._attr_frozen = True
+
+        if not LIVECODING:
+            self.start()
 
 
     def update(self, delta_t):
@@ -208,6 +211,14 @@ class Thread(object):
 
 
     """Specialized parameters"""
+
+    @property
+    def channel(self):
+        return self._channel
+
+    @channel.setter
+    def channel(self, channel):
+        self._channel = channel
 
     @property
     def pattern(self):
@@ -337,5 +348,4 @@ if len(synths):
             exec("%s = make(controls, defaults)" % synth)
         except Exception as e:
             print("Warning: failed to load %s" % synth, e)
-        else:
-            print("Loaded %s" % synth)
+    print("Loaded synths")
