@@ -3,6 +3,7 @@ CHANGELOG
 
 ## v0.12.1
 - channel now a changeable parameter
+- control values cached per-channel per-thread
 - start now called automatically when not livecoding
 
 ## v0.12.0
