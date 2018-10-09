@@ -130,9 +130,11 @@ class Thread(object):
             return
         for control in self.controls:
             value = int(getattr(self, control))
-            if control not in self._control_values or value != self._control_values[control]:
+            if self._channel not in self._control_values:
+                self._control_values[self._channel] = {}
+            if control not in self._control_values[self._channel] or value != self._control_values[self._channel][control]:
                 midi_out.send_control(self._channel, midi_clamp(self.controls[control]), value)
-                self._control_values[control] = value
+                self._control_values[self._channel][control] = value
                 # print("[CTRL %d: %s %s]" % (self._channel, control, value))
 
     def update_triggers(self):
