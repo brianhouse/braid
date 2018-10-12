@@ -82,7 +82,8 @@ class Thread(object):
         # specialized properties   
         self.pattern = [0]
         self.rate = 1.0   
-        self.keyboard = False     
+        self.keyboard = False   
+        self.micro = linear()  
 
         print("[Created thread on channel %d]" % self._channel)
         self._attr_frozen = True

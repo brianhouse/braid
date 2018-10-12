@@ -51,6 +51,7 @@ class Driver(threading.Thread):
                         except Exception as e:
                             print("\n[Error: \"%s\"]" % e)
                             thread.stop()
+                            raise e
                         rc = int((time.time() - c) * 1000)
                         if rc > 1:
                             print("[Warning: update took %dms]\n>>> " % rc, end='')

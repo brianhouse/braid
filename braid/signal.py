@@ -104,7 +104,7 @@ def cross(division, degree):
         bps.append([d, d/division, ease_in(degree)])
     f = breakpoints(*bps)
     return f
-    
+
 
 class Plotter():
 
@@ -128,7 +128,8 @@ class Plotter():
 
     @classmethod
     def show_plots(cls):
-        cls.instance.master.update()
+        if cls.instance is not None:
+            cls.instance.master.update()
 
 def plot(signal, color="red"):
     Plotter.plot(signal, color)
