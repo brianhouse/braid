@@ -1,10 +1,12 @@
 CHANGELOG
 =========
 
-## v0.12.1
+## v0.13.0
 - channel now a changeable parameter
-- control values cached per-channel per-thread
+- control values cached per-channel-per-thread
 - start now called automatically when not livecoding
+- new signal syntax
+- cross timing emphasis
 
 ## v0.12.0
 - fixed note-level control change so it fires a priori

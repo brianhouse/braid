@@ -9,34 +9,44 @@ def clamp(pos):
     else:
         return pos
 
-def linear(pos):
-    pos = clamp(pos)
-    return pos
+def linear():
+    def f(pos):
+        pos = clamp(pos)
+        return pos
+    return f
 
-def ease_in(pos):
-    pos = clamp(pos)    
-    return pos**3
+def ease_in(exp=2):
+    def f(pos):
+        pos = clamp(pos)    
+        return pos**exp
+    return f
         
-def ease_out(pos):
-    pos = clamp(pos)    
-    return (pos - 1)**3 + 1
+def ease_out(exp=3):
+    def f(pos):
+        pos = clamp(pos)    
+        return (pos - 1)**exp + 1
+    return f
+
+def ease_in_out(exp=3):
+    def f (pos):
+        pos = clamp(pos)    
+        pos *= 2
+        if pos < 1:
+             return 0.5 * pos**exp
+        pos -= 2
+        return 0.5 * (pos**exp + 2)
+    return f
     
-def ease_in_out(pos):
-    pos = clamp(pos)    
-    pos *= 2
-    if pos < 1:
-         return 0.5 * pos**3
-    pos -= 2
-    return 0.5 * (pos**3 + 2)
-    
-def ease_out_in(pos):
-    pos = clamp(pos)    
-    pos *= 2    
-    pos = pos - 1    
-    if pos < 2:
-        return 0.5 * pos**3 + 0.5
-    else:
-        return 1.0 - (0.5 * pos**3 + 0.5)
+def ease_out_in(exp=3):
+    def f(pos):
+        pos = clamp(pos)    
+        pos *= 2    
+        pos = pos - 1    
+        if pos < 2:
+            return 0.5 * pos**exp + 0.5
+        else:
+            return 1.0 - (0.5 * pos**exp + 0.5)
+    return f
 
 def normalize(signal):
     min_value = min(signal)
@@ -45,22 +55,22 @@ def normalize(signal):
 
 def timeseries(timeseries):
     timeseries = normalize(timeseries)
-    def signal_f(pos):
+    def f(pos):
         indexf = pos * (len(timeseries) - 1)
         pos = indexf % 1.0
         value = (timeseries[math.floor(indexf)] * (1.0 - pos)) + (timeseries[math.ceil(indexf)] * pos)
         return value
-    return signal_f    
+    return f    
 
-def breakpoints(*breakpoints):     ## change name? essentially wavetable function
+def breakpoints(*breakpoints):
     """ eg:
         breakpoints(    [0, 0],
-                        [2, 1, linear], 
-                        [6, 2, ease_out], 
+                        [2, 1, linear()], 
+                        [6, 2, ease_out()], 
                         [7, 0],
-                        [12, 3, ease_in], 
-                        [14, 2, ease_out], 
-                        [15, 0, ease_in_out]
+                        [12, 3, ease_in()], 
+                        [14, 2, ease_out()], 
+                        [15, 0, ease_in_out()]
                         )
     """
     min_x = min(breakpoints, key=lambda bp: bp[0])[0]
@@ -69,7 +79,7 @@ def breakpoints(*breakpoints):     ## change name? essentially wavetable functio
     resolution = max(breakpoints, key=lambda bp: bp[1])[1] - min_y
     breakpoints = [[(bp[0] - min_x) / float(domain), (bp[1] - min_y) / float(resolution), None if not len(bp) == 3 else bp[2]] for bp in breakpoints]
 
-    def breakpoint_f(pos):        
+    def f(pos):        
         index = 0
         while index < len(breakpoints) and breakpoints[index][0] < pos:
             index += 1
@@ -85,9 +95,16 @@ def breakpoints(*breakpoints):     ## change name? essentially wavetable functio
             pos = end_point[2](pos)
         return start_point[1] + (pos * (end_point[1] - start_point[1]))
 
-    return breakpoint_f
+    return f
 
-
+def cross(division, degree):
+    bps = [[0, 0]]
+    for d in range(division):
+        d += 1
+        bps.append([d, d/division, ease_in(degree)])
+    f = breakpoints(*bps)
+    return f
+    
 
 class Plotter():
 

@@ -7,7 +7,7 @@ from .core import driver
 
 class Tween(object):
 
-    def __init__(self, target_value, cycles, signal_f=linear, on_end=None, osc=False, saw=False, start_value=None):
+    def __init__(self, target_value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, start_value=None):
         self.target_value = target_value
         self.cycles = cycles
         self.signal_f = signal_f
@@ -105,7 +105,7 @@ class RateTween(ScalarTween):
         return phase_correction
 
 
-def tween(value, cycles, signal_f=linear, on_end=None, osc=False, saw=False, start=None):
+def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, start=None):
     print('new tween')
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f, on_end, osc, saw, start)
@@ -116,8 +116,8 @@ def tween(value, cycles, signal_f=linear, on_end=None, osc=False, saw=False, sta
     if type(value) == Pattern:
         return PatternTween(value, cycles, signal_f, on_end, osc, saw, start)
 
-def osc(start, value, cycles, signal_f=linear, on_end=None):
+def osc(start, value, cycles, signal_f=linear(), on_end=None):
     return tween(value, cycles, signal_f, on_end, True, False, start)
 
-def saw(start, value, cycles, signal_f=linear, on_end=None, saw=True):
+def saw(start, value, cycles, signal_f=linear(), on_end=None, saw=True):
     return tween(value, cycles, signal_f, on_end, False, True, start)    
