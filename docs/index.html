@@ -7,7 +7,7 @@
     <meta name="author" content="Brian House" /> 
     <meta name="copyright" content="Brian House" /> 
     <meta name="description" content="
-Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on polyrhythms, phasing, and entrainment." />
+Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. " />
     <meta property="og:title" content="Braid" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="http://brianhouse.net/about/about.jpg" />
@@ -17,9 +17,8 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
         body {
             margin: 0px;
             padding: 0px;       
-            background: #87e0fd;
-            /*background: linear-gradient(to bottom, #87e0fd 0%,#53cbf1 40%,#05abe0 100%);*/
-            background: linear-gradient(to bottom, #e0fffc 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);            
+            background: #00a1ce;
+            background: linear-gradient(to bottom, #00a1ce 0%,#00a1ce 16%,#5e244d 48%,#5e244d 67%,#00a1ce 95%);            
         }    
         .markdown-body {
             box-sizing: border-box;
@@ -39,15 +38,88 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
         .output {
             color: #ccc;
         }
+        .codehilite .hll { background-color: #ffffcc }
+        .codehilite  { background: #ffffff; }
+        .codehilite .c { color: #888888; font-style: italic } /* Comment */
+        .codehilite .err { background-color: #a848a8 } /* Error */
+        .codehilite .k { color: #2838b0 } /* Keyword */
+        .codehilite .o { color: #666666 } /* Operator */
+        .codehilite .p { color: #888888 } /* Punctuation */
+        .codehilite .ch { color: #287088; font-style: italic } /* Comment.Hashbang */
+        .codehilite .cm { color: #888888; font-style: italic } /* Comment.Multiline */
+        .codehilite .cp { color: #289870 } /* Comment.Preproc */
+        .codehilite .cpf { color: #888888; font-style: italic } /* Comment.PreprocFile */
+        .codehilite .c1 { color: #888888; font-style: italic } /* Comment.Single */
+        .codehilite .cs { color: #888888; font-style: italic } /* Comment.Special */
+        .codehilite .gd { color: #c02828 } /* Generic.Deleted */
+        .codehilite .ge { font-style: italic } /* Generic.Emph */
+        .codehilite .gr { color: #c02828 } /* Generic.Error */
+        .codehilite .gh { color: #666666 } /* Generic.Heading */
+        .codehilite .gi { color: #388038 } /* Generic.Inserted */
+        .codehilite .go { color: #666666 } /* Generic.Output */
+        .codehilite .gp { color: #444444 } /* Generic.Prompt */
+        .codehilite .gs { font-weight: bold } /* Generic.Strong */
+        .codehilite .gu { color: #444444 } /* Generic.Subheading */
+        .codehilite .gt { color: #2838b0 } /* Generic.Traceback */
+        .codehilite .kc { color: #444444; font-style: italic } /* Keyword.Constant */
+        .codehilite .kd { color: #2838b0; font-style: italic } /* Keyword.Declaration */
+        .codehilite .kn { color: #2838b0 } /* Keyword.Namespace */
+        .codehilite .kp { color: #2838b0 } /* Keyword.Pseudo */
+        .codehilite .kr { color: #2838b0 } /* Keyword.Reserved */
+        .codehilite .kt { color: #2838b0; font-style: italic } /* Keyword.Type */
+        .codehilite .m { color: #444444 } /* Literal.Number */
+        .codehilite .s { color: #b83838 } /* Literal.String */
+        .codehilite .na { color: #388038 } /* Name.Attribute */
+        .codehilite .nb { color: #388038 } /* Name.Builtin */
+        .codehilite .nc { color: #287088 } /* Name.Class */
+        .codehilite .no { color: #b85820 } /* Name.Constant */
+        .codehilite .nd { color: #287088 } /* Name.Decorator */
+        .codehilite .ni { color: #709030 } /* Name.Entity */
+        .codehilite .ne { color: #908828 } /* Name.Exception */
+        .codehilite .nf { color: #785840 } /* Name.Function */
+        .codehilite .nl { color: #289870 } /* Name.Label */
+        .codehilite .nn { color: #289870 } /* Name.Namespace */
+        .codehilite .nt { color: #2838b0 } /* Name.Tag */
+        .codehilite .nv { color: #b04040 } /* Name.Variable */
+        .codehilite .ow { color: #a848a8 } /* Operator.Word */
+        .codehilite .w { color: #a89028 } /* Text.Whitespace */
+        .codehilite .mb { color: #444444 } /* Literal.Number.Bin */
+        .codehilite .mf { color: #444444 } /* Literal.Number.Float */
+        .codehilite .mh { color: #444444 } /* Literal.Number.Hex */
+        .codehilite .mi { color: #444444 } /* Literal.Number.Integer */
+        .codehilite .mo { color: #444444 } /* Literal.Number.Oct */
+        .codehilite .sa { color: #444444 } /* Literal.String.Affix */
+        .codehilite .sb { color: #b83838 } /* Literal.String.Backtick */
+        .codehilite .sc { color: #a848a8 } /* Literal.String.Char */
+        .codehilite .dl { color: #b85820 } /* Literal.String.Delimiter */
+        .codehilite .sd { color: #b85820; font-style: italic } /* Literal.String.Doc */
+        .codehilite .s2 { color: #b83838 } /* Literal.String.Double */
+        .codehilite .se { color: #709030 } /* Literal.String.Escape */
+        .codehilite .sh { color: #b83838 } /* Literal.String.Heredoc */
+        .codehilite .si { color: #b83838; text-decoration: underline } /* Literal.String.Interpol */
+        .codehilite .sx { color: #a848a8 } /* Literal.String.Other */
+        .codehilite .sr { color: #a848a8 } /* Literal.String.Regex */
+        .codehilite .s1 { color: #b83838 } /* Literal.String.Single */
+        .codehilite .ss { color: #b83838 } /* Literal.String.Symbol */
+        .codehilite .bp { color: #388038; font-style: italic } /* Name.Builtin.Pseudo */
+        .codehilite .fm { color: #b85820 } /* Name.Function.Magic */
+        .codehilite .vc { color: #b04040 } /* Name.Variable.Class */
+        .codehilite .vg { color: #908828 } /* Name.Variable.Global */
+        .codehilite .vi { color: #b04040 } /* Name.Variable.Instance */
+        .codehilite .vm { color: #b85820 } /* Name.Variable.Magic */
+        .codehilite .il { color: #444444 } /* Literal.Number.Integer.Long */        
+
+        .codehilite .n { color: #289870 } /* Object */
+
     </style>    
 </head>
 <body>
 <div id="content" class="markdown-body">
 
 <h1>BRAID</h1>
-<p>Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. </p>
+<p>Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. </p>
 <p>Braid can be downloaded from its <a href="https://github.com/brianhouse/braid/releases">GitHub repository</a>.</p>
-<p>It is developed by <a href="http://brianhouse.net">Brian House</a>.</p>
+<p>It is developed by <a href="https://brianhouse.net">Brian House</a>.</p>
 <h2>Contents</h2>
 <ol>
 <li><a href="#goals">Goals</a></li>
@@ -84,67 +156,69 @@ Braid is a single-import module for Python 3 that comprises a musical notation s
 <ul>
 <li>
 <p><strong>Idiosyncracy</strong><br />
-Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making, nor does it have pedagogy in mind. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data.</p>
+Braid is a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data. It does not intend to be for general purpose music-making, nor does it have pedagogy in mind. </p>
 </li>
 <li>
 <p><strong>Limited scope</strong><br />
-Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. Those are pretty significant limitations, but it means that I was able to complete this. It also means I can take advantage of all the awesome cheap MIDI monosynths coming out, like the <a href="https://meeblip.com/">Meeblip</a> and the <a href="http://i.korg.com/volcaseries">Korg Volca</a> series.</p>
+Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. It's intended to be used with things like the <a href="https://meeblip.com/">Meeblip</a> and the <a href="http://i.korg.com/volcaseries">Korg Volca</a> series, but you can wire it into a DAW, too.</p>
 </li>
 <li>
 <p><strong>Integrates with Python</strong><br />
 I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects. This is the source of much of its usefullness and power (particularly when it comes to working with data).  </p>
 </li>
 <li>
-<p><strong>Both livecoding and scripting</strong><br />
- Sometimes I want to improvise within a livecoding framework, sometimes I want to make a composition. Braid doesn't make much of a distinction between these ways of operating, as it's all python and uses the interpreter as a livecoding environment. Premade scripts can be easily executed within the interpreter.</p>
-</li>
-<li>
-<p><strong>Works on small devices</strong><br />
-Braid is has very low processor overhead, suitable for running on devices like the Raspberry Pi.</p>
+<p><strong>Livecoding?</strong>  </p>
 </li>
 </ul>
+<p>Maybe. Normally you'd include braid in a script and execute it, but you can also run it in the python interpreter, and that opens up some additional possibilities for exploration and improvisation. Perhaps this could be expanded on with something like jupyter into a full-fledged livecoding environment.</p>
 <h4>A note on names</h4>
 <p>This framework is called Braid, and the fundamental objects are called <em>threads</em>&mdash;a thread corresponds to a hardware or software monosynth, and refers to the temporal operations of Braid through which threads can come in and out of sync. This is not a thread in the programming sense (in that respect Braid is single-threaded).</p>
 <h2><a name="installation"></a>Installation</h2>
-<p>You'll need to have Python 3 installed. Currently, 3.6 is supported, but 3.7 is not. On OS X, you can download the appropriate version <a href="https://www.python.org/ftp/python/3.6.6/python-3.6.6-macosx10.9.pkg">here</a>.</p>
-<p>Now open that terminal.</p>
-<p>To install (or update) Braid, type: <code>pip3 install git+git://github.com/brianhouse/braid --upgrade</code></p>
-<p>At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run-&gt;Run Module") Braid scripts, or use it to livecode (Run-&gt;Python Shell).</p>
+<p>You'll need to have Python 3 installed—if you're using macOS, I recommend doing so with Homebrew. Tested with python 3.7.</p>
+<p>To install (or update) Braid via the terminal: <code>pip3 install git+git://github.com/brianhouse/braid --upgrade</code></p>
 <h2><a name="tutorial"></a>Tutorial</h2>
 <h3><a name="prereq"></a>Prerequisites</h3>
-<p>Braid is, fundamentally, an extension to Python 3. This documentation won't cover python syntax&mdash;for that, look <a href="https://docs.python.org/3/tutorial/">here</a>. Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner (aka me?).</p>
+<p>Braid is, fundamentally, an extension to Python 3. This documentation won't cover python usage and syntax&mdash;for that, look <a href="https://docs.python.org/3/tutorial/">here</a>. Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner, or at least out of this documentation.</p>
 <p>Additionally, this documentation assumes a general knowledge of MIDI.</p>
+<p>If you don't know what you're doing with python and the terminal but you've gotten this far, follow the instructions for saving a Braid "Hello World" script below. Then in the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run-&gt;Run Module") Braid scripts.</p>
 <h3><a name="hello"></a>Hello World</h3>
-<p>Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on OS X, to simplify things download and run <a href="http://brianhouse.net/download/general_MIDI_bridge.app.zip">this simple MIDI bridge app</a> which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).</p>
-<p>To begin working with Braid, launch a python3 interpreter (from the terminal by typing <code>python3</code>, or from within IDLE by selecting Run -&gt; Python Shell) and <code>import braid</code>: </p>
-<pre><code>$ python3
-<span class="output">Python 3.6.0 (default, Mar  4 2017, 12:32:37) 
-[GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.</span>
-<span class="int">&gt;&gt;&gt;</span> from braid import *
-<span class="output">MIDI outputs available: ['to general_MIDI_bridge 1', 'to general_MIDI_bridge 2']
-MIDI OUT: to general_MIDI_bridge 1
-MIDI  IN: from general_MIDI_bridge 1
-Loaded VolcaKick
-Loaded VolcaBeats
-Braid started
-Playing</span>
-</code></pre>
+<p>Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on macOS, to simplify things download and run <a href="http://brianhouse.net/download/general_MIDI_bridge.app.zip">this simple MIDI bridge app</a> which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).</p>
+<p>To begin working with Braid, create a new file in your favorite text editor (such as Sublime Text).</p>
+<p>launch a python interpreter (from the terminal by typing <code>python3</code>, or from within IDLE by selecting Run -&gt; Python Shell) and <code>import braid</code>: </p>
+<div class="codehilite"><pre><span></span><span class="err">$</span> <span class="n">python3</span>
+<span class="p"><span class="output"></span><span class="n">Python</span> <span class="mf">3.6</span><span class="o">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Mar</span>  <span class="mi">4</span> <span class="mi">2017</span><span class="p">,</span> <span class="mi">12</span><span class="p">:</span><span class="mi">32</span><span class="p">:</span><span class="mi">37</span><span class="p">)</span> 
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.2</span><span class="o">.</span><span class="mi">1</span> <span class="n">Compatible</span> <span class="n">Apple</span> <span class="n">LLVM</span> <span class="mf">8.0</span><span class="o">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">clang</span><span class="o">-</span><span class="mf">800.0</span><span class="o">.</span><span class="mf">42.1</span><span class="p">)]</span> <span class="n">on</span> <span class="n">darwin</span>
+<span class="n">Type</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;copyright&quot;</span><span class="p">,</span> <span class="s2">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s2">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span><span class="p"></span></span>
+<span class="o"><span class="int">&gt;&gt;&gt;</span></span> <span class="kn">from</span> <span class="nn">braid</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="p"><span class="output"></span><span class="n">MIDI</span> <span class="n">outputs</span> <span class="n">available</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;to general_MIDI_bridge 1&#39;</span><span class="p">,</span> <span class="s1">&#39;to general_MIDI_bridge 2&#39;</span><span class="p">]</span>
+<span class="n">MIDI</span> <span class="n">OUT</span><span class="p">:</span> <span class="n">to</span> <span class="n">general_MIDI_bridge</span> <span class="mi">1</span>
+<span class="n">MIDI</span>  <span class="n">IN</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">general_MIDI_bridge</span> <span class="mi">1</span>
+<span class="n">Loaded</span> <span class="n">VolcaKick</span>
+<span class="n">Loaded</span> <span class="n">VolcaBeats</span>
+<span class="n">Braid</span> <span class="n">started</span>
+<span class="n">Playing</span><span class="p"></span></span>
+</pre></div>
+
+
 <p>Now, create a <em>thread</em>&mdash;the fundamental object of Braid&mdash;and start it:</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)               # create a thread&amp;mdash;the argument indicates the MIDI channel
-<span class="int">&gt;&gt;&gt;</span> t.pattern = C, C, C, C      # add a pattern
-<span class="int">&gt;&gt;&gt;</span> t.start()                   # start it
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>               <span class="c1"># create a thread--the argument indicates the MIDI channel</span>
+<span class="n">t</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span>      <span class="c1"># add a pattern</span>
+<span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>                   <span class="c1"># start it</span>
+</pre></div>
+
+
 <p>That's it! You should be hearing the steady pulse of progress.</p>
 <p>Alternately, you can create a python file with Braid syntax like this:</p>
-<pre><code>from braid import *
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">braid</span> <span class="kn">import</span> <span class="o">*</span>
 
-t = Thread(1)
-t.pattern = C, C, C, C
-t.start()
+<span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span>
+<span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-play()                      # dont forget this
-</code></pre>
+<span class="n">play</span><span class="p">()</span>                      <span class="c1"># dont forget this</span>
+</pre></div>
+
+
 <p>Save it as <code>hello_world.py</code>, and run it with <code>python3 hello_world.py 0 0</code>. The (optional) arguments designate the MIDI out and in interfaces to use.  </p>
 <p>From now on, we'll assume that we're livecoding within the python3 interpreter, but the code works the same in a standalone file.  </p>
 <h3><a name="top"></a>Top-level controls</h3>
@@ -152,119 +226,173 @@ play()                      # dont forget this
 <p>Braid also has some universal playback controls. When Braid launches, it is automatically in play mode. Use <code>pause()</code> to mute everything, and <code>play()</code> to get it going again. If you use <code>stop()</code>, it will stop all threads, so you'll need to start them up again individually. <code>clear()</code> just stops the threads, but Braid itself is still going and if you start a thread it will sound right away.</p>
 <p><em>Advanced note</em>: If you're doing a lot of livecoding, it's easy to create a new thread with the same name as an old one, and this can lead to orphan threads that you hear but can't reference. Use <code>stop()</code> or <code>clear()</code> to silence these.</p>
 <p>Try it now:</p>
-<pre><code>clear()
-</code></pre>
+<div class="codehilite"><pre><span></span>clear()
+</pre></div>
+
+
 <h3><a name="notes"></a>Notes and <code>chord</code></h3>
 <p>Start a thread</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)   # create a thread on channel 1
-<span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># create a thread on channel 1</span>
+<span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
 <p>MIDI pitch value can be specified by MIDI number or with note-name aliases between C0 and B8. C is an alias for C4, likewise for the rest of the middle octave</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = C, C, C, C
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">C</span>
+</pre></div>
+
+
 <p>is the same as  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 60, 60, 60, 60
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span>
+</pre></div>
+
+
 <p>0s simply sustain (no MIDI sent)  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = C, 0, C, C
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = C, 0, C, C
+</pre></div>
+
+
 <p>Rests (explicit MIDI note-offs) are specified with a Z  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = C, Z, C, Z
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = C, Z, C, Z
+</pre></div>
+
+
 <p>By default, there is no specified chord. But if there is one, notes can be specified by scale degree</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.chord = C4, MAJ
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.chord = C4, MAJ
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 3, 5, 7
-</code></pre>
+</pre></div>
+
+
 <p>Negative numbers designate the octave below  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = -5, -7, 1, 5
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = -5, -7, 1, 5
+</pre></div>
+
+
 <p>A chord consists of a root note and a scale. For example, <code>C, MAJ</code> is a major scale built off of C4. That means <code>1, 2, 3, 4, 5</code> is the equivalent of <code>C4, D4, E4, F4, G4</code>. But behind the scenes, it's specified like this: <code>Scale([0, 2, 4, 5, 7, 9, 11])</code>. Here's the <a href="#scales">list</a> of built-in scales.</p>
 <p>Custom scales can be generated with the following syntax, where numbers are chromatic steps from the root</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
+</pre></div>
+
+
 <p>R specifies a random note in the scale</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.chord = C4, whole_tone_scale
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.chord = C4, whole_tone_scale
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, R, R, -6
-</code></pre>
+</pre></div>
+
+
 <p>Grace notes are specified by using floats</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1., 1., 1.
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1., 1., 1.
+</pre></div>
+
+
 <p>Use the g function to create a grace note on note specified with a symbol</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.chord = None
-<span class="int">&gt;&gt;&gt;</span> t.pattern = C, g(C), g(C), g(C)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="n">t</span><span class="o">.</span><span class="n">chord</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">t</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">C</span><span class="p">,</span> <span class="n">g</span><span class="p">(</span><span class="n">C</span><span class="p">),</span> <span class="n">g</span><span class="p">(</span><span class="n">C</span><span class="p">),</span> <span class="n">g</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+
+
 <h3><a name="pattern_1"></a><code>Thread.pattern</code>, part 1</h3>
 <p>Start a thread with a pattern</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = C, DOR
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+</pre></div>
+
+
 <p>Once started, a thread repeats its pattern. Each repetition is called a <em>cycle</em>. Each cycle is subdivided evenly by the <strong>steps</strong> in the pattern.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 0, 1, 0              # 4/4
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 0, 1, 0              # 4/4
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 0, 1                 # 3/4
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 0, 1, 1, 0, 1     # 7/8
-</code></pre>
+</pre></div>
+
+
 <p>Each step of a pattern can be a note, but it can also be a subdivision</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [1, 1], 1, 1
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [1, 1], 1, 1
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [1, 1], 1, [1, 1, 1]
-</code></pre>
+</pre></div>
+
+
 <p><span class="int">...</span>or a subdivision of subdivisions, ad finitum</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [2, [1., 1.]], [3, [2, 1], 1.], [5, [4., 3.]]
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, [2, [1., 1.]], [3, [2, 1], 1.], [5, [4., 3.]]
+</pre></div>
+
+
 <p>So brackets indicate subdivisions. Parens, however, indicate a choice.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, (2, 3, 4), 1, 1
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.pattern = 1, (2, 3, 4), 1, 1
+</pre></div>
+
+
 <p>Brackets and parens can be combined to create intricate markov chains</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> tempo(132)                  # set the universal tempo
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> tempo(132)                  # set the universal tempo
 <span class="int">&gt;&gt;&gt;</span> d = Thread(10)              # channel 10 is MIDI for drums
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> d.pattern = [([K, H], [K, K]), (K, O)], (H, [H, K]), (S, [S, (O, K), 0, g(S)]), [[H, H], ([H, H], O, [g(S), g(S), g(S), g(S)])]         # K, S, H, O are built-in aliases for 36, 38, 42, 46
 <span class="int">&gt;&gt;&gt;</span> d.start()
-</code></pre>
+</pre></div>
+
+
 <p>Patterns are python lists, so they can be manipulated as such</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = [K, [O, H]] * 4
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern = [K, [O, H]] * 4
 <span class="int">&gt;&gt;&gt;</span> d.pattern[2] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = S
 <span class="int">&gt;&gt;&gt;</span> d.pattern[6] = [(S, [S, K])]
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> d.pattern.reverse()
-</code></pre>
+</pre></div>
+
+
 <h3><a name="pattern_2"></a><code>Thread.pattern</code>, part 2</h3>
 <p>There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> tempo(132)   
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> tempo(132)   
 <span class="int">&gt;&gt;&gt;</span> d = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> d.start()
-</code></pre>
+</pre></div>
+
+
 <h3></h3>
-<pre><code><span class="int">&gt;&gt;&gt;</span> steps = 7
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> steps = 7
 <span class="int">&gt;&gt;&gt;</span> pulses = 3
 <span class="int">&gt;&gt;&gt;</span> note = K
 <span class="int">&gt;&gt;&gt;</span> d.pattern = euc(steps, pulses, note)    # [K, 0, K, 0, K, 0, 0]
-</code></pre>
+</pre></div>
+
+
 <p>Adding a pattern to an existing pattern fills any 0s with the new pattern</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
+</pre></div>
+
+
 <p>XOR'ing a pattern to an existing pattern adds it, but turns any collisions into 0s</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
+</pre></div>
+
+
 <p>These can be done even if the patterns are different lengths, to create crossrhythms</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = [K, K] * 2
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern = [K, K] * 2
 <span class="int">&gt;&gt;&gt;</span> d.pattern.add([H, H, H, H, H])
-</code></pre>
+</pre></div>
+
+
 <p>Patterns can also be blended</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
+</pre></div>
+
+
 <p>same as</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = K, K, K, K
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern = K, K, K, K
 <span class="int">&gt;&gt;&gt;</span> d.pattern.blend([S, S, S, S])
-</code></pre>
+</pre></div>
+
+
 <p>blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pattern B.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
+</pre></div>
+
+
 <h3><a name="pattern_3"></a><code>Thread.pattern</code>, part 3</h3>
 <p>Additionally, any given step in a pattern may also be a function. This function should return a note value.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, PRG
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> def x():
@@ -273,9 +401,11 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t.pattern = [x] * 8
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+</pre></div>
+
+
 <p>This is particularly useful for manipulating synth parameters at each step (see <a href="#devices">below</a>). In this case, creating a wrapped function allows the actual note value to be passed as a parameter.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = VolcaKick(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = VolcaKick(1)
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> def k(n):
 <span class="int">...</span>     def f(t):
@@ -301,45 +431,57 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t.pattern = k(1), k(3), s(20), k(1)              # custom properties for k and s notes
 <span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+</pre></div>
+
+
 <h3><a name="velocity"></a><code>Thread.velocity</code> and <code>Thread.grace</code></h3>
 <p>All threads come with some properties built-in. We've seen <a href="#notes"><code>chord</code></a> already.  </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(10)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> t.chord = C, MAJ
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1., 1, 1.
 <span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+</pre></div>
+
+
 <p>There is also, of course, <code>velocity</code></p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.velocity = 0.5
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.velocity = 0.5
+</pre></div>
+
+
 <p>and <code>grace</code> is a percentage of velocity, to control the depth of the grace notes</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.velocity = 1.0
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.velocity = 1.0
 <span class="int">&gt;&gt;&gt;</span> t.grace = .45
-</code></pre>
+</pre></div>
+
+
 <h3><a name="phase"></a><code>Thread.phase</code></h3>
 <p>Consider the following:</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(10)
-<span class="int">&gt;&gt;&gt;</span> t1.chord = 76, CHR  # root note is "Hi Wood Block"
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t1 = Thread(10)
+<span class="int">&gt;&gt;&gt;</span> t1.chord = 76, CHR  # root note is &quot;Hi Wood Block&quot;
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t2 = Thread(10)
-<span class="int">&gt;&gt;&gt;</span> t2.chord = 77, CHR  # root note is "Lo Wood Block"
+<span class="int">&gt;&gt;&gt;</span> t2.chord = 77, CHR  # root note is &quot;Lo Wood Block&quot;
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = [1, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0]   # thanks Steve
 <span class="int">&gt;&gt;&gt;</span> t2.pattern = t1.pattern
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t1.start()
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)            # t1 as argument
-</code></pre>
+</pre></div>
+
+
 <p>Note that in this example, <code>t2</code> takes <code>t1</code> as an argument. This ensures that t2 will start in sync with t1. Otherwise, t1 and t2 will start at arbitrary times, which may not be desirable.</p>
 <p>However, each thread also has a <code>phase</code> property that allows us to control the relative phase of threads deliberately. Phase goes from 0-1 and indicates how much of the cycle the pattern is offset.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t2.phase = 1/12         # adjust phase by one subdivision
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t2.phase = 1/12         # adjust phase by one subdivision
 <span class="int">&gt;&gt;&gt;</span> t2.phase = 3/12
 <span class="int">&gt;&gt;&gt;</span> t2.phase = 7/12
-</code></pre>
+</pre></div>
+
+
 <h3><a name="rate"></a><code>Thread.rate</code></h3>
 <p>As we've already used it, the <code>tempo()</code> function sets the universal BPM (or at least the equivalent BPM if cycles were in 4/4 time). Braid silently keeps track of cycles at this tempo. By default, the cycles of each thread match this reference. We just saw how <code>phase</code> can offset the patterns of a thread&mdash;it does this in relation to the reference cycle.</p>
 <p>Likewise, individual threads can also cycle at their own <code>rate</code>. The <code>rate</code> property of each thread is a multiplier of the reference cycles&mdash;0.5 is twice as slow, 2 is twice as fast.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = C, C, C, C
 <span class="int">&gt;&gt;&gt;</span> t1.start()
 <span class="int">&gt;&gt;&gt;</span>
@@ -348,19 +490,23 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)                    # keep in phase
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t2.rate = 1/2                   # half-speed!
-</code></pre>
+</pre></div>
+
+
 <p>Notice that depending on when you hit return, changing the rate can make threads go out of sync (similar to how starting threads at different times puts them out of phase). The way to get around this is to make sure it changes on a cycle edge. For this, use a <a href="#triggers">trigger</a>:</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t2.stop()
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t2.stop()
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 <span class="int">&gt;&gt;&gt;</span> def x(): t2.rate = 0.5          # one-line python function
 <span class="int">...</span>                                 # hit return twice
 <span class="int">&gt;&gt;&gt;</span> t2.trigger(x)                   # executes x at the beginning of the next cycle
-</code></pre>
+</pre></div>
+
+
 <p>If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.</p>
 <h3><a name="tweens"></a>Tweening</h3>
 <p>Now for the fun part. Any property on a thread can be <strong>tweened</strong>&mdash;that is, interpolated between two values over time (yes, the term is borrowed from Flash).</p>
 <p>This is done simply by assigning a <code>tween()</code> function to the property instead of a value. <code>tween()</code> has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value, starting with the next cycle.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> p1 = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> p1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> p2 = Thread(2)
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
@@ -369,9 +515,11 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> p1.start(); p2.start(p1)            # two commands, one line
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> p2.phase = tween(1/12, 4.0)         # take four cycles to move one subdivision
-</code></pre>
+</pre></div>
+
+
 <p>All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127 (see <a href="#devices">below</a>). <code>rate</code>, <code>phase</code>, <code>velocity</code>, <code>grace</code> change continuously over float values. <code>chord</code> will probabilistically waver between the current value and the target value. <code>pattern</code> will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(10)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(10)
 <span class="int">&gt;&gt;&gt;</span> t.start()
 <span class="int">&gt;&gt;&gt;</span> t.pattern = K, K, S, [0, 0, 0, K]
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
@@ -381,31 +529,41 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t.pattern = euc(8, 5, 43)
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween(euc(8, 6, 50), 8)
 <span class="int">&gt;&gt;&gt;</span> t.pattern = tween(euc(8, 5, 43), 8)
-</code></pre>
+</pre></div>
+
+
 <p>When a tween completes, it can trigger a function, using the <code>on_end</code> parameter. The following example tweens the phase of Thread <code>t</code> over 8 cycles, and then stops the thread (Note the lack of parentheses around <code>t.stop</code>&mdash;we want the thread to execute the function at the end of the tween, not during this declaration!).</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.phase = tween(0.5, 8, on_end=t.stop)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.phase = tween(0.5, 8, on_end=t.stop)
+</pre></div>
+
+
 <h3><a name="signals"></a>Signals</h3>
 <p>Tweens can take an additional property, called a signal. This is any function that takes a float value from 0 to 1 and return another value from 0 to 1&mdash;a nonlinear transition function when you don't want to go from A to B in a straight line. (Yes, Flash again).</p>
 <p>Built-in signals: <code>linear</code> (default), <code>ease_in</code>, <code>ease_out</code>, <code>ease_in_out</code>, <code>ease_out_in</code></p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, DOR
 <span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 3, 5, 7] * 4
 <span class="int">&gt;&gt;&gt;</span> t.start()
 <span class="int">&gt;&gt;&gt;</span> 
 <span class="int">&gt;&gt;&gt;</span> t.chord = tween((E, MAJ), 8, ease_in_out)
 <span class="int">&gt;&gt;&gt;</span> t.chord = tween((E, MAJ), 8, ease_out_in)
-</code></pre>
+</pre></div>
+
+
 <p>Since signals are just functions, you can write your own in Python. <code>ease_out</code>, for example, is just</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> def ease_out(pos):
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> def ease_out(pos):
 <span class="int">...</span>    pos = clamp(pos)    
 <span class="int">...</span>    return (pos - 1)**3 + 1
-</code></pre>
+</pre></div>
+
+
 <p>To view a graphic representation of the function, plot it.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> plot(ease_out)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> plot(ease_out)
+</pre></div>
+
+
 <p>You can also convert <em>any</em> timeseries data into a signal function using <code>timeseries()</code>. You might use this to tween velocity over an entire composition, for example, or for data sonification.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
 <span class="int">&gt;&gt;&gt;</span> f = timeseries(data)
 <span class="int">&gt;&gt;&gt;</span> plot(f)
 <span class="int">&gt;&gt;&gt;</span> 
@@ -416,9 +574,11 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span>
 <span class="int">&gt;&gt;&gt;</span> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
 <span class="int">&gt;&gt;&gt;</span> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
-</code></pre>
+</pre></div>
+
+
 <p>Likewise, you can specify a function with breakpoints using <code>breakpoints()</code>. Each breakpoint is specified with an x,y coordinate system&mdash;it doesn't matter what the range and domain are, as it will be normalized. Additionally, a signal shape can be specified for each breakpoint transition, which allows complex curves and transitions.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> f = breakpoints( 
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> f = breakpoints( 
                 [0, 0],
                 [2, 0],
                 [8, 1, ease_in_out],
@@ -432,10 +592,12 @@ play()                      # dont forget this
                 )
 <span class="int">&gt;&gt;&gt;</span> f = breakpoints(data)
 <span class="int">&gt;&gt;&gt;</span> plot(f)
-</code></pre>
+</pre></div>
+
+
 <h3><a name="sync"></a>Sync, and tweening rate</h3>
 <p>Braid does something special when you assign a tween to <code>Thread.rate</code>. Ordinarily, if two threads started in sync and one thread tweened its rate, they would inevitably end up out of sync. However, Braid automatically adjusts its tweening function such that threads will remain aligned as best as possible.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t1.start()
@@ -446,16 +608,20 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 <span class="int">&gt;&gt;&gt;</span>    
 <span class="int">&gt;&gt;&gt;</span> t2.rate = tween(0.5, 4)
-</code></pre>
+</pre></div>
+
+
 <p>As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name.</p>
 <p>If you <em>don't</em> want this functionality, pass <code>sync=False</code> to the thread constructor, and the thread won't try to reconcile itself.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1, sync=False)
+</pre></div>
+
+
 <h3><a name="triggers"></a>Triggers</h3>
 <p>You can sequence in Braid using triggers. A trigger consists of a function, the number of <em>complete</em> cycles to wait before executing it, and whether or not (and how many times) to repeat. Triggers can be added to individual threads (<code>Thread.trigger()</code>), which then reference the thread's cycle, or they can use the universal <code>trigger()</code> function, which reference the universal (silent) cycles (as we've seen with <code>Thread.rate</code> and <code>Thread.phase</code>, these can be different).</p>
 <p>Triggers execute at the edge between cycles. </p>
 <h4>Thread Triggers</h4>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t.start()
@@ -465,9 +631,11 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t.trigger(x)                            # triggers x at the end of the current cycle
 <span class="int">&gt;&gt;&gt;</span> t.trigger(x, 1)                         # triggers x at the end of the first complete cycle
 <span class="int">&gt;&gt;&gt;</span> t.trigger(x, 4)                         # triggers x at the end of the fourth complete cycle
-</code></pre>
+</pre></div>
+
+
 <p>You might want to reuse the same triggered function with different threads. This is facilitated by including an argument in the function definition which will be passed the thread that triggered it.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t1.start()
@@ -477,30 +645,40 @@ play()                      # dont forget this
 <span class="int">&gt;&gt;&gt;</span> t2.pattern = 4, 4, 4, 4
 <span class="int">&gt;&gt;&gt;</span> t2.start(t1)
 <span class="int">&gt;&gt;&gt;</span>
-<span class="int">&gt;&gt;&gt;</span> def x(t): t.pattern = R, R, R, R    # generic 't' argument
+<span class="int">&gt;&gt;&gt;</span> def x(t): t.pattern = R, R, R, R    # generic &#39;t&#39; argument
 <span class="int">...</span>
 <span class="int">&gt;&gt;&gt;</span> t1.trigger(x, 2)
 <span class="int">&gt;&gt;&gt;</span> t2.trigger(x, 2)                    # same function
-</code></pre>
+</pre></div>
+
+
 <p>Using a third argument, triggers can be repeated infinitely or for a set number of times.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
 <span class="int">&gt;&gt;&gt;</span> t.trigger(y, 6, True)   # trigger x every 6 cycles
-</code></pre>
+</pre></div>
+
+
 <p>Also:</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(y, 0, True)   # nope
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.trigger(y, 0, True)   # nope
 
 <span class="int">&gt;&gt;&gt;</span> t.trigger(y)            # you probably wanted to do this
 <span class="int">&gt;&gt;&gt;</span> t.trigger(y, 1, True)
-</code></pre>
+</pre></div>
+
+
 <p>To cancel all triggers on a thread, pass <code>False</code>.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(False)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.trigger(False)
+</pre></div>
+
+
 <p>To cancel any triggers on a thread that are repeating infinitely, pass <code>repeat=False</code> without other arguments.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t.trigger(repeat=False)
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t.trigger(repeat=False)
+</pre></div>
+
+
 <h4>Universal Triggers</h4>
 <p>For universal triggers, no thread argument can be supplied to the trigger function. And universal triggers operate via the underlying cycle at the global tempo. Otherwise, they are the same as thread triggers, and are particularly useful for sets of changes, as defined in larger functions, or universal functions. </p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t1 = Thread(1)
 <span class="int">&gt;&gt;&gt;</span> t1.chord = D, SUSb9
 <span class="int">&gt;&gt;&gt;</span> t1.pattern = 1, 1, 1, 1
 <span class="int">&gt;&gt;&gt;</span> t1.start()
@@ -516,30 +694,38 @@ play()                      # dont forget this
 <span class="int">...</span>     t1.phase = 1/8
 <span class="int">...</span>     t1.pattern = t2.pattern = R, R, R, R
 <span class="int">&gt;&gt;&gt;</span> trigger(x, 2)
-</code></pre>
+</pre></div>
+
+
 <h3><a name="devices"></a>MIDI devices and properties</h3>
 <p>Braid is designed to work with hardware monosynths. Thus far, the only actual MIDI output we've been sending are MIDI notes. But CC values from devices are mapped directly to thread properties.</p>
 <p>Devices are represented in Braid as extensions to the thread object. To create a custom thread, use the <code>make()</code> function. <code>make()</code> is passed a dictionary with property names mapped to MIDI CC channels.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> Voltron = make({'attack': 54, 'decay': 53, 'filter_cutoff': 52, 'pulse_width': 51})
-</code></pre>
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> Voltron = make({&#39;attack&#39;: 54, &#39;decay&#39;: 53, &#39;filter_cutoff&#39;: 52, &#39;pulse_width&#39;: 51})
+</pre></div>
+
+
 <p>Now, Voltron can be used like any thread, but it will also have the specified CC values that can be set, tweened, etc.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Voltron(1)
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Voltron(1)
 <span class="int">&gt;&gt;&gt;</span> t.pattern = [1, 2, 3, 5] * 4
 <span class="int">&gt;&gt;&gt;</span> t.filter_cutoff = 0
 <span class="int">&gt;&gt;&gt;</span> t.filter_cutoff = tween(127, 8)
 <span class="int">&gt;&gt;&gt;</span> t.start()
-</code></pre>
+</pre></div>
+
+
 <p>Since you'll probably be using the same MIDI devices all the time, and it is tedious to specify this each time you run Braid (especially with large numbers of controls), Braid also automatically loads custom thread types from the <code>synths.yaml</code> file in the root directory.</p>
 <p>Note: A second dictionary can be passed to <code>make()</code> as an additional parameter with property names mapped to default MIDI values.</p>
 <h3><a name="custom"></a>Customizing MIDI behavior</h3>
 <p>See <code>custom.py</code> in the examples.</p>
 <h3><a name="properties"></a>Adding properties</h3>
 <p>In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.</p>
-<pre><code><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
-<span class="int">&gt;&gt;&gt;</span> t.add('ref')
+<div class="codehilite"><pre><span></span><span class="int">&gt;&gt;&gt;</span> t = Thread(1)
+<span class="int">&gt;&gt;&gt;</span> t.add(&#39;ref&#39;)
 <span class="int">&gt;&gt;&gt;</span> t.ref = 0
 <span class="int">&gt;&gt;&gt;</span> t.ref = tween(1.0, 8)
-</code></pre>
+</pre></div>
+
+
 <h2><a name="reference"></a>Reference</h2>
 <h3><a name="glossary"></a>Glossary</h3>
 <ul>

@@ -1,10 +1,10 @@
 # BRAID
 
-Braid is a single-import module for Python 3 that comprises a musical notation system, livecoding framework, and sequencer for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. 
+Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. 
 
 Braid can be downloaded from its [GitHub repository](https://github.com/brianhouse/braid/releases).
 
-It is developed by [Brian House](http://brianhouse.net).
+It is developed by [Brian House](https://brianhouse.net).
 
 
 ## Contents
@@ -39,19 +39,18 @@ It is developed by [Brian House](http://brianhouse.net).
 ## Goals
 
 - **Idiosyncracy**  
-Braid is designed to embody the methods and aesthetics I've used in my projects. It does not intend to be for general purpose music making, nor does it have pedagogy in mind. It is an exercise in developing a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data.
+Braid is a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data. It does not intend to be for general purpose music-making, nor does it have pedagogy in mind. 
 
 - **Limited scope**  
-Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. Those are pretty significant limitations, but it means that I was able to complete this. It also means I can take advantage of all the awesome cheap MIDI monosynths coming out, like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series.
+Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. It's intended to be used with things like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series, but you can wire it into a DAW, too.
 
 - **Integrates with Python**  
 I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects. This is the source of much of its usefullness and power (particularly when it comes to working with data).  
 
-- **Both livecoding and scripting**  
- Sometimes I want to improvise within a livecoding framework, sometimes I want to make a composition. Braid doesn't make much of a distinction between these ways of operating, as it's all python and uses the interpreter as a livecoding environment. Premade scripts can be easily executed within the interpreter.
+- **Livecoding?**  
 
-- **Works on small devices**  
-Braid is has very low processor overhead, suitable for running on devices like the Raspberry Pi.
+ Maybe. Normally you'd include braid in a script and execute it, but you can also run it in the python interpreter, and that opens up some additional possibilities for exploration and improvisation. Perhaps this could be expanded on with something like jupyter into a full-fledged livecoding environment.
+
 
 #### A note on names
 
@@ -62,26 +61,26 @@ This framework is called Braid, and the fundamental objects are called _threads_
 
 You'll need to have Python 3 installed—if you're using macOS, I recommend doing so with Homebrew. Tested with python 3.7.
 
-Now open that terminal.
-
-To install (or update) Braid: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
-
-At this point, if you are familiar with programming using a text editor and the terminal, have at it. If not, follow the instructions for saving a Braid "Hello World" script below. In the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run->Run Module") Braid scripts, or use it to "livecode" (Run->Python Shell).
+To install (or update) Braid via the terminal: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
 
 ## <a name="tutorial"></a>Tutorial
 
 ### <a name="prereq"></a>Prerequisites
 
-Braid is, fundamentally, an extension to Python 3. This documentation won't cover python syntax&mdash;for that, look [here](https://docs.python.org/3/tutorial/). Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner (aka me?).
+Braid is, fundamentally, an extension to Python 3. This documentation won't cover python usage and syntax&mdash;for that, look [here](https://docs.python.org/3/tutorial/). Most of the power of Braid comes from the fact that it can be interleaved with other python code. Such possibilities are left to the practitioner, or at least out of this documentation.
 
 Additionally, this documentation assumes a general knowledge of MIDI.
+
+If you don't know what you're doing with python and the terminal but you've gotten this far, follow the instructions for saving a Braid "Hello World" script below. Then in the Finder, right-click that python file, and open it using the latest version of IDLE, which should appear as one of your choices. You can then use IDLE's built-in text editor to write, save, and run ("Run->Run Module") Braid scripts.
 
 
 ### <a name="hello"></a>Hello World
 
 Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on macOS, to simplify things download and run [this simple MIDI bridge app](http://brianhouse.net/download/general_MIDI_bridge.app.zip) which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
 
-To begin working with Braid, launch a python3 interpreter (from the terminal by typing `python3`, or from within IDLE by selecting Run -> Python Shell) and `import braid`: 
+To begin working with Braid, create a new file in your favorite text editor (such as Sublime Text).
+
+launch a python interpreter (from the terminal by typing `python3`, or from within IDLE by selecting Run -> Python Shell) and `import braid`: 
 
     $ python3
     {{Python 3.6.0 (default, Mar  4 2017, 12:32:37) 
@@ -98,14 +97,17 @@ To begin working with Braid, launch a python3 interpreter (from the terminal by 
 
 Now, create a *thread*&mdash;the fundamental object of Braid&mdash;and start it:
 
-    >>> t = Thread(1)               # create a thread&mdash;the argument indicates the MIDI channel
-    >>> t.pattern = C, C, C, C      # add a pattern
-    >>> t.start()                   # start it
+    :::python
+    t = Thread(1)               # create a thread--the argument indicates the MIDI channel
+    t.pattern = C, C, C, C      # add a pattern
+    t.start()                   # start it
+
 
 That's it! You should be hearing the steady pulse of progress.
 
 Alternately, you can create a python file with Braid syntax like this:
 
+    :::python
     from braid import *
 
     t = Thread(1)
@@ -136,16 +138,19 @@ Try it now:
 
 Start a thread
 
-    >>> t = Thread(1)   # create a thread on channel 1
-    >>> t.start()
+    :::python
+    t = Thread(1)   # create a thread on channel 1
+    t.start()
 
 MIDI pitch value can be specified by MIDI number or with note-name aliases between C0 and B8. C is an alias for C4, likewise for the rest of the middle octave
     
-    >>> t.pattern = C, C, C, C
+    :::python    
+    t.pattern = C, C, C, C
 
 is the same as  
 
-    >>> t.pattern = 60, 60, 60, 60
+    :::python
+    t.pattern = 60, 60, 60, 60
 
 0s simply sustain (no MIDI sent)  
 
@@ -181,8 +186,9 @@ Grace notes are specified by using floats
 
 Use the g function to create a grace note on note specified with a symbol
 
-    >>> t.chord = None
-    >>> t.pattern = C, g(C), g(C), g(C)
+    :::python
+    t.chord = None
+    t.pattern = C, g(C), g(C), g(C)
 
 
 ### <a name="pattern_1"></a>`Thread.pattern`, part 1
