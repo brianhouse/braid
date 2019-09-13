@@ -345,10 +345,10 @@ except FileNotFoundError as e:
     pass
 if len(synths):
     for synth, params in synths.items():
-        controls = params['controls']
-        defaults = params['defaults']
         try:
+            controls = params['controls']
+            defaults = params['defaults']
             exec("%s = make(controls, defaults)" % synth)
         except Exception as e:
-            print("Warning: failed to load %s" % synth, e)
+            print("Warning: failed to load %s:" % synth, e)
     print("Loaded synths")
