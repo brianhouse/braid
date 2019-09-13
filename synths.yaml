@@ -1,120 +1,3 @@
-Triode:
-  controls:
-    lfo_depth: 48
-    lfo_rate: 49
-    detune: 50
-    glide: 51
-    attack: 60
-    decay: 55
-    filter_res: 52
-    filter_cutoff: 53
-    filter_attack: 59
-    filter_decay: 54    
-    filter_accent: 56
-    filter_mod: 57
-    pulse_width: 58
-    sustain: 64
-    sub: 65
-    pwm_sweep: 66
-    osc: 68
-    lfo_dest: 67    
-    lfo_randomize: 69
-    lfo_retrigger: 70
-  defaults:
-    lfo_depth: 0
-    lfo_rate: 0
-    detune: 64
-    glide: 0
-    attack: 0
-    decay: 0
-    filter_res: 64
-    filter_cutoff: 127
-    filter_attack: 0
-    filter_decay: 0    
-    filter_accent: 127
-    filter_mod: 127
-    pulse_width: 64
-    sustain: 127
-    sub: 127
-    pwm_sweep: 127
-    osc: 127
-    lfo_dest: 127    
-    lfo_randomize: 0
-    lfo_retrigger: 127
-
-Anode:
-  controls:
-    attack: 54
-    decay: 53
-    filter_cutoff: 52
-    pulse_width: 51
-    osc_detune: 50
-    lfo_rate: 49
-    lfo_depth: 48
-    glide: 55
-    vcf_envelope: 56
-    sustain: 64
-    octave: 65
-    sweep: 66
-    lfo_destination: 67
-    lfo_random: 68
-    osc_wave: 70
-  defaults:
-    attack: 0
-    decay: 0
-    filter_cutoff: 64
-    pulse_width: 64
-    osc_detune: 64
-    lfo_rate: 0
-    lfo_depth: 0
-    glide: 0
-    vcf_envelope: 0
-    sustain: 127
-    octave: 0
-    sweep: 127
-    lfo_destination: 0
-    lfo_random: 0
-    osc_wave: 127
-
-VolcaKick:
-  controls:
-    pulse_colour: 40
-    pulse_level: 41
-    amp_attack: 42
-    amp_decay: 43
-    drive: 44
-    tone: 45
-    resonator_pitch: 46
-    resonator_bend: 47
-    resonator_time: 48
-    accent: 49
-  defaults: 
-    None
-
-VolcaBeats:
-  controls:
-    clap_pcm: 50
-    claves_pcm: 51
-    agogo_pcm: 52
-    crash_pcm: 53
-    stutter_time: 54
-    stutter_depth: 55
-    tom_decay: 56
-    closed_hat_decay: 57
-    open_hat_decay: 58
-    hat_grain: 59
-  defaults:
-    clap_pcm: 127
-    claves_pcm: 127
-    agogo_pcm: 127
-    crash_pcm: 127
-    stutter_time: 0
-    stutter_depth: 0
-    tom_decay: 127
-    closed_hat_decay: 50
-    open_hat_decay: 64
-    hat_grain: 127
-
 Meeblip:
   controls:
     filter_resonance: 48
@@ -173,4 +56,156 @@ Meeblip:
     pwm_sweep: 0
     wave: 0
 
+Anode:
+  controls:
+    attack: 54
+    decay: 53
+    filter_cutoff: 52
+    pulse_width: 51
+    osc_detune: 50
+    lfo_rate: 49
+    lfo_depth: 48
+    glide: 55
+    vcf_envelope: 56
+    sustain: 64
+    octave: 65
+    sweep: 66
+    lfo_destination: 67
+    lfo_random: 68
+    osc_wave: 70
+  defaults:
+    attack: 0
+    decay: 0
+    filter_cutoff: 64
+    pulse_width: 64
+    osc_detune: 64
+    lfo_rate: 0
+    lfo_depth: 0
+    glide: 0
+    vcf_envelope: 0
+    sustain: 127
+    octave: 0
+    sweep: 127
+    lfo_destination: 0
+    lfo_random: 0
+    osc_wave: 127
+
+Triode:
+  controls:
+    lfo_depth: 48
+    lfo_rate: 49
+    detune: 50
+    glide: 51
+    attack: 60
+    decay: 55
+    filter_res: 52
+    filter_cutoff: 53
+    filter_attack: 59
+    filter_decay: 54    
+    filter_accent: 56
+    filter_mod: 57
+    pulse_width: 58
+    sustain: 64
+    sub: 65
+    pwm_sweep: 66
+    osc: 68
+    lfo_dest: 67    
+    lfo_randomize: 69
+    lfo_retrigger: 70
+  defaults:
+    lfo_depth: 0
+    lfo_rate: 0
+    detune: 64
+    glide: 0
+    attack: 0
+    decay: 0
+    filter_res: 64
+    filter_cutoff: 127
+    filter_attack: 0
+    filter_decay: 0    
+    filter_accent: 127
+    filter_mod: 127
+    pulse_width: 64
+    sustain: 127
+    sub: 127
+    pwm_sweep: 127
+    osc: 127
+    lfo_dest: 127    
+    lfo_randomize: 0
+    lfo_retrigger: 127
+
+VolcaBeats:
+  controls:
+    clap_pcm: 50
+    claves_pcm: 51
+    agogo_pcm: 52
+    crash_pcm: 53
+    stutter_time: 54
+    stutter_depth: 55
+    tom_decay: 56
+    closed_hat_decay: 57
+    open_hat_decay: 58
+    hat_grain: 59
+  defaults:
+    clap_pcm: 127
+    claves_pcm: 127
+    agogo_pcm: 127
+    crash_pcm: 127
+    stutter_time: 0
+    stutter_depth: 0
+    tom_decay: 127
+    closed_hat_decay: 50
+    open_hat_decay: 64
+    hat_grain: 127
+
+VolcaKick:
+  controls:
+    pulse_colour: 40
+    pulse_level: 41
+    amp_attack: 42
+    amp_decay: 43
+    drive: 44
+    tone: 45
+    resonator_pitch: 46
+    resonator_bend: 47
+    resonator_time: 48
+    accent: 49
+  defaults: 
+    None
+
+VolcaDrum:
+    controls:
+        pan: 10
+        level_1: 17
+        level_2: 18
+        level: 19
+        attack_1: 20
+        attack_2: 21
+        attack: 22  
+        release_1: 23
+        release_2: 24
+        release: 25
+        pitch_1: 26
+        pitch_2: 27
+        pitch: 28
+        mod_1: 29
+        mod_2: 30
+        mod: 31
+        mod_rate_1: 46
+        mod_rate_2: 47
+        mod_rate: 48
+        bit: 49
+        fold: 50
+        drive: 51
+        gain: 52
+        wave_send: 103
+        wave_model: 116
+        wave_decay: 117
+        wave_body: 118
+        wave_tune: 119
+    defaults:
+        pan: 64
+        level: 127
+        pitch: 64
+        gain: 64
 
