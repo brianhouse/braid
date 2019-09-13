@@ -36,10 +36,10 @@ It is developed by [Brian House](https://brianhouse.net).
     1. [Signals](#signals)
     
 
-## Goals
+## <a name="goals"></a>Goals
 
 - **Idiosyncracy**  
-Braid is a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data. It does not intend to be for general purpose music-making, nor does it have pedagogy in mind. 
+Braid is a domain-specific language for a very specific set of concerns, namely my interest in gradually evolving rhythmic relationships and music with a relationship to data.
 
 - **Limited scope**  
 Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesizer. It's intended to be used with things like the [Meeblip](https://meeblip.com/) and the [Korg Volca](http://i.korg.com/volcaseries) series, but you can wire it into a DAW, too.
@@ -48,8 +48,7 @@ Braid is MIDI-based, it's monophonic, and it's only a sequencer, not a synthesiz
 I find specialized development environments frustrating, as they limit what's possible to their own sandbox. Braid is just a python module, and as such can be used within other python projects. This is the source of much of its usefullness and power (particularly when it comes to working with data).  
 
 - **Livecoding?**  
-
- Maybe. Normally you'd include braid in a script and execute it, but you can also run it in the python interpreter, and that opens up some additional possibilities for exploration and improvisation. Perhaps this could be expanded on with something like jupyter into a full-fledged livecoding environment.
+Maybe. Normally you'd include braid in a script and execute it, but you can also run it in the python interpreter, and that opens up some additional possibilities for exploration and improvisation. Perhaps this could be expanded on with something like jupyter into a full-fledged livecoding environment.
 
 
 #### A note on names
@@ -61,7 +60,8 @@ This framework is called Braid, and the fundamental objects are called _threads_
 
 You'll need to have Python 3 installed—if you're using macOS, I recommend doing so with Homebrew. Tested with python 3.7.
 
-To install (or update) Braid via the terminal: `pip3 install git+git://github.com/brianhouse/braid --upgrade`
+To install (or update) Braid via the terminal:  
+`pip3 install git+git://github.com/brianhouse/braid --upgrade`
 
 ## <a name="tutorial"></a>Tutorial
 
@@ -78,47 +78,31 @@ If you don't know what you're doing with python and the terminal but you've gott
 
 Any MIDI software or hardware device you have running should more or less work with Braid to make sounds. If you are on macOS, to simplify things download and run [this simple MIDI bridge app](http://brianhouse.net/download/general_MIDI_bridge.app.zip) which will let you use General MIDI for the purposes of this documentation (make sure no other MIDI devices are running before launching the app, and launch it before starting Braid).
 
-To begin working with Braid, create a new file in your favorite text editor (such as Sublime Text).
-
-launch a python interpreter (from the terminal by typing `python3`, or from within IDLE by selecting Run -> Python Shell) and `import braid`: 
-
-    $ python3
-    {{Python 3.6.0 (default, Mar  4 2017, 12:32:37) 
-    [GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)] on darwin
-    Type "help", "copyright", "credits" or "license" for more information.}}
-    >>> from braid import *
-    {{MIDI outputs available: ['to general_MIDI_bridge 1', 'to general_MIDI_bridge 2']
-    MIDI OUT: to general_MIDI_bridge 1
-    MIDI  IN: from general_MIDI_bridge 1
-    Loaded VolcaKick
-    Loaded VolcaBeats
-    Braid started
-    Playing}}
-
-Now, create a *thread*&mdash;the fundamental object of Braid&mdash;and start it:
-
-    :::python
-    t = Thread(1)               # create a thread--the argument indicates the MIDI channel
-    t.pattern = C, C, C, C      # add a pattern
-    t.start()                   # start it
-
-
-That's it! You should be hearing the steady pulse of progress.
-
-Alternately, you can create a python file with Braid syntax like this:
+To begin working with Braid, create a new file in your favorite text editor (such as Sublime Text). Create a *thread*&mdash;the fundamental object of Braid&mdash;and start it:
 
     :::python
     from braid import *
 
-    t = Thread(1)
-    t.pattern = C, C, C, C
-    t.start()
+    t = Thread(1)               # create a thread--the argument indicates the MIDI channel
+    t.pattern = C, C, C, C      # add a pattern
+    t.start()                   # start it
 
-    play()                      # dont forget this
+    play()                      # don't forget this
 
 Save it as `hello_world.py`, and run it with `python3 hello_world.py 0 0`. The (optional) arguments designate the MIDI out and in interfaces to use.  
 
-From now on, we'll assume that we're livecoding within the python3 interpreter, but the code works the same in a standalone file.  
+    $ python3 hello_world.py
+    {{Python 3.7.4 (default, Jul  9 2019, 18:13:23)
+    [Clang 10.0.1 (clang-1001.0.46.4)] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.}}
+    {{MIDI outputs available: ['to general_MIDI_bridge 1', 'to general_MIDI_bridge 2']
+    MIDI OUT: to general_MIDI_bridge 1
+    MIDI  IN: from general_MIDI_bridge 1
+    Loaded synths
+    Braid started
+    Playing}}
+
+That's it! You should be hearing the steady pulse of progress.
 
 
 ### <a name="top"></a>Top-level controls
@@ -154,35 +138,35 @@ is the same as
 
 0s simply sustain (no MIDI sent)  
 
-    >>> t.pattern = C, 0, C, C
+    t.pattern = C, 0, C, C
 
 Rests (explicit MIDI note-offs) are specified with a Z  
 
-    >>> t.pattern = C, Z, C, Z
+    t.pattern = C, Z, C, Z
 
 By default, there is no specified chord. But if there is one, notes can be specified by scale degree
 
-    >>> t.chord = C4, MAJ
-    >>> t.pattern = 1, 3, 5, 7
+    t.chord = C4, MAJ
+    t.pattern = 1, 3, 5, 7
 
 Negative numbers designate the octave below  
 
-    >>> t.pattern = -5, -7, 1, 5
+    t.pattern = -5, -7, 1, 5
 
 A chord consists of a root note and a scale. For example, `C, MAJ` is a major scale built off of C4. That means `1, 2, 3, 4, 5` is the equivalent of `C4, D4, E4, F4, G4`. But behind the scenes, it's specified like this: `Scale([0, 2, 4, 5, 7, 9, 11])`. Here's the [list](#scales) of built-in scales.
   
 Custom scales can be generated with the following syntax, where numbers are chromatic steps from the root
 
-    >>> whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
+    whole_tone_scale = Scale([0, 2, 4, 6, 8, 10])
 
 R specifies a random note in the scale
 
-    >>> t.chord = C4, whole_tone_scale
-    >>> t.pattern = 1, R, R, -6
+    t.chord = C4, whole_tone_scale
+    t.pattern = 1, R, R, -6
 
 Grace notes are specified by using floats
 
-    >>> t.pattern = 1, 1., 1., 1.
+    t.pattern = 1, 1., 1., 1.
 
 Use the g function to create a grace note on note specified with a symbol
 
@@ -195,107 +179,112 @@ Use the g function to create a grace note on note specified with a symbol
 
 Start a thread with a pattern
 
-    >>> t = Thread(1)
-    >>> t.chord = C, DOR
-    >>> t.pattern = 1, 1, 1, 1
-    >>> t.start()
+    :::python
+    t = Thread(1)
+    t.chord = C, DOR
+    t.pattern = 1, 1, 1, 1
+    t.start()
 
 Once started, a thread repeats its pattern. Each repetition is called a *cycle*. Each cycle is subdivided evenly by the **steps** in the pattern.
 
-    >>> t.pattern = 1, 0, 1, 0              # 4/4
-    >>> t.pattern = 1, 0, 1                 # 3/4
-    >>> t.pattern = 1, 1, 0, 1, 1, 0, 1     # 7/8
+    :::python
+    t.pattern = 1, 0, 1, 0              # 4/4
+    t.pattern = 1, 0, 1                 # 3/4
+    t.pattern = 1, 1, 0, 1, 1, 0, 1     # 7/8
 
 Each step of a pattern can be a note, but it can also be a subdivision
 
-    >>> t.pattern = 1, [1, 1], 1, 1
-    >>> t.pattern = 1, [1, 1], 1, [1, 1, 1]
+    :::python
+    t.pattern = 1, [1, 1], 1, 1
+    t.pattern = 1, [1, 1], 1, [1, 1, 1]
 
 ...or a subdivision of subdivisions, ad finitum
 
-    >>> t.pattern = 1, [2, [1., 1.]], [3, [2, 1], 1.], [5, [4., 3.]]
+    :::python
+    t.pattern = 1, [2, [1., 1.]], [3, [2, 1], 1.], [5, [4., 3.]]
 
 So brackets indicate subdivisions. Parens, however, indicate a choice.
 
-    >>> t.pattern = 1, (2, 3, 4), 1, 1
+    :::python
+    t.pattern = 1, (2, 3, 4), 1, 1
 
 Brackets and parens can be combined to create intricate markov chains
 
-    >>> tempo(132)                  # set the universal tempo
-    >>> d = Thread(10)              # channel 10 is MIDI for drums
+    tempo(132)                  # set the universal tempo
+    d = Thread(10)              # channel 10 is MIDI for drums
     >>>
-    >>> d.pattern = [([K, H], [K, K]), (K, O)], (H, [H, K]), (S, [S, (O, K), 0, g(S)]), [[H, H], ([H, H], O, [g(S), g(S), g(S), g(S)])]         # K, S, H, O are built-in aliases for 36, 38, 42, 46
-    >>> d.start()
+    d.pattern = [([K, H], [K, K]), (K, O)], (H, [H, K]), (S, [S, (O, K), 0, g(S)]), [[H, H], ([H, H], O, [g(S), g(S), g(S), g(S)])]         # K, S, H, O are built-in aliases for 36, 38, 42, 46
+    d.start()
 
 Patterns are python lists, so they can be manipulated as such
 
-    >>> d.pattern = [K, [O, H]] * 4
-    >>> d.pattern[2] = S
-    >>> d.pattern[6] = S
-    >>> d.pattern[6] = [(S, [S, K])]
+    d.pattern = [K, [O, H]] * 4
+    d.pattern[2] = S
+    d.pattern[6] = S
+    d.pattern[6] = [(S, [S, K])]
     >>>
-    >>> d.pattern.reverse()
+    d.pattern.reverse()
 
 
 ### <a name="pattern_2"></a>`Thread.pattern`, part 2
 
 There are additional functions for working with rhythms. For example, euclidean rhythms can be generated with the euc function
 
-    >>> tempo(132)   
-    >>> d = Thread(10)
-    >>> d.start()
+    tempo(132)   
+    d = Thread(10)
+    d.start()
 ###
-    >>> steps = 7
-    >>> pulses = 3
-    >>> note = K
-    >>> d.pattern = euc(steps, pulses, note)    # [K, 0, K, 0, K, 0, 0]
+    steps = 7
+    pulses = 3
+    note = K
+    d.pattern = euc(steps, pulses, note)    # [K, 0, K, 0, K, 0, 0]
 
 Adding a pattern to an existing pattern fills any 0s with the new pattern
 
-    >>> d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
+    d.pattern.add(euc(7, 5, H))             # [K, H, K, H, K, 0, H]
 
 XOR'ing a pattern to an existing pattern adds it, but turns any collisions into 0s
 
-    >>> d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
+    d.pattern.xor([1, 1, 0, 0, 0, 0, 0])    # [0, 0, K, H, K, 0, H]
 
 These can be done even if the patterns are different lengths, to create crossrhythms
 
-    >>> d.pattern = [K, K] * 2
-    >>> d.pattern.add([H, H, H, H, H])
+    d.pattern = [K, K] * 2
+    d.pattern.add([H, H, H, H, H])
 
 Patterns can also be blended
     
-    >>> d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
+    d.pattern = blend([K, K, K, K], [S, S, S, S])   # this is probabilistic and will be different every time!
 
 same as
 
-    >>> d.pattern = K, K, K, K
-    >>> d.pattern.blend([S, S, S, S])
+    d.pattern = K, K, K, K
+    d.pattern.blend([S, S, S, S])
 
 blend can take a balance argument, where 0 is fully pattern A, and 1 is fully pattern B.
 
-    >>> d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
+    d.pattern = blend([K, K, K, K], [S, S, S, S], 0.2)   # more kicks, less snare
 
 
 ### <a name="pattern_3"></a>`Thread.pattern`, part 3
 
 Additionally, any given step in a pattern may also be a function. This function should return a note value.
 
-    >>> t = Thread(1)
-    >>> t.chord = D, PRG
+    t = Thread(1)
+    t.chord = D, PRG
     >>>
-    >>> def x():
+    def x():
     ...    return choice([1, 3, 5, 7])
     >>>
-    >>> t.pattern = [x] * 8
+    t.pattern = [x] * 8
     >>>
-    >>> t.start()
+    t.start()
 
  This is particularly useful for manipulating synth parameters at each step (see [below](#devices)). In this case, creating a wrapped function allows the actual note value to be passed as a parameter.
 
-    >>> t = VolcaKick(1)
+    t = VolcaKick(1)
     >>>
-    >>> def k(n):
+    def k(n):
     ...     def f(t):
     ...         t.pulse_colour = 127
     ...         t.pulse_level = 127
@@ -306,7 +295,7 @@ Additionally, any given step in a pattern may also be a function. This function 
     ...         return n
     ...     return f
     >>>
-    >>> def s(n):
+    def s(n):
     ...     def f(t):    
     ...         t.pulse_colour = 127
     ...         t.pulse_level = 127
@@ -317,8 +306,8 @@ Additionally, any given step in a pattern may also be a function. This function 
     ...         return n
     ...     return f
     >>>
-    >>> t.pattern = k(1), k(3), s(20), k(1)              # custom properties for k and s notes
-    >>> t.start()
+    t.pattern = k(1), k(3), s(20), k(1)              # custom properties for k and s notes
+    t.start()
 
 
 
@@ -327,44 +316,44 @@ Additionally, any given step in a pattern may also be a function. This function 
 
 All threads come with some properties built-in. We've seen [`chord`](#notes) already.  
 
-    >>> t = Thread(10)
-    >>> t.chord = C, MAJ
-    >>> t.pattern = 1, 1., 1, 1.
-    >>> t.start()
+    t = Thread(10)
+    t.chord = C, MAJ
+    t.pattern = 1, 1., 1, 1.
+    t.start()
 
 There is also, of course, `velocity`
 
-    >>> t.velocity = 0.5
+    t.velocity = 0.5
 
 and `grace` is a percentage of velocity, to control the depth of the grace notes
 
-    >>> t.velocity = 1.0
-    >>> t.grace = .45
+    t.velocity = 1.0
+    t.grace = .45
 
 
 ### <a name="phase"></a>`Thread.phase`
 
 Consider the following:
 
-    >>> t1 = Thread(10)
-    >>> t1.chord = 76, CHR  # root note is "Hi Wood Block"
+    t1 = Thread(10)
+    t1.chord = 76, CHR  # root note is "Hi Wood Block"
     >>>
-    >>> t2 = Thread(10)
-    >>> t2.chord = 77, CHR  # root note is "Lo Wood Block"
+    t2 = Thread(10)
+    t2.chord = 77, CHR  # root note is "Lo Wood Block"
     >>>
-    >>> t1.pattern = [1, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0]   # thanks Steve
-    >>> t2.pattern = t1.pattern
+    t1.pattern = [1, 1, 1, 0], [1, 1, 0, 1], [0, 1, 1, 0]   # thanks Steve
+    t2.pattern = t1.pattern
     >>>
-    >>> t1.start()
-    >>> t2.start(t1)            # t1 as argument
+    t1.start()
+    t2.start(t1)            # t1 as argument
 
 Note that in this example, `t2` takes `t1` as an argument. This ensures that t2 will start in sync with t1. Otherwise, t1 and t2 will start at arbitrary times, which may not be desirable.
 
 However, each thread also has a `phase` property that allows us to control the relative phase of threads deliberately. Phase goes from 0-1 and indicates how much of the cycle the pattern is offset.
 
-    >>> t2.phase = 1/12         # adjust phase by one subdivision
-    >>> t2.phase = 3/12
-    >>> t2.phase = 7/12
+    t2.phase = 1/12         # adjust phase by one subdivision
+    t2.phase = 3/12
+    t2.phase = 7/12
 
 
 
@@ -374,23 +363,23 @@ As we've already used it, the `tempo()` function sets the universal BPM (or at l
 
 Likewise, individual threads can also cycle at their own `rate`. The `rate` property of each thread is a multiplier of the reference cycles&mdash;0.5 is twice as slow, 2 is twice as fast.
 
-    >>> t1 = Thread(1)
-    >>> t1.pattern = C, C, C, C
-    >>> t1.start()
+    t1 = Thread(1)
+    t1.pattern = C, C, C, C
+    t1.start()
     >>>
-    >>> t2 = Thread(2)
-    >>> t2.pattern = G, G, G, G
-    >>> t2.start(t1)                    # keep in phase
+    t2 = Thread(2)
+    t2.pattern = G, G, G, G
+    t2.start(t1)                    # keep in phase
     >>>
-    >>> t2.rate = 1/2                   # half-speed!    
+    t2.rate = 1/2                   # half-speed!    
 
 Notice that depending on when you hit return, changing the rate can make threads go out of sync (similar to how starting threads at different times puts them out of phase). The way to get around this is to make sure it changes on a cycle edge. For this, use a [trigger](#triggers):
 
-    >>> t2.stop()
-    >>> t2.start(t1)
-    >>> def x(): t2.rate = 0.5          # one-line python function
+    t2.stop()
+    t2.start(t1)
+    def x(): t2.rate = 0.5          # one-line python function
     ...                                 # hit return twice
-    >>> t2.trigger(x)                   # executes x at the beginning of the next cycle
+    t2.trigger(x)                   # executes x at the beginning of the next cycle
 
 If you're working with scripts, using triggers like this isn't necessary, as things will execute simultaneously.
 
@@ -403,32 +392,32 @@ Now for the fun part. Any property on a thread can be **tweened**&mdash;that is,
 
 This is done simply by assigning a `tween()` function to the property instead of a value. `tween()` has two required arguments: the target value, and the number of cycles to get there. (A transition function can also be specified, more on that below.) Braid will then automatically tween from the current value to the target value, starting with the next cycle.
 
-    >>> p1 = Thread(1)
-    >>> p2 = Thread(2)
+    p1 = Thread(1)
+    p2 = Thread(2)
     >>>
-    >>> pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
-    >>> p1.pattern = p2.pattern = pp
+    pp = [E4, Gb4, B4, Db5], [D5, Gb4, E4, Db5], [B4, Gb4, D5, Db5]
+    p1.pattern = p2.pattern = pp
     >>>
-    >>> p1.start(); p2.start(p1)            # two commands, one line
+    p1.start(); p2.start(p1)            # two commands, one line
     >>>
-    >>> p2.phase = tween(1/12, 4.0)         # take four cycles to move one subdivision
+    p2.phase = tween(1/12, 4.0)         # take four cycles to move one subdivision
 
 All properties on a thread can be tweened. Device specific MIDI parameters move stepwise between ints within the range 0-127 (see [below](#devices)). `rate`, `phase`, `velocity`, `grace` change continuously over float values. `chord` will probabilistically waver between the current value and the target value. `pattern` will perform a blend between the current and target patterns on each cycle, with the balance shifting from one to the other.
 
-    >>> t = Thread(10)
-    >>> t.start()
-    >>> t.pattern = K, K, S, [0, 0, 0, K]
-    >>> t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
+    t = Thread(10)
+    t.start()
+    t.pattern = K, K, S, [0, 0, 0, K]
+    t.pattern = tween([[K, K], [S, 0, K, 0], [0, K], [S, K, 0, K]], 8)
     >>>
-    >>> # or:
+    # or:
     >>>
-    >>> t.pattern = euc(8, 5, 43)
-    >>> t.pattern = tween(euc(8, 6, 50), 8)
-    >>> t.pattern = tween(euc(8, 5, 43), 8)
+    t.pattern = euc(8, 5, 43)
+    t.pattern = tween(euc(8, 6, 50), 8)
+    t.pattern = tween(euc(8, 5, 43), 8)
 
 When a tween completes, it can trigger a function, using the `on_end` parameter. The following example tweens the phase of Thread `t` over 8 cycles, and then stops the thread (Note the lack of parentheses around `t.stop`&mdash;we want the thread to execute the function at the end of the tween, not during this declaration!).
 
-    >>> t.phase = tween(0.5, 8, on_end=t.stop)
+    t.phase = tween(0.5, 8, on_end=t.stop)
 
 
 
@@ -438,41 +427,41 @@ Tweens can take an additional property, called a signal. This is any function th
 
 Built-in signals: `linear` (default), `ease_in`, `ease_out`, `ease_in_out`, `ease_out_in`
 
-    >>> t = Thread(1)
-    >>> t.chord = D, DOR
-    >>> t.pattern = [1, 3, 5, 7] * 4
-    >>> t.start()
-    >>> 
-    >>> t.chord = tween((E, MAJ), 8, ease_in_out)
-    >>> t.chord = tween((E, MAJ), 8, ease_out_in)
+    t = Thread(1)
+    t.chord = D, DOR
+    t.pattern = [1, 3, 5, 7] * 4
+    t.start()
+    
+    t.chord = tween((E, MAJ), 8, ease_in_out)
+    t.chord = tween((E, MAJ), 8, ease_out_in)
 
 Since signals are just functions, you can write your own in Python. `ease_out`, for example, is just
 
-    >>> def ease_out(pos):
+    def ease_out(pos):
     ...    pos = clamp(pos)    
     ...    return (pos - 1)**3 + 1
 
 To view a graphic representation of the function, plot it.
 
-    >>> plot(ease_out)
+    plot(ease_out)
 
 You can also convert _any_ timeseries data into a signal function using `timeseries()`. You might use this to tween velocity over an entire composition, for example, or for data sonification.
 
-    >>> data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
-    >>> f = timeseries(data)
-    >>> plot(f)
-    >>> 
-    >>> t = Thread(1)
-    >>> t.chord = D, SUSb9
-    >>> t.pattern = [1, 2, 3, 4] * 4
-    >>> t.start()
+    data = 0, 0, 1, 0.8, 1, 0.2, 0, 0.4, 0.8, 1     # arbitrary timseries
+    f = timeseries(data)
+    plot(f)
+    
+    t = Thread(1)
+    t.chord = D, SUSb9
+    t.pattern = [1, 2, 3, 4] * 4
+    t.start()
     >>>
-    >>> t.velocity = 0.0                                # sets the lower bound of the range to 0.0
-    >>> t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
+    t.velocity = 0.0                                # sets the lower bound of the range to 0.0
+    t.velocity = tween(1.0, 24, f)                  # sets the uppper bound of the range to 1.0, and applies the signal shape over 24 cycles
 
 Likewise, you can specify a function with breakpoints using `breakpoints()`. Each breakpoint is specified with an x,y coordinate system&mdash;it doesn't matter what the range and domain are, as it will be normalized. Additionally, a signal shape can be specified for each breakpoint transition, which allows complex curves and transitions.
 
-    >>> f = breakpoints( 
+    f = breakpoints( 
                     [0, 0],
                     [2, 0],
                     [8, 1, ease_in_out],
@@ -484,31 +473,31 @@ Likewise, you can specify a function with breakpoints using `breakpoints()`. Eac
                     [37.5, 4, ease_in_out],
                     [48, 0, ease_out]
                     )
-    >>> f = breakpoints(data)
-    >>> plot(f)
+    f = breakpoints(data)
+    plot(f)
 
 
 ### <a name="sync"></a>Sync, and tweening rate
 
 Braid does something special when you assign a tween to `Thread.rate`. Ordinarily, if two threads started in sync and one thread tweened its rate, they would inevitably end up out of sync. However, Braid automatically adjusts its tweening function such that threads will remain aligned as best as possible.
 
-    >>> t1 = Thread(1)
-    >>> t1.chord = D, SUSb9
-    >>> t1.pattern = 1, 1, 1, 1
-    >>> t1.start()
+    t1 = Thread(1)
+    t1.chord = D, SUSb9
+    t1.pattern = 1, 1, 1, 1
+    t1.start()
     >>>
-    >>> t2 = Thread(2)
-    >>> t2.chord = D, SUSb9
-    >>> t2.pattern = 4, 4, 4, 4
-    >>> t2.start(t1)
-    >>>    
-    >>> t2.rate = tween(0.5, 4)
+    t2 = Thread(2)
+    t2.chord = D, SUSb9
+    t2.pattern = 4, 4, 4, 4
+    t2.start(t1)
+       
+    t2.rate = tween(0.5, 4)
 
 As simple as that is, that's probably the most interesting feature of Braid to me, and what give it its name.
 
 If you _don't_ want this functionality, pass `sync=False` to the thread constructor, and the thread won't try to reconcile itself.
 
-    >>> t = Thread(1, sync=False)
+    t = Thread(1, sync=False)
 
 
 ### <a name="triggers"></a>Triggers
@@ -519,74 +508,74 @@ Triggers execute at the edge between cycles.
 
 #### Thread Triggers
 
-    >>> t = Thread(1)
-    >>> t.chord = D, SUSb9
-    >>> t.pattern = 1, 1, 1, 1
-    >>> t.start()
+    t = Thread(1)
+    t.chord = D, SUSb9
+    t.pattern = 1, 1, 1, 1
+    t.start()
     >>>
-    >>> def x(): t.pattern = 4, 4, 4, 4         # one-line python function
+    def x(): t.pattern = 4, 4, 4, 4         # one-line python function
     ...
-    >>> t.trigger(x)                            # triggers x at the end of the current cycle
-    >>> t.trigger(x, 1)                         # triggers x at the end of the first complete cycle
-    >>> t.trigger(x, 4)                         # triggers x at the end of the fourth complete cycle
+    t.trigger(x)                            # triggers x at the end of the current cycle
+    t.trigger(x, 1)                         # triggers x at the end of the first complete cycle
+    t.trigger(x, 4)                         # triggers x at the end of the fourth complete cycle
 
 You might want to reuse the same triggered function with different threads. This is facilitated by including an argument in the function definition which will be passed the thread that triggered it.
 
-    >>> t1 = Thread(1)
-    >>> t1.chord = D, SUSb9
-    >>> t1.pattern = 1, 1, 1, 1
-    >>> t1.start()
+    t1 = Thread(1)
+    t1.chord = D, SUSb9
+    t1.pattern = 1, 1, 1, 1
+    t1.start()
     >>>
-    >>> t2 = Thread(2)
-    >>> t2.chord = D, SUSb9
-    >>> t2.pattern = 4, 4, 4, 4
-    >>> t2.start(t1)
+    t2 = Thread(2)
+    t2.chord = D, SUSb9
+    t2.pattern = 4, 4, 4, 4
+    t2.start(t1)
     >>>
-    >>> def x(t): t.pattern = R, R, R, R    # generic 't' argument
+    def x(t): t.pattern = R, R, R, R    # generic 't' argument
     ...
-    >>> t1.trigger(x, 2)
-    >>> t2.trigger(x, 2)                    # same function
+    t1.trigger(x, 2)
+    t2.trigger(x, 2)                    # same function
 
 Using a third argument, triggers can be repeated infinitely or for a set number of times.
 
-    >>> t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
-    >>> t.trigger(y, 6, True)   # trigger x every 6 cycles 
+    t.trigger(x, 4, 2)      # trigger x after 4 cycles and after 8 cycles
+    t.trigger(y, 6, True)   # trigger x every 6 cycles 
 
 Also:
     
-    >>> t.trigger(y, 0, True)   # nope
+    t.trigger(y, 0, True)   # nope
 
-    >>> t.trigger(y)            # you probably wanted to do this
-    >>> t.trigger(y, 1, True)   
+    t.trigger(y)            # you probably wanted to do this
+    t.trigger(y, 1, True)   
 
 To cancel all triggers on a thread, pass `False`.
 
-    >>> t.trigger(False)
+    t.trigger(False)
 
 To cancel any triggers on a thread that are repeating infinitely, pass `repeat=False` without other arguments.
 
-    >>> t.trigger(repeat=False)
+    t.trigger(repeat=False)
 
 #### Universal Triggers
 
 For universal triggers, no thread argument can be supplied to the trigger function. And universal triggers operate via the underlying cycle at the global tempo. Otherwise, they are the same as thread triggers, and are particularly useful for sets of changes, as defined in larger functions, or universal functions. 
 
-    >>> t1 = Thread(1)
-    >>> t1.chord = D, SUSb9
-    >>> t1.pattern = 1, 1, 1, 1
-    >>> t1.start()
+    t1 = Thread(1)
+    t1.chord = D, SUSb9
+    t1.pattern = 1, 1, 1, 1
+    t1.start()
     >>>
-    >>> t2 = Thread(2)
-    >>> t2.chord = D, SUSb9
-    >>> t2.pattern = 4, 4, 4, 4
-    >>> t2.start(t1)
+    t2 = Thread(2)
+    t2.chord = D, SUSb9
+    t2.pattern = 4, 4, 4, 4
+    t2.start(t1)
     >>>
-    >>> def x():
+    def x():
     ...     tempo(tempo() * 1.3)                    # calling tempo without arguments returns the current value
     ...     t1.chord = D2, SUSb9
     ...     t1.phase = 1/8
     ...     t1.pattern = t2.pattern = R, R, R, R
-    >>> trigger(x, 2)
+    trigger(x, 2)
 
 
 ### <a name="devices"></a>MIDI devices and properties
@@ -595,15 +584,15 @@ Braid is designed to work with hardware monosynths. Thus far, the only actual MI
 
 Devices are represented in Braid as extensions to the thread object. To create a custom thread, use the `make()` function. `make()` is passed a dictionary with property names mapped to MIDI CC channels.
 
-    >>> Voltron = make({'attack': 54, 'decay': 53, 'filter_cutoff': 52, 'pulse_width': 51})
+    Voltron = make({'attack': 54, 'decay': 53, 'filter_cutoff': 52, 'pulse_width': 51})
 
 Now, Voltron can be used like any thread, but it will also have the specified CC values that can be set, tweened, etc.
 
-    >>> t = Voltron(1)
-    >>> t.pattern = [1, 2, 3, 5] * 4
-    >>> t.filter_cutoff = 0
-    >>> t.filter_cutoff = tween(127, 8)
-    >>> t.start()
+    t = Voltron(1)
+    t.pattern = [1, 2, 3, 5] * 4
+    t.filter_cutoff = 0
+    t.filter_cutoff = tween(127, 8)
+    t.start()
 
 Since you'll probably be using the same MIDI devices all the time, and it is tedious to specify this each time you run Braid (especially with large numbers of controls), Braid also automatically loads custom thread types from the `synths.yaml` file in the root directory.
 
@@ -619,10 +608,10 @@ See `custom.py` in the examples.
 
 In some cases, you may want to use a reference property that does not directly affect a thread itself or send any MIDI data&mdash;a thread-specific variable that can be tweened as though it were a property, in order to guide other processes.
 
-    >>> t = Thread(1)
-    >>> t.add('ref')
-    >>> t.ref = 0
-    >>> t.ref = tween(1.0, 8)
+    t = Thread(1)
+    t.add('ref')
+    t.ref = 0
+    t.ref = tween(1.0, 8)
 
 
 ## <a name="reference"></a>Reference
