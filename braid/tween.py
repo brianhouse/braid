@@ -110,7 +110,7 @@ def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, s
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f, on_end, osc, saw, start)
     if type(value) == tuple:
-        return ChordTween(value, cycles, signal_f, one_end, osc, saw, start)
+        return ChordTween(value, cycles, signal_f, on_end, osc, saw, start)
     if type(value) == list: # careful, lists are always patterns
         value = Pattern(value)
     if type(value) == Pattern:
