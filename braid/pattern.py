@@ -1,6 +1,7 @@
 import collections
 from random import choice, random
 from . import num_args
+from .signal import ease_in, ease_out
 
 
 class Pattern(list):
