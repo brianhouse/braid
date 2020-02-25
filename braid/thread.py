@@ -234,7 +234,7 @@ class Thread(object):
             scale = self.chord[1] if self.chord else CHR  # Default to Chromatic Scale
         self.chord = root, scale
 
-    # Convenience methods for getting/settings chord scale
+    # Convenience methods for getting/setting chord scale
     # Does NOT support tweening, for that use chord
     @property
     def scale(self):

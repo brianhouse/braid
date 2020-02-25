@@ -59,6 +59,10 @@ class Pattern(list):
     def __repr__(self):
         return "P%s" % list.__repr__(self)
 
+    def notes(self):
+        """return a list of all values in pattern that are not 0 or REST"""
+        return [n for n in self if n != 0 and n != 'REST']
+
     def replace(self, value, target):
         list.__init__(self, [target if step == value else value for step in self])
 
@@ -79,6 +83,21 @@ class Pattern(list):
     def xor(self, pattern_2):
         l = xor(self, pattern_2)
         list.__init__(self, l)
+
+    def invert(self, off_note=0, note_list=None):
+        """replace all occurrences of off_note with values from note_list which defaults to self.notes()"""
+        """and replace all occurrences of NOT off_note with off_note"""
+        if note_list is None:
+            note_list = self.notes()
+        inverted_pattern = []
+        i = 0
+        for n in self:
+            if n == off_note:
+                inverted_pattern.append(note_list[i % len(note_list)])
+                i += 1
+            else:
+                inverted_pattern.append(off_note)
+        list.__init__(self, inverted_pattern)
 
 
 def prep(pattern_1, pattern_2):
@@ -150,7 +169,7 @@ def lcm(a, b):
     return a * b // gcd
 
 
-def euc(steps, pulses, rotation=0, invert=False, note=1, rest=0, note_list=None, rest_list=None):
+def euc(steps, pulses, rotation=0, invert=False, note=1, off_note=0, note_list=None, off_note_list=None):
     steps = int(steps)
     pulses = int(pulses)
     if pulses > steps:
@@ -173,7 +192,7 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, rest=0, note_list=None,
 
     def build(level):
         if level == -1:
-            pattern.append(rest)
+            pattern.append(off_note)
         elif level == -2:
             pattern.append(note)
         else:
@@ -191,9 +210,9 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, rest=0, note_list=None,
         pattern = list(pattern)
     if note_list is None:
         note_list = [note]
-    if rest_list is None:
-        rest_list = [rest]
-    pulse = rest if invert else note
+    if off_note_list is None:
+        off_note_list = [off_note]
+    pulse = off_note if invert else note
     final_pattern = []
     i = j = 0
     for n in pattern:
@@ -201,7 +220,7 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, rest=0, note_list=None,
             final_pattern.append(note_list[i % len(note_list)])
             i += 1
         else:
-            final_pattern.append(rest_list[j % len(rest_list)])
+            final_pattern.append(off_note_list[j % len(off_note_list)])
             j += 1
 
     return final_pattern

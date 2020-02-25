@@ -5,7 +5,7 @@ from bisect import bisect
 class Scale(list):
 
     """Allows for specifying scales by degree, up to 1 octave below and octaves_above above (default 2)"""
-    """Set constrain=True to octave shift degree values into range thus preserving pitch class, else raise ScaleError"""
+    """Set constrain=True to octave shift out-of-range degrees into range, preserving pitch class, else ScaleError"""
     """Any number of scale steps is supported, but default for MAJ: """
     """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
 
