@@ -85,8 +85,9 @@ class Pattern(list):
         list.__init__(self, l)
 
     def invert(self, off_note=0, note_list=None):
-        """replace all occurrences of off_note with values from note_list which defaults to self.notes()"""
+        """replace all occurrences of off_note with consecutive values from note_list (default = self.notes())"""
         """and replace all occurrences of NOT off_note with off_note"""
+        """e.g. [1, 0, 2, 0, 3] becomes [0, 1, 0, 2, 0]"""
         if note_list is None:
             note_list = self.notes()
         inverted_pattern = []
