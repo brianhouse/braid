@@ -1,10 +1,11 @@
 from random import randint, choice, random, shuffle
+from collections import deque
 
 class Scale(list):
 
     """Allows for specifying scales by degree, up to one octave below and two octaves above"""
     """Any number of scale steps is supported, but for MAJ: """
-    """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""    
+    """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
 
     def __init__(self, *args):
         super(Scale, self).__init__(*args)
@@ -223,6 +224,7 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 R = 'R'         # random
 Z = 'REST'      # rest
 
+Q = deque       # alias for collections.deque, used to create note queue steps that rotate each cycle: Q([1, 2, 3])
 
 def g(note):
     # create grace note from named step
