@@ -1,17 +1,16 @@
 from random import randint, choice, random, shuffle
 from collections import deque
-from bisect import bisect_left
+from bisect import bisect
 
 class Scale(list):
 
-    """Allows for specifying scales by degree, up to octaves_below below and octaves_above above"""
-    """Set constrain=True to keep degree values in range while preserving pitch class, else raise ScaleError"""
+    """Allows for specifying scales by degree, up to 1 octave below and octaves_above above (default 2)"""
+    """Set constrain=True to octave shift degree values into range thus preserving pitch class, else raise ScaleError"""
     """Any number of scale steps is supported, but default for MAJ: """
     """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
 
-    def __init__(self, *args, constrain=False, octaves_below=1, octaves_above=2):
+    def __init__(self, *args, constrain=False, octaves_above=2):
         self.constrain = constrain
-        self.octaves_below = octaves_below
         self.octaves_above = octaves_above
         super(Scale, self).__init__(*args)
 
@@ -28,10 +27,10 @@ class Scale(list):
         if self.constrain:
             while degree > self._upper_bound():
                 degree = degree - len(self)
-            while degree < self._lower_bound():
+            while degree < 0 - len(self):
                 degree = degree + len(self)
         else:
-            if degree > self._upper_bound() or degree < self._lower_bound():
+            if degree > self._upper_bound() or degree < 0 - len(self):
                 raise ScaleError(degree)
         if degree < 0:
             degree = abs(degree)
@@ -45,9 +44,6 @@ class Scale(list):
             return float(semitone)
         return semitone
 
-    def _lower_bound(self):
-        return 0 - len(self) * self.octaves_below
-
     def _upper_bound(self):
         return len(self) * self.octaves_above
 
@@ -59,15 +55,15 @@ class Scale(list):
         return Scale(scale)
 
     def quantize(self, interval):
+        """Quantize a semitone interval to the scale, negative and positive intervals are accepted without bounds"""
+        """Intervals not in the scale are shifted up in pitch to the nearest interval in the scale"""
+        """i.e. for MAJ, 1 returns 2,  3 returns 4, -2 returns -1, -4 returns -3, etc..."""
         if interval in self:
             return interval
-        octave = interval // self[len(self)]
-        interval = interval - octave * 12
-        degree = bisect_left(list(self), interval) + 1
-        if octave:
-            return self[degree] + octave * 12
-        return self[degree]
-
+        octave_shift = interval // self[len(self)] * 12
+        interval = interval - octave_shift
+        degree = bisect(list(self), interval) + 1
+        return self[degree] + octave_shift
 
 
 class ScaleError(Exception):

@@ -218,6 +218,37 @@ class Thread(object):
 
 
     """Specialized parameters"""
+    # Convenience methods for getting/setting chord root
+    # Does NOT support tweening, for that use chord or transpose
+    @property
+    def root(self):
+        if isinstance(self.chord, Tween):
+            return self.chord.value[0]
+        return self.chord[0] if self.chord else None
+
+    @root.setter
+    def root(self, root):
+        if isinstance(self.chord, Tween):
+            scale = self.chord.value[1]
+        else:
+            scale = self.chord[1] if self.chord else CHR  # Default to Chromatic Scale
+        self.chord = root, scale
+
+    # Convenience methods for getting/settings chord scale
+    # Does NOT support tweening, for that use chord
+    @property
+    def scale(self):
+        if isinstance(self.chord, Tween):
+            return self.chord.value[1]
+        return self.chord[1] if self.chord else None
+
+    @scale.setter
+    def scale(self, scale):
+        if isinstance(self.chord, Tween):
+            root = self.chord.value[0]
+        else:
+            root = self.chord[0] if self.chord else C  # Default to Middle C
+        self.chord = root, scale
 
     @property
     def channel(self):
