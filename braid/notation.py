@@ -1,13 +1,18 @@
 from random import randint, choice, random, shuffle
 from collections import deque
+from bisect import bisect_left
 
 class Scale(list):
 
-    """Allows for specifying scales by degree, up to one octave below and two octaves above"""
-    """Any number of scale steps is supported, but for MAJ: """
+    """Allows for specifying scales by degree, up to octaves_below below and octaves_above above"""
+    """Set constrain=True to keep degree values in range while preserving pitch class, else raise ScaleError"""
+    """Any number of scale steps is supported, but default for MAJ: """
     """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, constrain=False, octaves_below=1, octaves_above=2):
+        self.constrain = constrain
+        self.octaves_below = octaves_below
+        self.octaves_above = octaves_above
         super(Scale, self).__init__(*args)
 
     def __getitem__(self, degree):
@@ -20,8 +25,14 @@ class Scale(list):
         octave_shift = 0
         if degree == R:
             degree = list.__getitem__(self, randint(0, len(self) - 1))
-        if degree > len(self) * 2 or degree < 0 - len(self):
-            raise ScaleError(degree)
+        if self.constrain:
+            while degree > self._upper_bound():
+                degree = degree - len(self)
+            while degree < self._lower_bound():
+                degree = degree + len(self)
+        else:
+            if degree > self._upper_bound() or degree < self._lower_bound():
+                raise ScaleError(degree)
         if degree < 0:
             degree = abs(degree)
             octave_shift -= 12
@@ -34,12 +45,28 @@ class Scale(list):
             return float(semitone)
         return semitone
 
+    def _lower_bound(self):
+        return 0 - len(self) * self.octaves_below
+
+    def _upper_bound(self):
+        return len(self) * self.octaves_above
+
     def rotate(self, steps):
         l = list(self)
         scale = l[steps:] + l[:steps]
         scale = [degree - scale[0] for degree in scale]
         scale = [(degree + 12) if degree < 0 else degree for degree in scale]
         return Scale(scale)
+
+    def quantize(self, interval):
+        if interval in self:
+            return interval
+        octave = interval // self[len(self)]
+        interval = interval - octave * 12
+        degree = bisect_left(list(self), interval) + 1
+        if octave:
+            return self[degree] + octave * 12
+        return self[degree]
 
 
 
