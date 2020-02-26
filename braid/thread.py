@@ -168,7 +168,11 @@ class Thread(object):
         while isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
             self.update_controls()  # to handle note-level CC changes
-        v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
+        if type(step) == float:  # use the part after the decimal to scale velocity
+            v = step % 1
+            v = self.grace if v == 0.0 else v  # if decimal part is 0.0 fallback to self.grace to scale velocity
+        else:
+            v = 1.0
         step = int(step) if type(step) == float else step
         if step == Z:
             self.rest()
