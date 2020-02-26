@@ -3,14 +3,25 @@ from random import choice, random
 from . import num_args
 from .signal import ease_in, ease_out
 
+class Q(collections.deque):
+    """Q is a wrapper around collections.deque for making rotating note 'queues'
+       Set drunk=True to randomize the rotation direction, else always rotate right.
+       e.g. Q([1, 2, 3]) returns 1 on the first cycle, then 2 on the next, then 3, then 1, etc...
+    """
+    def __init__(self, iterable, drunk=False):
+        self.drunk = drunk
+        super(Q, self).__init__(iterable)
+
 class Pattern(list):
 
     """ Pattern is just a list (of whatever) that can be specified in compacted form
-        ... with the addition of the Markov expansion of tuples on calling resolve
+        ... with the addition of the Markov expansion of tuples and rotating Qs on calling resolve
         ... and some blending functions
+        Set drunk = True to treat all Qs as if they are drunk = True, else defer to each Q's drunk property
     """
 
-    def __init__(self, value=[0]):
+    def __init__(self, value=[0], drunk=False):
+        self.drunk = drunk
         list.__init__(self, value)
 
     def resolve(self):
@@ -21,12 +32,17 @@ class Pattern(list):
         """Resolve a subbranch of the pattern"""
         steps = []
         for step in pattern:
-            while type(step) == tuple or type(step) == collections.deque:
+            while type(step) == tuple or type(step) == Q:
                 if type(step) == tuple:
                     step = choice(step)
                 else:
-                    step.rotate(-1)
+                    coin = choice([0, 1])
+                    if coin and (self.drunk or step.drunk):
+                        step.rotate(1)
+                    else:
+                        step.rotate(-1)
                     step = step[-1]
+
             if type(step) == list:
                 step = self._subresolve(step)
             steps.append(step)

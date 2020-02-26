@@ -247,8 +247,6 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 R = 'R'         # random
 Z = 'REST'      # rest
 
-Q = deque       # alias for collections.deque, used to create note queue steps that rotate each cycle: Q([1, 2, 3])
-
 def g(note):
     # create grace note from named step
     return float(note)
