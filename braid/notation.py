@@ -1,4 +1,4 @@
-from random import randint, choice, random, shuffle
+from random import randint, choice, random, shuffle, uniform
 from collections import deque
 from bisect import bisect
 
@@ -244,9 +244,24 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 
 #
 
-R = 'R'         # random
+R = 'R'         # random note
+Rv = 'Rv'       # random note and random velocity
 Z = 'REST'      # rest
 
 def g(note):
     # create grace note from named step
     return float(note)
+
+def v(note, v_scale=None):
+    # create a note with scaled velocity from named step
+    # v_scale can be a single float value 0.0 < v_scale < 1.0
+    # or it can be a tuple of lo, hi to randomly select from, e.g. v(C4, (.2, .9))
+    # or if v_scale is None randomly generate between 0.17 and 0.999
+    if type(v_scale) == float:
+        v_scale = v_scale % 1  # ignore any part before the decimal
+    elif type(v_scale) == tuple and len(v_scale):
+        hi = 0.999 if len(v_scale) < 2 else v_scale[1] % 1  # allow specifying only lo, e.g. v(C, (.5,))
+        v_scale = uniform(v_scale[0] % 1, hi)
+    else:
+        v_scale = uniform(0.17, 0.999)
+    return note + v_scale
