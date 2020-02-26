@@ -245,7 +245,6 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 #
 
 R = 'R'         # random note
-Rv = 'Rv'       # random note and random velocity
 Z = 'REST'      # rest
 
 def g(note):
