@@ -1,5 +1,5 @@
 import collections, math
-from random import random
+from random import random, uniform
 from .signal import linear
 from .pattern import Q, Pattern, blend, euc, add, xor
 from .core import driver
@@ -7,7 +7,7 @@ from .core import driver
 
 class Tween(object):
 
-    def __init__(self, target_value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, start_value=None):
+    def __init__(self, target_value, cycles, signal_f=linear(), on_end=None, osc=False, random=False, saw=False, start_value=None):
         self.target_value = target_value
         self.cycles = cycles
         self.signal_f = signal_f
@@ -15,18 +15,38 @@ class Tween(object):
         self.osc = osc
         self.saw = saw
         self.start_value = start_value
+        if start_value is not None:
+            self._min_value = min(self.start_value, self.target_value)
+            self._max_value = max(self.start_value, self.target_value)
+        self.random = random
+        self._random_value = 0
+        self._step_len = 1/4
+        self._steps = [0., .25, .5, .75]
+        self._step = 0
         self.finished = False
+
 
     def start(self, thread, start_value):
         self.thread = thread
-        self.start_value = start_value if self.start_value is None else self.start_value    # needed for osc
+        self._step = 0
+        if self.start_value is None:
+            self.start_value = start_value
+            self._min_value = min(self.start_value, self.target_value)
+            self._max_value = max(self.start_value, self.target_value)
         self.start_cycle = float(math.ceil(self.thread._cycles)) # tweens always start on next cycle
 
     @property
     def value(self):
         if self.finished:
             return self.target_value
-        return self.calc_value(self.signal_position)
+        if self.random:
+            if self._steps[self._step] <= self.position and (self._step != 0 or self.position <= self._steps[-1]):
+                self._step += 1
+                self._step %= len(self._steps)
+                self._random_value = uniform(self._min_value, self._max_value)
+            return self._random_value
+        else:
+            return self.calc_value(self.signal_position)
 
     @property
     def signal_position(self): # can reference this to see where we are on the signal function
@@ -57,6 +77,21 @@ class Tween(object):
                 self.finished = True
                 print('finished is true')
         return position
+
+    @property
+    def step_len(self):
+        return self._step_len
+
+    @step_len.setter
+    def step_len(self, length):
+        steps = []
+        i = 0
+        while 0 <= i < 1.0:
+            steps.append(i)
+            i += length
+        self._steps = steps
+        self._step_len = length
+
 
 
 class ScalarTween(Tween):
@@ -105,19 +140,24 @@ class RateTween(ScalarTween):
         return phase_correction
 
 
-def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, start=None):
+def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, random=False, saw=False, start=None):
     print('new tween')
     if type(value) == int or type(value) == float:
-        return ScalarTween(value, cycles, signal_f, on_end, osc, saw, start)
+        return ScalarTween(value, cycles, signal_f, on_end, osc, random, saw, start)
     if type(value) == tuple:
-        return ChordTween(value, cycles, signal_f, on_end, osc, saw, start)
+        return ChordTween(value, cycles, signal_f, on_end, osc, False, saw, start)
     if type(value) == list: # careful, lists are always patterns
         value = Pattern(value)
     if type(value) == Pattern:
-        return PatternTween(value, cycles, signal_f, on_end, osc, saw, start)
+        return PatternTween(value, cycles, signal_f, on_end, osc, False, saw, start)
 
 def osc(start, value, cycles, signal_f=linear(), on_end=None):
-    return tween(value, cycles, signal_f, on_end, True, False, start)
+    return tween(value, cycles, signal_f, on_end, True, False, False, start)
 
-def saw(start, value, cycles, signal_f=linear(), on_end=None, saw=True):
-    return tween(value, cycles, signal_f, on_end, False, True, start)
+def saw(start, value, cycles, signal_f=linear(), on_end=None):
+    return tween(value, cycles, signal_f, on_end, False, False, True, start)
+
+def sh(hi, lo, cycles, step_len, continuous=True, on_end=None):
+    t = tween(hi, cycles, start=lo, on_end=on_end, random=True, saw=continuous)
+    t.step_len = step_len
+    return t

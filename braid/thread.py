@@ -183,9 +183,7 @@ class Thread(object):
                 pitch = step + int(self.transpose)
             else:
                 root, scale = self.chord
-                transposition = 0
-                if self.transpose:
-                    transposition = scale.quantize(int(self.transpose))
+                transposition = scale.quantize(int(self.transpose))
                 try:
                     pitch = root + scale[step] + transposition
                 except ScaleError as e:
