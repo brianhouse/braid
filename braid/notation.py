@@ -225,9 +225,9 @@ BMA = Scale([[0, 3, 4, 7, 9, 10]])  # Blues major (From midipal/BitT source code
 
 PEN = Scale([0, 2, 5, 7, 10])
 
-PMI = Scale([0, 2, 4, 7, 9])  # Pentatonic major (From midipal/BitT source code)
+PMA = Scale([0, 2, 4, 7, 9])  # Pentatonic major (From midipal/BitT source code)
 
-PMA = Scale([0, 3, 5, 7, 10])  # Pentatonic minor (From midipal/BitT source code)
+PMI = Scale([0, 3, 5, 7, 10])  # Pentatonic minor (From midipal/BitT source code)
 
 # world
 
