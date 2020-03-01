@@ -1,6 +1,6 @@
 from random import randint, choice, random, shuffle, uniform
 from collections import deque
-from bisect import bisect
+from bisect import bisect_left
 
 class Scale(list):
 
@@ -60,9 +60,9 @@ class Scale(list):
         """i.e. for MAJ, 1 returns 2,  3 returns 4, -2 returns -1, -4 returns -3, etc..."""
         if interval in self:
             return interval
-        octave_shift = interval // self[len(self)] * 12
+        octave_shift = (interval // 12) * 12
         interval = interval - octave_shift
-        degree = bisect(list(self), interval) + 1
+        degree = bisect_left(list(self), interval) + 1
         return self[degree] + octave_shift
 
 
