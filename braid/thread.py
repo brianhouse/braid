@@ -111,7 +111,7 @@ class Thread(object):
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             if self._start_lock:
-                self._index, self._transpose_index = i
+                self._index = self._transpose_index = i
             else:
                 self._index = (self._index + 1) % len(self._steps) # dont skip steps
                 if type(self.transpose) == list and not self._index % int(self.transpose_step_len):
