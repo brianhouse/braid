@@ -221,7 +221,7 @@ MMI = Scale([0, 2, 4, 5, 6, 9, 11])  # Melodic Minor
 
 BLU = BMI = Scale([0, 3, 5, 6, 7, 10])  # Blues Minor
 
-BMA = Scale([[0, 3, 4, 7, 9, 10]])  # Blues major (From midipal/BitT source code)
+BMA = Scale([0, 3, 4, 7, 9, 10])  # Blues major (From midipal/BitT source code)
 
 PEN = Scale([0, 2, 5, 7, 10])
 
