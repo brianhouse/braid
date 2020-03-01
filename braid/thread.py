@@ -193,7 +193,7 @@ class Thread(object):
             else:
                 root, scale = self.chord
                 try:
-                    pitch = root + scale[step] + scale.quantize(int(transposition))
+                    pitch = scale.quantize(root + int(transposition)) + scale[step]
                 except ScaleError as e:
                     print("\n[Error: %s]" % e)
                     return
