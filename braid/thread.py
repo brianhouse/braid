@@ -33,6 +33,7 @@ class Thread(object):
     def setup(cls):
         # standard properties
         Thread.add_attr('transpose', 0)
+        Thread.add_attr('transpose_step_len', 1)
         Thread.add_attr('chord', None)
         Thread.add_attr('velocity', 1.0)
         Thread.add_attr('grace', 0.75)
@@ -71,6 +72,7 @@ class Thread(object):
         self._cycles = 0.0
         self._last_edge = 0
         self._index = -1
+        self._transpose_index = -1
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
@@ -109,9 +111,11 @@ class Thread(object):
         i = int(p * len(self._steps))
         if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
             if self._start_lock:
-                self._index = i
+                self._index, self._transpose_index = i
             else:
                 self._index = (self._index + 1) % len(self._steps) # dont skip steps
+                if type(self.transpose) == list and not self._index % int(self.transpose_step_len):
+                    self._transpose_index = (self._transpose_index + 1) % len(self.transpose)
             if self._index == 0:
                 self.update_triggers()
                 if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
@@ -179,13 +183,17 @@ class Thread(object):
         elif step == 0 or step is None:
             self.hold()
         else:
+            transposition = self.transpose
+            if type(transposition) == list:
+                transposition = transposition[self._transpose_index % len(transposition)]
+            while type(transposition) == tuple:
+                transposition = choice(transposition)
             if self.chord is None:
-                pitch = step + int(self.transpose)
+                pitch = step + int(transposition)
             else:
                 root, scale = self.chord
-                transposition = scale.quantize(int(self.transpose))
                 try:
-                    pitch = root + scale[step] + transposition
+                    pitch = root + scale[step] + scale.quantize(int(transposition))
                 except ScaleError as e:
                     print("\n[Error: %s]" % e)
                     return
