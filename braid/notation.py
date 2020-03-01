@@ -213,20 +213,45 @@ AOL = ION.rotate(5)
 
 LOC = ION.rotate(6)
 
-MIN = Scale([0, 2, 3, 5, 7, 8, 11])
+MIN = HMI = Scale([0, 2, 3, 5, 7, 8, 11])  # Harmonic Minor
 
-MMI = Scale([0, 2, 4, 5, 6, 9, 11])
+NMI = Scale([0, 2, 3, 5, 7, 8, 10])  # Natural Minor
 
-BLU = Scale([0, 3, 5, 6, 7, 10])
+MMI = Scale([0, 2, 4, 5, 6, 9, 11])  # Melodic Minor
+
+BLU = BMI = Scale([0, 3, 5, 6, 7, 10])  # Blues Minor
+
+BMA = Scale([[0, 3, 4, 7, 9, 10]])  # Blues major (From midipal/BitT source code)
 
 PEN = Scale([0, 2, 5, 7, 10])
+
+PMI = Scale([0, 2, 4, 7, 9])  # Pentatonic major (From midipal/BitT source code)
+
+PMA = Scale([0, 3, 5, 7, 10])  # Pentatonic minor (From midipal/BitT source code)
+
+# world
+
+FLK = Scale([0, 1, 3, 4, 5, 7, 8, 10])  # Folk (From midipal/BitT source code)
+
+JPN = Scale([0, 1, 5, 7, 8])  # Japanese (From midipal/BitT source code)
+
+GYP = Scale([0, 2, 3, 6, 7, 8, 11])  # Gypsy (From MI Braids source code)
+
+ARB = Scale([0, 1, 4, 5, 7, 8, 11])  # Arabian (From MI Braids source code)
+
+FLM = Scale([0, 1, 4, 5, 7, 8, 10])  # Flamenco (From MI Braids source code)
+
+# other
+
+WHL = Scale([0, 2, 4, 6, 8, 10])  # Whole tone (From midipal/BitT source code)
 
 # chromatic
 
 CHR = Scale([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
 
-
 # gamelan
+
+GML = Scale([0, 1, 3, 7, 8])  # Gamelan (From midipal/BitT source code)
 
 SDR = Scale([0, 2, 5, 7, 9])
 
