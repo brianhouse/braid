@@ -209,13 +209,11 @@ LYD = ION.rotate(3)
 
 MYX = DOM = ION.rotate(4)
 
-AOL = ION.rotate(5)
+AOL = NMI = ION.rotate(5)
 
 LOC = ION.rotate(6)
 
 MIN = HMI = Scale([0, 2, 3, 5, 7, 8, 11])  # Harmonic Minor
-
-NMI = Scale([0, 2, 3, 5, 7, 8, 10])  # Natural Minor
 
 MMI = Scale([0, 2, 4, 5, 6, 9, 11])  # Melodic Minor
 
