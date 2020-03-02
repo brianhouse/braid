@@ -1,6 +1,11 @@
 import time, math, __main__
 from random import random
 
+def pos2rad(pos):
+    pos = clamp(pos)
+    degrees = pos * 360
+    return math.radians(degrees)
+
 def clamp(pos):
     if pos > 1.0:
         return 1.0
@@ -13,6 +18,31 @@ def linear():
     def f(pos):
         pos = clamp(pos)
         return pos
+    return f
+
+def inverse_linear():
+    def f(pos):
+        pos = clamp(1 - pos)
+        return pos
+    return f
+
+def triangle(s=0.5):
+    def f(pos):
+        pos = clamp(pos)
+        if pos < s:
+            pos *= 1/s
+        else:
+            pos = 1 - ((pos - s) * (1 / (1 - s)))
+        return pos
+    return f
+
+def pulse(w=0.5):
+    def f(pos):
+        pos = clamp(pos)
+        if pos < w:
+            return 0.0
+        else:
+            return 1.0
     return f
 
 def ease_in(exp=2):
@@ -46,6 +76,11 @@ def ease_out_in(exp=3):
             return 0.5 * pos**exp + 0.5
         else:
             return 1.0 - (0.5 * pos**exp + 0.5)
+    return f
+
+def sine():
+    def f(pos):
+        return math.sin(pos2rad(pos)) * 0.5 + 0.5
     return f
 
 def normalize(signal):

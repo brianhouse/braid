@@ -1,6 +1,6 @@
 import collections, math
-from random import random, uniform
-from .signal import linear
+from random import random, uniform, choice
+from .signal import linear, sine, pulse, inverse_linear, triangle
 from .pattern import Q, Pattern, blend, euc, add, xor
 from .core import driver
 
@@ -20,7 +20,10 @@ class Tween(object):
             self._min_value = min(self.start_value, self.target_value)
             self._max_value = max(self.start_value, self.target_value)
         self.random = random
+        self.rand_lock = False
         self._random_value = 0
+        self._lock_values = [0]
+        self._lag = 1.
         self._step_len = 1/4
         self._steps = [0., .25, .5, .75]
         self._step = 0
@@ -42,8 +45,12 @@ class Tween(object):
             return self.target_value
         if self.random:
             if self._steps[self._step] <= self.position < self._steps[self._step] + self._step_len:
+                if self.rand_lock:
+                    self._random_value = self._lock_values[self._step]
+                else:
+                    lag_diff = (uniform(self._min_value, self._max_value) - self._random_value) * self._lag
+                    self._random_value += lag_diff
                 self._step = (self._step + 1) % len(self._steps)
-                self._random_value = uniform(self._min_value, self._max_value)
             return self._random_value
         else:
             return self.calc_value(self.signal_position)
@@ -140,7 +147,17 @@ class RateTween(ScalarTween):
         return phase_correction
 
 
-def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, phase_offset=0, random=False, saw=False, start=None):
+def tween(
+        value,
+        cycles,
+        signal_f=linear(),
+        on_end=None,
+        osc=False,
+        phase_offset=0,
+        random=False,
+        saw=False,
+        start=None,
+):
     print('new tween')
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f, on_end, osc, phase_offset, random, saw, start)
@@ -152,12 +169,78 @@ def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, phase_offset
         return PatternTween(value, cycles, signal_f, on_end, osc, phase_offset, False, saw, start)
 
 def osc(start, value, cycles, signal_f=linear(), phase_offset=0, on_end=None):
-    return tween(value, cycles, signal_f, on_end, True, phase_offset, False, False, start)
+    return tween(
+        value,
+        cycles,
+        signal_f=signal_f,
+        on_end=on_end,
+        osc=True,
+        phase_offset=phase_offset,
+        start=start,
+    )
 
-def saw(start, value, cycles, signal_f=linear(), phase_offset=0, on_end=None):
-    return tween(value, cycles, signal_f, on_end, False, phase_offset, False, True, start)
+def saw(start, value, cycles, up=True, signal_f=linear(), phase_offset=0, on_end=None):
+    if not up and signal_f == linear():
+        signal_f = inverse_linear()
+    return tween(
+        value,
+        cycles,
+        signal_f=signal_f,
+        on_end=on_end,
+        phase_offset=phase_offset,
+        saw=True,
+        start=start,
+    )
 
-def sh(hi, lo, cycles, step_len, continuous=True, on_end=None):
-    t = tween(hi, cycles, start=lo, on_end=on_end, random=True, saw=continuous)
+def sin(start, value, cycles, phase_offset=0, loop=True, on_end=None):
+    return tween(
+        value,
+        cycles,
+        signal_f=sine(),
+        on_end=on_end,
+        phase_offset=phase_offset,
+        saw=loop,
+        start=start,
+    )
+
+def tri(start, value, cycles, symmetry=0.5, phase_offset=0, loop=True, on_end=None):
+    return tween(
+        value,
+        cycles,
+        signal_f=triangle(symmetry),
+        on_end=on_end,
+        phase_offset=phase_offset,
+        saw=loop,
+        start=start,
+    )
+
+def pw(start, value, cycles, width=0.5, phase_offset=0, loop=True, on_end=None):
+    return tween(
+        value,
+        cycles,
+        signal_f=pulse(width),
+        on_end=on_end,
+        phase_offset=phase_offset,
+        saw=loop,
+        start=start,
+    )
+
+def sh(lo, hi, cycles, step_len, lag=1., loop=True, lock=False, lock_len=None, on_end=None):
+    t = tween(
+        hi,
+        cycles,
+        start=lo,
+        on_end=on_end,
+        random=True,
+        saw=loop,
+    )
     t.step_len = step_len
+    t._lag = lag  # scale the distance between the random values
+    if lock:  # pre-generate a list of random values to choose from instead of generating new ones continuously
+        lock_len = lock_len if lock_len else len(t._steps)
+        t.rand_lock = True
+        lock_vals = [lo + (uniform(t._min_value, t._max_value) - lo) * lag]
+        for x in range(1, lock_len):
+            lock_vals.append(lock_vals[x - 1] + (uniform(t._min_value, t._max_value) - lock_vals[x - 1]) * lag)
+        t._lock_values = lock_vals
     return t
