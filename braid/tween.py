@@ -57,13 +57,13 @@ class Tween(object):
 
     @property
     def signal_position(self): # can reference this to see where we are on the signal function
-        return self.signal_f(self.position)
+        return self.signal_f((self.position + self.phase_offset) % 1.0)
 
     @property
     def position(self): # can reference this to see where we are in the tween
         if self.cycles == 0.0:
             return 1.0
-        position = (self.thread._cycles - self.start_cycle) / self.cycles + self.phase_offset
+        position = (self.thread._cycles - self.start_cycle) / self.cycles
         if position <= 0.0:
             position = 0.0
         if position >= 1.0:
