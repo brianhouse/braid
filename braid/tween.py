@@ -22,7 +22,7 @@ class Tween(object):
         self.random = random
         self.rand_lock = False
         self._random_value = 0
-        self._lock_values = [0]
+        self._lock_values = collections.deque([0])
         self._lag = 1.
         self._step_len = 1/4
         self._steps = [0., .25, .5, .75]
@@ -46,7 +46,8 @@ class Tween(object):
         if self.random:
             if self._steps[self._step] <= self.position < self._steps[self._step] + self._step_len:
                 if self.rand_lock:
-                    self._random_value = self._lock_values[self._step]
+                    self._lock_values.rotate(-1)
+                    self._random_value = self._lock_values[-1]
                 else:
                     lag_diff = (uniform(self._min_value, self._max_value) - self._random_value) * self._lag
                     self._random_value += lag_diff
@@ -239,7 +240,7 @@ def sh(lo, hi, cycles, step_len, lag=1., loop=True, lock=False, lock_len=None, o
     if lock:  # pre-generate a list of random values to choose from instead of generating new ones continuously
         lock_len = lock_len if lock_len else len(t._steps)
         t.rand_lock = True
-        lock_vals = [lo + (uniform(t._min_value, t._max_value) - lo) * lag]
+        lock_vals = collections.deque([lo + (uniform(t._min_value, t._max_value) - lo) * lag])
         for x in range(1, lock_len):
             lock_vals.append(lock_vals[x - 1] + (uniform(t._min_value, t._max_value) - lock_vals[x - 1]) * lag)
         t._lock_values = lock_vals
