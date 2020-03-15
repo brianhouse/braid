@@ -1,9 +1,10 @@
 from random import randint, choice, random, shuffle, uniform
 from collections import deque
 from bisect import bisect_left
+from .signal import amp_bias, calc_pos
+
 
 class Scale(list):
-
     """Allows for specifying scales by degree, up to 1 octave below and octaves_above above (default 2)"""
     """Set constrain=True to octave shift out-of-range degrees into range, preserving pitch class, else ScaleError"""
     """Any number of scale steps is supported, but default for MAJ: """
@@ -255,11 +256,9 @@ SDR = Scale([0, 2, 5, 7, 9])
 
 PLG = Scale([0, 1, 3, 6, 7, 8, 10])
 
-
 # personal
 
 JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
-
 
 # stepwise drums
 
@@ -267,12 +266,14 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 
 #
 
-R = 'R'         # random
-Z = 'REST'      # rest
+R = 'R'  # random
+Z = 'REST'  # rest
+
 
 def g(note):
     # create grace note from named step
     return float(note)
+
 
 def v(note, v_scale=None):
     # create a note with scaled velocity from named (or unnamed) step
@@ -287,3 +288,16 @@ def v(note, v_scale=None):
     else:
         v_scale = uniform(0.17, 0.999)
     return int(note) + v_scale
+
+
+def s(signal, a=1, r=1, p=0, b=0, v_scale=None):
+    # Use signals to dynamically generate note pitches and velocities with base phase derived from the thread
+    def f(t):
+        pos = calc_pos(t._base_phase, r, p)
+        n = signal(pos)
+        if v_scale is not None:
+            vs = v_scale(pos) if callable(v_scale) else v_scale
+            n = v(n, v_scale=vs)
+        return amp_bias(n, a, b, pos)
+
+    return f
