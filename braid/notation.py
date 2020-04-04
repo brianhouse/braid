@@ -216,7 +216,7 @@ LOC = ION.rotate(6)
 
 MIN = HMI = Scale([0, 2, 3, 5, 7, 8, 11])  # Harmonic Minor
 
-MMI = Scale([0, 2, 4, 5, 6, 9, 11])  # Melodic Minor
+MMI = Scale([0, 2, 3, 5, 7, 9, 11])  # Melodic Minor
 
 BLU = BMI = Scale([0, 3, 5, 6, 7, 10])  # Blues Minor
 
