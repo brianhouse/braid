@@ -4,8 +4,8 @@ from setuptools import setup
 
 setup(
     name="braid",
-    version="0.12.1",
-    description="A musical notation system, livecoding framework, and sequencer for monophonic MIDI synths.",
+    version="0.13.0",
+    description="A musical notation system and sequencer for monophonic MIDI synths.",
     author="Brian House",
     author_email="brian.house@gmail.com",
     url="https://braid.live",
