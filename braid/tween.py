@@ -23,14 +23,14 @@ class Tween(object):
         self.start_cycle = float(math.ceil(self.thread._cycles)) # tweens always start on next cycle
 
     @property
-    def value(self):            
+    def value(self):
         if self.finished:
             return self.target_value
         return self.calc_value(self.signal_position)
 
     @property
     def signal_position(self): # can reference this to see where we are on the signal function
-        return self.signal_f(self.position)        
+        return self.signal_f(self.position)
 
     @property
     def position(self): # can reference this to see where we are in the tween
@@ -40,7 +40,7 @@ class Tween(object):
         if position <= 0.0:
             position = 0.0
         if position >= 1.0:
-            position = 1.0            
+            position = 1.0
             if self.end_f is not None:
                 try:
                     self.end_f()
@@ -56,26 +56,26 @@ class Tween(object):
             else:
                 self.finished = True
                 print('finished is true')
-        return position        
+        return position
 
-    
+
 class ScalarTween(Tween):
 
-    def calc_value(self, position):        
+    def calc_value(self, position):
         value = (position * (self.target_value - self.start_value)) + self.start_value
         return value
 
-        
+
 class ChordTween(Tween):
 
     def calc_value(self, position):
-        if random() > position:        
+        if random() > position:
             return self.start_value
         else:
             return self.target_value
 
 
-class PatternTween(Tween):    
+class PatternTween(Tween):
 
     def calc_value(self, position):
         return blend(self.start_value, self.target_value, position)
@@ -99,14 +99,13 @@ class RateTween(ScalarTween):
         cycles_at_completion = syncer_cycles_remaining + self.syncer._cycles
         phase_at_completion = cycles_at_completion % 1.0
         phase_correction = phase_at_completion
-        phase_correction *= -1        
+        phase_correction *= -1
         if phase_correction < 0.0:
             phase_correction = 1.0 + phase_correction
         return phase_correction
 
 
 def tween(value, cycles, signal_f=linear(), on_end=None, osc=False, saw=False, start=None):
-    print('new tween')
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f, on_end, osc, saw, start)
     if type(value) == tuple:
@@ -120,4 +119,4 @@ def osc(start, value, cycles, signal_f=linear(), on_end=None):
     return tween(value, cycles, signal_f, on_end, True, False, start)
 
 def saw(start, value, cycles, signal_f=linear(), on_end=None, saw=True):
-    return tween(value, cycles, signal_f, on_end, False, True, start)    
+    return tween(value, cycles, signal_f, on_end, False, True, start)

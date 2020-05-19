@@ -101,7 +101,7 @@ Triode:
     filter_res: 52
     filter_cutoff: 53
     filter_attack: 59
-    filter_decay: 54    
+    filter_decay: 54
     filter_accent: 56
     filter_mod: 57
     pulse_width: 58
@@ -109,7 +109,7 @@ Triode:
     sub: 65
     pwm_sweep: 66
     osc: 68
-    lfo_dest: 67    
+    lfo_dest: 67
     lfo_randomize: 69
     lfo_retrigger: 70
   defaults:
@@ -122,7 +122,7 @@ Triode:
     filter_res: 64
     filter_cutoff: 127
     filter_attack: 0
-    filter_decay: 0    
+    filter_decay: 0
     filter_accent: 127
     filter_mod: 127
     pulse_width: 64
@@ -130,7 +130,7 @@ Triode:
     sub: 127
     pwm_sweep: 127
     osc: 127
-    lfo_dest: 127    
+    lfo_dest: 127
     lfo_randomize: 0
     lfo_retrigger: 127
 
@@ -170,18 +170,18 @@ VolcaKick:
     resonator_bend: 47
     resonator_time: 48
     accent: 49
-  defaults: 
+  defaults:
     None
 
 VolcaDrum:
     controls:
         pan: 10
-        level_1: 17
-        level_2: 18
-        level: 19
+        select_1: 14
+        select_2: 15
+        select: 16
         attack_1: 20
         attack_2: 21
-        attack: 22  
+        attack: 22
         release_1: 23
         release_2: 24
         release: 25
@@ -209,3 +209,38 @@ VolcaDrum:
         pitch: 64
         gain: 64
 
+MBase:
+    controls:
+        tune: 100
+        pitch: 101
+        decay: 102
+        harmonics: 103
+        pulse: 104
+        noise: 105
+        attack: 106
+        eq: 107
+        compression: 113
+        gate_time: 114
+        metal_noise: 115
+        volume: 117
+        lfo_sync: 120
+        lfo_one_shot: 123
+        lfo_intensity: 121
+        lfo_rate: 122
+    defaults:
+        tune: 127
+        pitch: 64
+        decay: 25
+        harmonics: 64
+        pulse: 127
+        noise: 127
+        attack: 0
+        eq: 0
+        compression: 40
+        gate_time: 32
+        metal_noise: 127
+        volume: 255         ## scales note velocity
+        lfo_sync: 0
+        lfo_one_shot: 0
+        lfo_intensity: 127
+        lfo_rate: 0

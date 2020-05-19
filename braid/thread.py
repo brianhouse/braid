@@ -27,7 +27,7 @@ class Thread(object):
                 value = 0
             setattr(self, "_%s" % name, value)
         setattr(cls, "_%s" % name, default)
-        setattr(cls, name, property(getter, setter))       
+        setattr(cls, name, property(getter, setter))
 
     @classmethod
     def setup(cls):
@@ -52,7 +52,7 @@ class Thread(object):
             print("[Error: \"%s\"]" % e)
 
     def __getattr__(self, key):
-        print("[No property %s]" % key) 
+        print("[No property %s]" % key)
         return None
 
     def add(self, param, default=0):
@@ -61,29 +61,29 @@ class Thread(object):
         self._attr_frozen = True
 
     def __init__(self, channel, sync=True):
-        Thread.threads.append(self)        
+        Thread.threads.append(self)
 
         # private reference variables
-        self._attr_frozen = False        
+        self._attr_frozen = False
         self._channel = channel
         self._running = False
         self._cycles = 0.0
         self._last_edge = 0
-        self._index = -1      
+        self._index = -1
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
         self.__phase_correction = 0.0
-        self._control_values = {}    
+        self._control_values = {}
         self._triggers = []
-        self._sync = sync 
+        self._sync = sync
         self._start_lock = False
 
-        # specialized properties   
+        # specialized properties
         self.pattern = [0]
-        self.rate = 1.0   
-        self.keyboard = False   
-        self.micro = linear()  
+        self.rate = 1.0
+        self.keyboard = False
+        self.micro = linear()
 
         print("[Created thread on channel %d]" % self._channel)
         self._attr_frozen = True
@@ -102,7 +102,7 @@ class Thread(object):
             pc = self._rate.get_phase()
             if pc is not None:
                 self.__phase_correction.target_value = pc
-        p = (self._cycles + self.phase + self._phase_correction) % 1.0  
+        p = (self._cycles + self.phase + self._phase_correction) % 1.0
         if self.micro is not None:
             p = self.micro(p)
         i = int(p * len(self._steps))
@@ -163,7 +163,7 @@ class Thread(object):
             self._triggers = [trigger for trigger in self._triggers if trigger is not None]
 
     def play(self, step, velocity=None):
-        """Interpret a step value to play a note"""        
+        """Interpret a step value to play a note"""
         while isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
             self.update_controls()  # to handle note-level CC changes
@@ -187,8 +187,8 @@ class Thread(object):
             velocity *= self.velocity
             velocity *= v
             self.note(pitch, velocity)
-        if step != 0:        
-            self._previous_step = step            
+        if step != 0:
+            self._previous_step = step
 
     def note(self, pitch, velocity):
         """Override for custom MIDI behavior"""
@@ -206,11 +206,11 @@ class Thread(object):
 
     def rest(self):
         """Send a MIDI off"""
-        midi_out.send_note(self._channel, self._previous_pitch, 0)        
+        midi_out.send_note(self._channel, self._previous_pitch, 0)
 
     def end(self):
         """Override to add behavior for the end of the piece, otherwise rest"""
-        self.rest()             
+        self.rest()
 
 
     """Specialized parameters"""
@@ -226,7 +226,7 @@ class Thread(object):
     @property
     def pattern(self):
         if isinstance(self._pattern, Tween):
-            return self._pattern.value        
+            return self._pattern.value
         return self._pattern
 
     @pattern.setter
@@ -240,7 +240,7 @@ class Thread(object):
     @property
     def rate(self):
         if isinstance(self._rate, Tween):
-            return self._rate.value        
+            return self._rate.value
         return self._rate
 
     @rate.setter
@@ -263,7 +263,7 @@ class Thread(object):
     @property
     def _phase_correction(self):
         if isinstance(self.__phase_correction, Tween):
-            return self.__phase_correction.value        
+            return self.__phase_correction.value
         return self.__phase_correction
 
 
@@ -318,7 +318,7 @@ def midi_clamp(value):
 def make(controls={}, defaults={}):
     """Make a Thread with MIDI control values and defaults (will send MIDI)"""
     name = "T%s" % str(random())[-4:]           # name doesn't really do anything
-    T = type(name, (Thread,), {})    
+    T = type(name, (Thread,), {})
     T.add_attr('controls', controls)
     for control in controls:
         T.add_attr(control, defaults[control] if control in defaults else 0)    # mid-level for knobs, off for switches
@@ -330,17 +330,17 @@ Thread.setup()
 synths = {}
 try:
     with open(os.path.join(os.getcwd(), "synths.yaml")) as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 try:
     with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 try:
     with open("/usr/local/braid/synths.yaml") as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 if len(synths):
