@@ -382,17 +382,17 @@ Thread.setup()
 synths = {}
 try:
     with open(os.path.join(os.getcwd(), "synths.yaml")) as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 try:
     with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 try:
     with open("/usr/local/braid/synths.yaml") as f:
-        synths.update(yaml.load(f, Loader=yaml.FullLoader))
+        synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
 if len(synths):

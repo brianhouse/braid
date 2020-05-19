@@ -159,7 +159,6 @@ def tween(
         saw=False,
         start=None,
 ):
-    print('new tween')
     if type(value) == int or type(value) == float:
         return ScalarTween(value, cycles, signal_f, on_end, osc, phase_offset, random, saw, start)
     if type(value) == tuple:

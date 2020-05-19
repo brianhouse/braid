@@ -217,6 +217,7 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, off_note=0, note_list=N
                 build(level - 1)
             if remainders[level] != 0:
                 build(level - 2)
+                
     build(level)
     i = pattern.index(note)
     pattern = pattern[i:] + pattern[0:i]
@@ -241,3 +242,4 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, off_note=0, note_list=N
             j += 1
 
     return final_pattern
+
