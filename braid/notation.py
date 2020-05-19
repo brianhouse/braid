@@ -1,12 +1,18 @@
-from random import randint, choice, random, shuffle
+from random import randint, choice, random, shuffle, uniform
+from collections import deque
+from bisect import bisect_left
+from .signal import amp_bias, calc_pos
+
 
 class Scale(list):
+    """Allows for specifying scales by degree, up to 1 octave below and octaves_above above (default 2)"""
+    """Set constrain=True to octave shift out-of-range degrees into range, preserving pitch class, else ScaleError"""
+    """Any number of scale steps is supported, but default for MAJ: """
+    """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""
 
-    """Allows for specifying scales by degree, up to one octave below and two octaves above"""
-    """Any number of scale steps is supported, but for MAJ: """
-    """ -1, -2, -3, -4, -5, -6, -7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14"""    
-
-    def __init__(self, *args):
+    def __init__(self, *args, constrain=False, octaves_above=2):
+        self.constrain = constrain
+        self.octaves_above = octaves_above
         super(Scale, self).__init__(*args)
 
     def __getitem__(self, degree):
@@ -19,8 +25,14 @@ class Scale(list):
         octave_shift = 0
         if degree == R:
             degree = list.__getitem__(self, randint(0, len(self) - 1))
-        if degree > len(self) * 2 or degree < 0 - len(self):
-            raise ScaleError(degree)
+        if self.constrain:
+            while degree > self._upper_bound():
+                degree = degree - len(self)
+            while degree < 0 - len(self):
+                degree = degree + len(self)
+        else:
+            if degree > self._upper_bound() or degree < 0 - len(self):
+                raise ScaleError(degree)
         if degree < 0:
             degree = abs(degree)
             octave_shift -= 12
@@ -33,6 +45,9 @@ class Scale(list):
             return float(semitone)
         return semitone
 
+    def _upper_bound(self):
+        return len(self) * self.octaves_above
+
     def rotate(self, steps):
         l = list(self)
         scale = l[steps:] + l[:steps]
@@ -40,6 +55,16 @@ class Scale(list):
         scale = [(degree + 12) if degree < 0 else degree for degree in scale]
         return Scale(scale)
 
+    def quantize(self, interval):
+        """Quantize a semitone interval to the scale, negative and positive intervals are accepted without bounds"""
+        """Intervals not in the scale are shifted up in pitch to the nearest interval in the scale"""
+        """i.e. for MAJ, 1 returns 2,  3 returns 4, -2 returns -1, -4 returns -3, etc..."""
+        if interval in self:
+            return interval
+        octave_shift = (interval // 12) * 12
+        interval = interval - octave_shift
+        degree = bisect_left(list(self), interval) + 1
+        return self[degree] + octave_shift
 
 
 class ScaleError(Exception):
@@ -185,34 +210,55 @@ LYD = ION.rotate(3)
 
 MYX = DOM = ION.rotate(4)
 
-AOL = ION.rotate(5)
+AOL = NMI = ION.rotate(5)
 
 LOC = ION.rotate(6)
 
-MIN = Scale([0, 2, 3, 5, 7, 8, 11])
+MIN = HMI = Scale([0, 2, 3, 5, 7, 8, 11])  # Harmonic Minor
 
-MMI = Scale([0, 2, 4, 5, 6, 9, 11])
+MMI = Scale([0, 2, 3, 5, 7, 9, 11])  # Melodic Minor
 
-BLU = Scale([0, 3, 5, 6, 7, 10])
+BLU = BMI = Scale([0, 3, 5, 6, 7, 10])  # Blues Minor
+
+BMA = Scale([0, 3, 4, 7, 9, 10])  # Blues major (From midipal/BitT source code)
 
 PEN = Scale([0, 2, 5, 7, 10])
+
+PMA = Scale([0, 2, 4, 7, 9])  # Pentatonic major (From midipal/BitT source code)
+
+PMI = Scale([0, 3, 5, 7, 10])  # Pentatonic minor (From midipal/BitT source code)
+
+# world
+
+FLK = Scale([0, 1, 3, 4, 5, 7, 8, 10])  # Folk (From midipal/BitT source code)
+
+JPN = Scale([0, 1, 5, 7, 8])  # Japanese (From midipal/BitT source code)
+
+GYP = Scale([0, 2, 3, 6, 7, 8, 11])  # Gypsy (From MI Braids source code)
+
+ARB = Scale([0, 1, 4, 5, 7, 8, 11])  # Arabian (From MI Braids source code)
+
+FLM = Scale([0, 1, 4, 5, 7, 8, 10])  # Flamenco (From MI Braids source code)
+
+# other
+
+WHL = Scale([0, 2, 4, 6, 8, 10])  # Whole tone (From midipal/BitT source code)
 
 # chromatic
 
 CHR = Scale([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
 
-
 # gamelan
+
+GML = Scale([0, 1, 3, 7, 8])  # Gamelan (From midipal/BitT source code)
 
 SDR = Scale([0, 2, 5, 7, 9])
 
 PLG = Scale([0, 1, 3, 6, 7, 8, 10])
 
-
 # personal
 
 JAM = Scale([0, 2, 3, 5, 6, 7, 10, 11])
-
 
 # stepwise drums
 
@@ -220,10 +266,38 @@ DRM = Scale([0, 2, 7, 14, 6, 10, 3, 39, 31, 13])
 
 #
 
-R = 'R'         # random
-Z = 'REST'      # rest
+R = 'R'  # random
+Z = 'REST'  # rest
 
 
 def g(note):
     # create grace note from named step
     return float(note)
+
+
+def v(note, v_scale=None):
+    # create a note with scaled velocity from named (or unnamed) step
+    # v_scale can be a single float value (the part before the decimal is ignored)
+    # or it can be a tuple of (lo, hi) specifying a range for random scaling, e.g. v(C4, (.2, .9))
+    # else randomly generate v_scale between 0.17 and 0.999
+    if type(v_scale) == float:
+        v_scale = v_scale % 1  # ignore any part before the decimal
+    elif type(v_scale) == tuple and len(v_scale):
+        hi = 0.999 if len(v_scale) < 2 else v_scale[1] % 1  # allow specifying only lo, e.g. v(C, (.5,))
+        v_scale = uniform(v_scale[0] % 1, hi)
+    else:
+        v_scale = uniform(0.17, 0.999)
+    return int(note) + v_scale
+
+
+def s(signal, a=1, r=1, p=0, b=0, v_scale=None):
+    # Use signals to dynamically generate note pitches and velocities with base phase derived from the thread
+    def f(t):
+        pos = calc_pos(t._base_phase, r, p)
+        n = signal(pos)
+        if v_scale is not None:
+            vs = v_scale(pos) if callable(v_scale) else v_scale
+            n = v(n, v_scale=vs)
+        return amp_bias(n, a, b, pos)
+
+    return f

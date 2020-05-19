@@ -5,8 +5,8 @@ from .signal import linear
 from .notation import *
 from .tween import *
 
-class Thread(object):
 
+class Thread(object):
     """Class definitions"""
 
     threads = driver.threads
@@ -14,10 +14,12 @@ class Thread(object):
     @classmethod
     def add_attr(cls, name, default=0):
         """Add a property with tweening capability (won't send MIDI)"""
+
         def getter(self):
             if isinstance(getattr(self, "_%s" % name), Tween):
                 return getattr(self, "_%s" % name).value
             return getattr(self, "_%s" % name)
+
         def setter(self, value):
             if isinstance(value, Tween):
                 value.start(self, getattr(self, name))
@@ -26,19 +28,21 @@ class Thread(object):
             if value is False:
                 value = 0
             setattr(self, "_%s" % name, value)
+
         setattr(cls, "_%s" % name, default)
         setattr(cls, name, property(getter, setter))
 
     @classmethod
     def setup(cls):
         # standard properties
+        Thread.add_attr('transpose', 0)
+        Thread.add_attr('transpose_step_len', 1)
         Thread.add_attr('chord', None)
         Thread.add_attr('velocity', 1.0)
         Thread.add_attr('grace', 0.75)
         Thread.add_attr('phase', 0.0)
         Thread.add_attr('micro', None)
         Thread.add_attr('controls', None)
-
 
     """Instance definitions"""
 
@@ -68,8 +72,10 @@ class Thread(object):
         self._channel = channel
         self._running = False
         self._cycles = 0.0
+        self._base_phase = 0.0
         self._last_edge = 0
         self._index = -1
+        self._transpose_index = -1
         self._steps = [0]
         self._previous_pitch = 60
         self._previous_step = 1
@@ -91,7 +97,6 @@ class Thread(object):
         if not LIVECODING:
             self.start()
 
-
     def update(self, delta_t):
         """Run each tick and update the state of the Thread"""
         if not self._running:
@@ -102,22 +107,25 @@ class Thread(object):
             pc = self._rate.get_phase()
             if pc is not None:
                 self.__phase_correction.target_value = pc
-        p = (self._cycles + self.phase + self._phase_correction) % 1.0
+        self._base_phase = (self._cycles + self.phase + self._phase_correction) % 1.0
         if self.micro is not None:
-            p = self.micro(p)
-        i = int(p * len(self._steps))
-        if i != self._index or (len(self._steps) == 1 and int(self._cycles) != self._last_edge): # contingency for whole notes
+            self._base_phase = self.micro(self._base_phase)
+        i = int(self._base_phase * len(self._steps))
+        if i != self._index or (
+                len(self._steps) == 1 and int(self._cycles) != self._last_edge):  # contingency for whole notes
             if self._start_lock:
-                self._index = i
+                self._index = self._transpose_index = i
             else:
-                self._index = (self._index + 1) % len(self._steps) # dont skip steps
+                self._index = (self._index + 1) % len(self._steps)  # dont skip steps
+                if type(self.transpose) == list and not self._index % int(self.transpose_step_len):
+                    self._transpose_index = (self._transpose_index + 1) % len(self.transpose)
             if self._index == 0:
                 self.update_triggers()
-                if isinstance(self.pattern, Tween): # pattern tweens only happen on an edge
+                if isinstance(self.pattern, Tween):  # pattern tweens only happen on an edge
                     pattern = self.pattern.value()
                 else:
                     pattern = self.pattern
-                self._steps = pattern.resolve() # new patterns kick in here
+                self._steps = pattern.resolve()  # new patterns kick in here
             if self._start_lock:
                 self._start_lock = False
             else:
@@ -133,7 +141,8 @@ class Thread(object):
             value = int(getattr(self, control))
             if self._channel not in self._control_values:
                 self._control_values[self._channel] = {}
-            if control not in self._control_values[self._channel] or value != self._control_values[self._channel][control]:
+            if control not in self._control_values[self._channel] or value != self._control_values[self._channel][
+                control]:
                 midi_out.send_control(self._channel, midi_clamp(self.controls[control]), value)
                 self._control_values[self._channel][control] = value
                 # print("[CTRL %d: %s %s]" % (self._channel, control, value))
@@ -142,8 +151,9 @@ class Thread(object):
         """Check trigger functions a fire as necessary"""
         updated = False
         for t, trigger in enumerate(self._triggers):
-            trigger[3] += 1                             # increment edge
-            if (trigger[1] + 1) - trigger[3] == 0:      # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
+            trigger[3] += 1  # increment edge
+            if (trigger[1] + 1) - trigger[
+                3] == 0:  # have to add 1 because trigger[1] is total 'elapsed' cycles but we're counting edges
                 try:
                     if num_args(trigger[0]):
                         trigger[0](self)
@@ -152,12 +162,12 @@ class Thread(object):
                 except Exception as e:
                     print("\n[Trigger error: %s]" % e)
                 if trigger[2] is True:
-                    self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
+                    self.trigger(trigger[0], trigger[1], True)  # create new trigger with same properties
                 else:
                     trigger[2] -= 1
                     if trigger[2] > 0:
-                        self.trigger(trigger[0], trigger[1], trigger[2] - 1)    # same, but decrement repeats
-                self._triggers[t] = None                                        # clear this trigger
+                        self.trigger(trigger[0], trigger[1], trigger[2] - 1)  # same, but decrement repeats
+                self._triggers[t] = None  # clear this trigger
                 updated = True
         if updated:
             self._triggers = [trigger for trigger in self._triggers if trigger is not None]
@@ -167,19 +177,28 @@ class Thread(object):
         while isinstance(step, collections.Callable):
             step = step(self) if num_args(step) else step()
             self.update_controls()  # to handle note-level CC changes
-        v = self.grace if type(step) == float else 1.0 # floats signify gracenotes
+        if type(step) == float:  # use the part after the decimal to scale velocity
+            v = step % 1
+            v = self.grace if v == 0.0 else v  # if decimal part is 0.0 fallback to self.grace to scale velocity
+        else:
+            v = 1.0
         step = int(step) if type(step) == float else step
         if step == Z:
             self.rest()
         elif step == 0 or step is None:
             self.hold()
         else:
+            transposition = self.transpose
+            if type(transposition) == list:
+                transposition = transposition[self._transpose_index % len(transposition)]
+            while type(transposition) == tuple:
+                transposition = choice(transposition)
             if self.chord is None:
-                pitch = step
+                pitch = step + int(transposition)
             else:
                 root, scale = self.chord
                 try:
-                    pitch = root + scale[step]
+                    pitch = scale.quantize(root + int(transposition) + scale[step])
                 except ScaleError as e:
                     print("\n[Error: %s]" % e)
                     return
@@ -212,8 +231,39 @@ class Thread(object):
         """Override to add behavior for the end of the piece, otherwise rest"""
         self.rest()
 
-
     """Specialized parameters"""
+
+    # Convenience methods for getting/setting chord root
+    # Does NOT support tweening, for that use chord or transpose
+    @property
+    def root(self):
+        if isinstance(self.chord, Tween):
+            return self.chord.value[0]
+        return self.chord[0] if self.chord else None
+
+    @root.setter
+    def root(self, root):
+        if isinstance(self.chord, Tween):
+            scale = self.chord.value[1]
+        else:
+            scale = self.chord[1] if self.chord else CHR  # Default to Chromatic Scale
+        self.chord = root, scale
+
+    # Convenience methods for getting/setting chord scale
+    # Does NOT support tweening, for that use chord
+    @property
+    def scale(self):
+        if isinstance(self.chord, Tween):
+            return self.chord.value[1]
+        return self.chord[1] if self.chord else None
+
+    @scale.setter
+    def scale(self, scale):
+        if isinstance(self.chord, Tween):
+            root = self.chord.value[0]
+        else:
+            root = self.chord[0] if self.chord else C  # Default to Middle C
+        self.chord = root, scale
 
     @property
     def channel(self):
@@ -246,15 +296,17 @@ class Thread(object):
     @rate.setter
     def rate(self, rate):
         if isinstance(rate, Tween):
-            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f, rate.end_f, rate.osc) # downcast tween
+            rate = RateTween(rate.target_value, rate.cycles, rate.signal_f, rate.end_f, rate.osc)  # downcast tween
             if self._sync:
                 def rt():
                     rate.start(self, self.rate)
-                    phase_correction = tween(89.9, rate.cycles)                     # make a tween for the subsequent phase correction
+                    phase_correction = tween(89.9, rate.cycles)  # make a tween for the subsequent phase correction
                     phase_correction.start(driver, self._phase_correction)
                     self.__phase_correction = phase_correction
                     self._rate = rate
-                self.trigger(rt)                                                    # this wont work unless it happens on an edge, and we need to do that here unlike other tweens
+
+                self.trigger(
+                    rt)  # this wont work unless it happens on an edge, and we need to do that here unlike other tweens
                 return
             else:
                 rate.start(self, self.rate)
@@ -265,7 +317,6 @@ class Thread(object):
         if isinstance(self.__phase_correction, Tween):
             return self.__phase_correction.value
         return self.__phase_correction
-
 
     """Sequencing"""
 
@@ -297,13 +348,13 @@ class Thread(object):
             self._triggers = []
         else:
             try:
-                assert(callable(f))
+                assert (callable(f))
                 if cycles == 0:
                     assert repeat == 0
             except AssertionError as e:
                 print("\n[Bad arguments for trigger]")
             else:
-                self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far
+                self._triggers.append([f, cycles, repeat, 0])  # last parameter is cycle edges so far
 
 
 def midi_clamp(value):
@@ -317,12 +368,13 @@ def midi_clamp(value):
 
 def make(controls={}, defaults={}):
     """Make a Thread with MIDI control values and defaults (will send MIDI)"""
-    name = "T%s" % str(random())[-4:]           # name doesn't really do anything
+    name = "T%s" % str(random())[-4:]  # name doesn't really do anything
     T = type(name, (Thread,), {})
     T.add_attr('controls', controls)
     for control in controls:
-        T.add_attr(control, defaults[control] if control in defaults else 0)    # mid-level for knobs, off for switches
+        T.add_attr(control, defaults[control] if control in defaults else 0)  # mid-level for knobs, off for switches
     return T
+
 
 Thread.setup()
 
