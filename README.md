@@ -3,7 +3,7 @@ Braid
 
 Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment. 
 
-Please see the [documentation](https://briad.live/).
+Please see the [documentation](https://braid.live/).
 
 
 ### Copyright/License

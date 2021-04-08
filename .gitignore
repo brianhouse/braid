@@ -1,3 +1,4 @@
+.gitignore
 .DS_Store
 __pycache__
 TODO.md
@@ -11,3 +12,8 @@ refs
 NOTES.md
 *backup.zip
 .idea
+*.code-workspace
+
+*.py
+!setup.py
+!*/*.py
