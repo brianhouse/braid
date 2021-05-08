@@ -4,7 +4,7 @@ Braid is a single-import module for Python 3 that comprises a sequencer and musi
 
 Braid can be downloaded from its [GitHub repository](https://github.com/brianhouse/braid/releases).
 
-It is developed by [Brian House](https://brianhouse.net).
+It was developed by [Brian House](https://brianhouse.net).
 
 
 ## Contents
@@ -61,7 +61,7 @@ This framework is called Braid, and the fundamental objects are called _threads_
 You'll need to have Python 3 installed—if you're using macOS, I recommend doing so with Homebrew. Tested with python 3.7.
 
 To install (or update) Braid via the terminal:  
-`pip3 install git+git://github.com/brianhouse/braid --upgrade`
+`pip3 install git+git://github.com/brianhouse/braid --user --upgrade`
 
 ## <a name="tutorial"></a>Tutorial
 

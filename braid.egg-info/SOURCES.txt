@@ -1,5 +1,6 @@
 CHANGELOG.md
 LICENSE.txt
+MANIFEST.in
 README.md
 setup.py
 synths.yaml
