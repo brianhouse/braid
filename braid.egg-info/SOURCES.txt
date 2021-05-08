@@ -3,7 +3,6 @@ LICENSE.txt
 MANIFEST.in
 README.md
 setup.py
-synths.yaml
 braid/__init__.py
 braid/core.py
 braid/custom.py
@@ -11,6 +10,7 @@ braid/midi.py
 braid/notation.py
 braid/pattern.py
 braid/signal.py
+braid/synths.yaml
 braid/thread.py
 braid/tween.py
 braid.egg-info/PKG-INFO
