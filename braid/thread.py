@@ -378,20 +378,9 @@ def make(controls={}, defaults={}):
 
 Thread.setup()
 
-"""Create all synths in config file--look in the current directory, in the directory above the braid module, and in /usr/local/braid"""
 synths = {}
 try:
-    with open(os.path.join(os.getcwd(), "synths.yaml")) as f:
-        synths.update(yaml.safe_load(f))
-except FileNotFoundError as e:
-    pass
-try:
-    with open(os.path.join(os.path.dirname(__file__), "..", "synths.yaml")) as f:
-        synths.update(yaml.safe_load(f))
-except FileNotFoundError as e:
-    pass
-try:
-    with open("/usr/local/braid/synths.yaml") as f:
+    with open(os.path.join(os.path.dirname(__file__), "synths.yaml")) as f:
         synths.update(yaml.safe_load(f))
 except FileNotFoundError as e:
     pass
