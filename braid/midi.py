@@ -113,14 +113,14 @@ class MidiIn(threading.Thread):
     def run(self):
         def receive_message(event, data=None):
             message, deltatime = event
-            if message[0] < 144:
+            if message[0] & 0b11110000 == CONTROLLER_CHANGE:
                 nop, control, value = message
                 self.queue.put((control, value / 127.0))
-            else:
+            elif (message[0] & 0b11110000 == NOTE_ON):
                 if len(message) < 3:
                     return        ## ?
                 channel, pitch, velocity = message
-                channel -= 144
+                channel -= NOTE_ON
                 if channel < len(self.threads):
                     thread = self.threads[channel]
                     thread.note(pitch, velocity)
