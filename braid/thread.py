@@ -174,7 +174,7 @@ class Thread(object):
 
     def play(self, step, velocity=None):
         """Interpret a step value to play a note"""
-        while isinstance(step, collections.Callable):
+        while isinstance(step, collections.abc.Callable):
             step = step(self) if num_args(step) else step()
             self.update_controls()  # to handle note-level CC changes
         if type(step) == float:  # use the part after the decimal to scale velocity
