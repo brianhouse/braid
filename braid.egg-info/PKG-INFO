@@ -7,22 +7,22 @@ Author: Brian House
 Author-email: email@brian.house
 License: GPL3
 Project-URL: Issue Tracker, https://github.com/brianhouse/braid/issues
-Description: Braid
-        =====
-        
-        Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.
-        
-        Please see the [documentation](https://braid.live/).
-        
-        
-        ### Copyright/License
-        
-        Copyright (c) 2013-2021 Brian House
-        
-        This program is free software licensed under the GNU General Public License, and you are welcome to redistribute it under certain conditions. It comes without any warranty whatsoever. See the LICENSE file for details, or see <http://www.gnu.org/licenses/> if it is missing.
-        
-        Please credit Brian House and link to https://brianhouse.net where appropriate.
-        
-Platform: UNKNOWN
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
+Braid
+=====
+
+Braid is a single-import module for Python 3 that comprises a sequencer and musical notation system for monophonic MIDI synths. Its emphasis is on interpolation, polyrhythms, phasing, and entrainment.
+
+Please see the [documentation](https://braid.live/).
+
+
+### Copyright/License
+
+Copyright (c) 2013-2021 Brian House
+
+This program is free software licensed under the GNU General Public License, and you are welcome to redistribute it under certain conditions. It comes without any warranty whatsoever. See the LICENSE file for details, or see <http://www.gnu.org/licenses/> if it is missing.
+
+Please credit Brian House and link to https://brianhouse.net where appropriate.

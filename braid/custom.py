@@ -1,7 +1,9 @@
+from .logger import logger
+
 try:
     from . import Anode, Triode, VolcaKick, VolcaBeats, VolcaDrum, midi_out, midi_clamp
 except ImportError as e:
-    print("Custom Threads failed: %s" % e)
+    logger.error("Custom Threads failed: %s" % e)
 else:
 
     from braid.notation import *
@@ -27,7 +29,7 @@ else:
         try:
             midi_out.send_control(self._channel, DRM.index(pitch - 36) + 40, midi_clamp(velocity * 127))
         except ValueError:
-            print("(warning: note doesn't exist)")
+            logger.warning("(warning: note doesn't exist)")
         midi_out.send_note(self._channel, pitch, 127)
         self._previous_pitch = pitch
     VolcaBeats.note = note
