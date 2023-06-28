@@ -1,2 +1,2 @@
-python-rtmidi>=1.0.0
 PyYAML>=3.11
+python-rtmidi>=1.0.0

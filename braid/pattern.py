@@ -2,6 +2,7 @@ import collections
 from random import choice, random
 from . import num_args
 from .signal import ease_in, ease_out
+from .logger import logger
 
 class Q(collections.deque):
     """Q is a wrapper around collections.deque for making rotating note 'queues'
@@ -190,7 +191,7 @@ def euc(steps, pulses, rotation=0, invert=False, note=1, off_note=0, note_list=N
     steps = int(steps)
     pulses = int(pulses)
     if pulses > steps:
-        print("Make pulses > steps")
+        logger.info("Make pulses > steps")
         return None
     pattern = []
     counts = []

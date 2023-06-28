@@ -3,6 +3,7 @@
 import sys, time, threading, atexit, queue, rtmidi
 from rtmidi.midiconstants import NOTE_ON, NOTE_OFF, CONTROLLER_CHANGE
 from . import num_args
+from .logger import logger
 
 log_midi = False
 
@@ -18,21 +19,21 @@ class MidiOut(threading.Thread):
         available_interfaces = self.scan()
         if available_interfaces:
             if self._interface >= len(available_interfaces):
-                print("Interface index %s not available" % self._interface)
+                logger.info("Interface index %s not available" % self._interface)
                 return
-            print("MIDI OUT: %s" % available_interfaces[self._interface])
+            logger.info("MIDI OUT: %s" % available_interfaces[self._interface])
             self.midi.open_port(self._interface)
         else:
-            print("MIDI OUT opening virtual interface 'Braid'...")
+            logger.info("MIDI OUT opening virtual interface 'Braid'...")
             self.midi.open_virtual_port('Braid')
         self.start()   
 
     def scan(self):
         available_interfaces = self.midi.get_ports()
         if len(available_interfaces):
-            print("MIDI outputs available: %s" % available_interfaces)
+            logger.info("MIDI outputs available: %s" % available_interfaces)
         else:
-            print("No MIDI outputs available")
+            logger.info("No MIDI outputs available")
         return available_interfaces
 
     def send_control(self, channel, control, value):
@@ -57,13 +58,13 @@ class MidiOut(threading.Thread):
                 if type(value) == bool:
                     value = 127 if value else 0
                 if log_midi:
-                    print("MIDI ctrl %s %s %s" % (channel, control, value))                    
+                    logger.info("MIDI ctrl %s %s %s" % (channel, control, value))                    
                 channel -= 1
                 self.midi.send_message([CONTROLLER_CHANGE | (channel & 0xF), control, value])                
             if note is not None:
                 pitch, velocity = note
                 if log_midi:
-                    print("MIDI note %s %s %s" % (channel, pitch, velocity))
+                    logger.info("MIDI note %s %s %s" % (channel, pitch, velocity))
                 channel -= 1
                 if velocity:            
                     self.midi.send_message([NOTE_ON | (channel & 0xF), pitch & 0x7F, velocity & 0x7F])
@@ -86,9 +87,9 @@ class MidiIn(threading.Thread):
         available_interfaces = self.scan()
         if available_interfaces:
             if self._interface >= len(available_interfaces):
-                print("Interface index %s not available" % self._interface)
+                logger.info("Interface index %s not available" % self._interface)
                 return
-            print("MIDI IN: %s" % available_interfaces[self._interface])
+            logger.info("MIDI IN: %s" % available_interfaces[self._interface])
             self.midi.open_port(self._interface)
         self.start()           
         
@@ -97,9 +98,9 @@ class MidiIn(threading.Thread):
         if 'Braid' in available_interfaces:
             available_interfaces.remove('Braid')
         if len(available_interfaces):
-            print("MIDI inputs available: %s" % available_interfaces)
+            logger.info("MIDI inputs available: %s" % available_interfaces)
         else:
-            print("No MIDI inputs available")
+            logger.info("No MIDI inputs available")
         return available_interfaces        
 
     @property
@@ -146,7 +147,7 @@ class MidiIn(threading.Thread):
         self.callbacks[control] = f                
 
 
-midi_out = MidiOut(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
-midi_in = MidiIn(int(sys.argv[2]) if len(sys.argv) > 2 else 0)
+midi_out = MidiOut(0)
+midi_in = MidiIn(0)
 time.sleep(0.5)
-print("MIDI ready")
+logger.info("MIDI ready")

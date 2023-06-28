@@ -1,7 +1,10 @@
+.gitattributes
+.gitignore
 CHANGELOG.md
 LICENSE.txt
 MANIFEST.in
 README.md
+package.sh
 setup.py
 braid/__init__.py
 braid/core.py
@@ -18,3 +21,14 @@ braid.egg-info/SOURCES.txt
 braid.egg-info/dependency_links.txt
 braid.egg-info/requires.txt
 braid.egg-info/top_level.txt
+docs/CNAME
+docs/content.md
+docs/generate.py
+docs/github-markdown.css
+docs/index.html
+docs/page.html
+examples/20180804.py
+examples/20181008.py
+examples/20181009.py
+examples/20181012.py
+examples/20181014.py

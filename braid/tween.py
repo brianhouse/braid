@@ -3,6 +3,7 @@ from random import random, uniform, choice
 from .signal import linear, sine, pulse, inverse_linear, triangle
 from .pattern import Q, Pattern, blend, euc, add, xor
 from .core import driver
+from .logger import logger
 
 
 class Tween(object):
@@ -73,7 +74,7 @@ class Tween(object):
                 try:
                     self.end_f()
                 except Exception as e:
-                    print("[Error tween.on_end: %s]" % e)
+                    logger.error("[Error tween.on_end: %s]" % e)
             if self.osc or self.saw:
                 if self.osc:
                     sv = self.target_value
@@ -83,7 +84,7 @@ class Tween(object):
                 position = abs(1 - position)
             else:
                 self.finished = True
-                print('finished is true')
+                logger.info('finished is true')
         return position
 
     @property

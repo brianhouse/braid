@@ -2,6 +2,7 @@
 
 import sys, time, threading, queue, __main__, atexit
 from .midi import midi_in
+from .logger import logger
 
 LIVECODING = not hasattr(__main__, "__file__")
 
@@ -22,7 +23,7 @@ class Driver(threading.Thread):
 
     def start(self):
         super(Driver, self).start()
-        print("-------------> O")
+        logger.info("-------------> O")
         if not LIVECODING:
             try:
                 while self.running:
@@ -49,12 +50,12 @@ class Driver(threading.Thread):
                         try:
                             thread.update(delta_t)
                         except Exception as e:
-                            print("\n[Error: \"%s\"]" % e)
+                            logger.error("\n[Error: \"%s\"]" % e)
                             thread.stop()
                             raise e
                         rc = int((time.time() - c) * 1000)
                         if rc > 1:
-                            print("[Warning: update took %dms]\n>>> " % rc, end='')
+                            logger.warning("[Warning: update took %dms]\n>>> " % rc, end='')
                 except KeyboardInterrupt:
                     self.stop()
             elif not LIVECODING:
@@ -73,7 +74,7 @@ class Driver(threading.Thread):
                 if cycles == 0:
                     assert repeat == 0
             except AssertionError as e:
-                print("\n[Bad arguments for trigger]")
+                logger.error("\n[Bad arguments for trigger]")
             else:
                 self._triggers.append([f, cycles, repeat, 0])   # last parameter is cycle edges so far                
 
@@ -86,13 +87,13 @@ class Driver(threading.Thread):
                 try:
                     trigger[0]()
                 except Exception as e:
-                    print("\n[Error: %s]" % e)
+                    logger.error("\n[Error: %s]" % e)
                 if trigger[2] is True:
                     self.trigger(trigger[0], trigger[1], True)                  # create new trigger with same properties
                 else:
                     trigger[2] -= 1
                     if trigger[2] > 0:
-                        print("\n[Made new trigger with %s]" % trigger[2])
+                        logger.info("\n[Made new trigger with %s]" % trigger[2])
                         self.trigger(trigger[0], trigger[1], trigger[2] - 1)    # same, but decrement repeats
                 self._triggers[t] = None                                         # clear this trigger
                 updated = True
@@ -125,28 +126,28 @@ def play():
     driver.running = True
     if not driver.is_alive():
         driver.start()
-    print("[Playing]")
+    logger.info("[Playing]")
     
 def pause():
     driver.running = False
     for thread in driver.threads:
         thread.end()    
-    print("[Paused]")
+    logger.info("[Paused]")
 
 def stop():
     driver.stop()
-    print("[Stopped]")
+    logger.info("[Stopped]")
 
 def clear():
     for thread in driver.threads:
         if thread._running:
             thread.stop()
-    print("[Cleared]")
+    logger.info("[Cleared]")
 
 def exit_handler():
     driver.stop()
     time.sleep(0.1) # for midi to finish               
-    print("\n-------------> X")    
+    logger.info("\n-------------> X")    
 atexit.register(exit_handler)    
 
 driver = Driver()
